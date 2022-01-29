@@ -21,12 +21,10 @@ namespace Buffs
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-
         }
 
         public void OnUpdate(float diff)
         {
-
         }
     }
 }

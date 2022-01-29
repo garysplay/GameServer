@@ -4,6 +4,8 @@ using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using LeagueSandbox.GameServer.GameObjects.Stats;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
+
 
 namespace Buffs
 {

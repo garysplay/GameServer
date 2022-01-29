@@ -19,7 +19,6 @@ namespace Buffs
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
         IParticle activate;
-
         public void OnUpdate(float diff)
         {
         }
