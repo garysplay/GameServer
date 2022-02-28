@@ -6,7 +6,6 @@
 	path = LeaguePackets
 	url = https://github.com/LeagueSandbox/LeaguePackets
 	branch = master
-[submodule "LeagueSandbox-Scripts"]
+[submodule "Content/LeagueSandbox-Scripts"]
 	path = Content/LeagueSandbox-Scripts
 	url = https://github.com/cabeca1143/LeagueSandbox-Scripts.git
-	branch = main
