@@ -42,7 +42,7 @@ namespace GameServerCore.Maps
         /// <summary>
         /// List of all capture points in-game
         /// </summary>
-        List<IMapObject> InfoPoints { get; }
+        List<MapObject> InfoPoints { get; }
         /// <summary>
         /// List of all inhibitors in-game
         /// </summary>
@@ -62,10 +62,14 @@ namespace GameServerCore.Maps
         /// <summary>
         /// List of LaneMinion's spawn points
         /// </summary>
-        Dictionary<string, IMapObject> SpawnBarracks { get; }
+        Dictionary<string, MapObject> SpawnBarracks { get; }
         /// <summary>
         /// Initializes MapProperties. Usually only occurs once before players are added to Game.
         /// </summary>
         void Init();
+
+        //Adding these temporarily here
+        Dictionary<LaneID, List<Vector2>> BlueMinionPathing { get; }
+        Dictionary<LaneID, List<Vector2>> PurpleMinionPathing { get; }
     }
 }
