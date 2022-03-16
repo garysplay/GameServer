@@ -9,3 +9,6 @@
 [submodule "Content/LeagueSandbox-Scripts"]
 	path = Content/LeagueSandbox-Scripts
 	url = https://github.com/cabeca1143/LeagueSandbox-Scripts.git
+[submodule "Content/ColaborativeScripts"]
+	path = Content/ColaborativeScripts
+	url = https://github.com/cabeca1143/LeagueSandbox-Scripts.git
