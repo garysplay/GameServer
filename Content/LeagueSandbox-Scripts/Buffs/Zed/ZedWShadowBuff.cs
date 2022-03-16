@@ -3,7 +3,6 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
-using LeagueSandbox.GameServer.API;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 using LeagueSandbox.GameServer.Scripting.CSharp;
@@ -36,51 +35,8 @@ namespace Buffs
             AddParticleTarget(Shadow.Owner, Shadow, "zed_base_w_tar", Shadow);
 
             currentIndicator = AddParticleTarget(Shadow.Owner, Shadow.Owner, "zed_shadowindicatorfar", Shadow, buff.Duration, flags: FXFlags.TargetDirection);
-			ApiEventManager.OnSpellCast.AddListener(this, ownerSpell.CastInfo.Owner.GetSpell("ZedShuriken"), QOnSpellCast);
-            ApiEventManager.OnSpellPostCast.AddListener(this, ownerSpell.CastInfo.Owner.GetSpell("ZedShuriken"), QOnSpellPostCast);
-
-            //Listeners to Zed's E
-            ApiEventManager.OnSpellCast.AddListener(this, ownerSpell.CastInfo.Owner.GetSpell("ZedPBAOEDummy"), EOnSpellCast);
         }
 
-        public void QOnSpellCast(ISpell spell)
-        {
-            if (Shadow != null && !Shadow.IsDead)
-            {
-                PlayAnimation(Shadow, "Spell1");
-                var targetPos = new Vector2(spell.CastInfo.TargetPositionEnd.X, spell.CastInfo.TargetPositionEnd.Z);
-                FaceDirection(targetPos, Shadow);
-            }
-        }
-
-        public void QOnSpellPostCast(ISpell spell)
-        {
-            if (Shadow != null && !Shadow.IsDead)
-            {
-                var owner = spell.CastInfo.Owner;
-                var targetPos = new Vector2(spell.CastInfo.TargetPositionEnd.X, spell.CastInfo.TargetPositionEnd.Z);
-
-                SpellCast(spell.CastInfo.Owner, 0, SpellSlotType.ExtraSlots, targetPos, Vector2.Zero, true, Shadow.Position);
-            }
-        }
-        public void EOnSpellCast(ISpell spell)
-        {
-			var owner = spell.CastInfo.Owner;
-			var ownerSkinID = owner.SkinID;
-            if (Shadow != null && !Shadow.IsDead)
-            {
-                SpellCast(spell.CastInfo.Owner, 2, SpellSlotType.ExtraSlots, true, Shadow, Vector2.Zero);
-                PlayAnimation(Shadow, "Spell3", 0.5f);
-				if (ownerSkinID == 1)
-                {
-                AddParticleTarget(owner, null, "Zed_Skin01_E_cas.troy", Shadow);
-                }
-				else
-				{
-                AddParticleTarget(spell.CastInfo.Owner, null, "Zed_E_cas.troy", Shadow);
-				}
-            }
-        }
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             if (Shadow != null && !Shadow.IsDead)

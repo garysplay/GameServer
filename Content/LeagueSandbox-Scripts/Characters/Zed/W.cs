@@ -24,32 +24,27 @@ namespace Spells
 
         public void OnActivate(IObjAiBase owner, ISpell spell)
         {
-			ApiEventManager.OnLevelUpSpell.AddListener(this, spell, OnLevelUp, true);
+            AddBuff("ZedWPassiveBuff", 1.0f, 1, spell, owner, owner, true);
         }
-		public void OnLevelUp (ISpell spell)
-        {
-			var owner = spell.CastInfo.Owner as IChampion;
-            AddBuff("ZedWPassiveBuff", 250000f, 1, spell, owner, owner);
-        }
+
         public void OnDeactivate(IObjAiBase owner, ISpell spell)
         {
         }
+
         public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
         public void OnSpellCast(ISpell spell)
         {
-			var owner = spell.CastInfo.Owner as IChampion;
-			spell.SetCooldown(0.5f, true);
-            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
-            SpellCast(owner, 4, SpellSlotType.ExtraSlots, spellPos, spellPos, true, Vector2.Zero);
-            PlayAnimation(owner, "Spell2_Cast", timeScale: 0.6f);
         }
 
         public void OnSpellPostCast(ISpell spell)
         {
-			spell.SetCooldown(0.25f, true);
+            var owner = spell.CastInfo.Owner as IChampion;
+            var spellPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);
+            SpellCast(owner, 4, SpellSlotType.ExtraSlots, spellPos, spellPos, true, Vector2.Zero);
+            PlayAnimation(owner, "Spell2_Cast", timeScale: 0.6f);
         }
 
         public void OnSpellChannel(ISpell spell)

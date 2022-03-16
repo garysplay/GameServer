@@ -7,21 +7,20 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Buffs
 {
-    internal class CannonBarrageSlow : IBuffGameScript
+    class ZedWPassiveBuff : IBuffGameScript
     {
         public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {
-            BuffType = BuffType.COMBAT_DEHANCER,
+            BuffType = BuffType.COMBAT_ENCHANCER,
             BuffAddType = BuffAddType.REPLACE_EXISTING,
-            MaxStacks = 1
+            IsHidden = true
         };
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            StatsModifier.MoveSpeed.PercentBonus = -0.25f;
-            unit.AddStatModifier(StatsModifier);
+            StatsModifier.AttackDamage.PercentBonus = 5f * ownerSpell.CastInfo.SpellLevel;
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
