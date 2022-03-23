@@ -386,6 +386,10 @@ namespace MapScripts.Map10
                     // Adds Protection to Turrets
                     foreach (var turret in TurretList[inhibitor.Team][inhibitor.Lane])
                     {
+                        if(turret.Type == TurretType.INNER_TURRET)
+                        {
+                            continue;
+                        }
                         AddProtection(turret, false, TurretList[inhibitor.Team][inhibitor.Lane].First(dependTurret => dependTurret.Type == TurretType.INNER_TURRET));
                     }
                 }
