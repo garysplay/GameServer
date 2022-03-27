@@ -195,11 +195,10 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="o">GameObject entering vision.</param>
         /// <param name="userId">User to send the packet to.</param>
         /// <param name="isChampion">Whether or not the GameObject entering vision is a Champion.</param>
-        /// <param name="useTeleportID">Whether or not to teleport the object to its current position.</param>
         /// <param name="ignoreVision">Optionally ignore vision checks when sending this packet.</param>
         /// <param name="packets">Takes in a list of packets to send alongside this vision packet.</param>
         /// TODO: Incomplete implementation.
-        void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false, bool useTeleportID = false, bool ignoreVision = false, List<GamePacket> packets = null);
+        void NotifyEnterVisibilityClient(IGameObject o, int userId = 0, bool isChampion = false, bool ignoreVision = false, List<GamePacket> packets = null);
         /// <summary>
         /// Sends a packet to all players with vision of the specified unit detailing that the unit has begun facing the specified direction.
         /// </summary>
@@ -242,11 +241,6 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players.</param>
         void NotifyGameStart(int userId = 0);
-        /// <summary>
-        /// Sends a packet to all players which announces that the team which owns the specified inhibitor has an inhibitor which is respawning soon.
-        /// </summary>
-        /// <param name="inhibitor">Inhibitor that is respawning soon.</param>
-        void NotifyInhibitorSpawningSoon(IInhibitor inhibitor);
         /// <summary>
         /// Sends a packet to all players detailing the state (DEAD/ALIVE) of the specified inhibitor.
         /// </summary>
@@ -565,6 +559,13 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="losingTeam">The Team that lost the match</param>
         /// <param name="time">The offset for the result to actually be displayed</param>
         void NotifyS2C_EndGame(TeamId losingTeam, float time = 5000);
+        void NotifyS2C_HandleCapturePointUpdate(byte capturePointIndex, uint otherNetId, byte PARType, byte attackTeam, CapturePointUpdateCommand capturePointUpdateCommand);
+        /// <summary>
+        /// Notifies the game about a map score
+        /// </summary>
+        /// <param name="team"></param>
+        /// <param name="score"></param>
+        void NotifyS2C_HandleGameScore(TeamId team, int score);
         /// <summary>
         /// Sends a side bar tip to the specified player (ex: quest tips).
         /// </summary>
@@ -943,7 +944,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="u">AttackableUnit that is moving.</param>
         /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
         /// <param name="useTeleportID">Whether or not to teleport the unit to its current position in its path.</param>
-        void NotifyWaypointGroup(IAttackableUnit u, int userId = 0, bool useTeleportID = true);
+        void NotifyWaypointGroup(IAttackableUnit u, int userId = 0, bool useTeleportID = false);
         /// <summary>
         /// Sends a packet to all players that have vision of the specified unit.
         /// The packet details a group of waypoints with speed parameters which determine what kind of movement will be done to reach the waypoints, or optionally a GameObject.

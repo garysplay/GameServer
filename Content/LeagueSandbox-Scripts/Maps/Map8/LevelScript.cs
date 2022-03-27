@@ -4,7 +4,6 @@ using System.Numerics;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using GameServerCore.Maps;
 using LeagueSandbox.GameServer.Content;
 using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Scripting.CSharp;
@@ -23,15 +22,15 @@ namespace MapScripts.Map8
             RecallSpellItemId = 2005,
             GoldPerSecond = 5.6f,
             FirstGoldTime = 90.0f * 1000,
-            InitialLevel = 3
+            InitialLevel = 3,
+            ExpRange = 1250.0f,
+            GoldRange = 0.0f
         };
 
-        private IMapScriptHandler _map;
         public virtual IGlobalData GlobalData { get; set; } = new GlobalData();
         public bool HasFirstBloodHappened { get; set; } = false;
         public long NextSpawnTime { get; set; } = 90 * 1000;
         public string LaneMinionAI { get; set; } = "LaneMinionAI";
-        public string LaneTurretAI { get; set; } = "TurretAI";
 
         //Values i got the values for 5 players from replay packets, the value for 1 player is just a guess of mine by using !coords command in-game
         public Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>> PlayerSpawnPoints { get; } = new Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>>
@@ -62,30 +61,6 @@ namespace MapScripts.Map8
                 }}
             }},
 
-        };
-        //Nexus models
-        public Dictionary<TeamId, string> NexusModels { get; set; } = new Dictionary<TeamId, string>
-        {
-            {TeamId.TEAM_BLUE, "OrderNexus" },
-            {TeamId.TEAM_PURPLE, "ChaosNexus" }
-        };
-        //Inhib models
-        public Dictionary<TeamId, string> InhibitorModels { get; set; } = new Dictionary<TeamId, string>
-        {
-            {TeamId.TEAM_BLUE, "OrderInhibitor" },
-            {TeamId.TEAM_PURPLE, "ChaosInhibitor" }
-        };
-        //Tower Models
-        public Dictionary<TeamId, Dictionary<TurretType, string>> TowerModels { get; set; } = new Dictionary<TeamId, Dictionary<TurretType, string>>
-        {
-            {TeamId.TEAM_BLUE, new Dictionary<TurretType, string>
-            {
-                {TurretType.FOUNTAIN_TURRET, "OdinOrderTurretShrine" },
-            } },
-            {TeamId.TEAM_PURPLE, new Dictionary<TurretType, string>
-            {
-                {TurretType.FOUNTAIN_TURRET, "OdinChaosTurretShrine" },
-            } }
         };
 
         //Minion models for this map
@@ -160,22 +135,22 @@ namespace MapScripts.Map8
         public Dictionary<TeamId, ILevelProp> Nexus = new Dictionary<TeamId, ILevelProp>();
         public Dictionary<int, ILevelProp> SwainBeams = new Dictionary<int, ILevelProp>();
         //This function is executed in-between Loading the map structures and applying the structure protections. Is the first thing on this script to be executed
-        public void Init(IMapScriptHandler map)
+        public void Init(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
         {
-            _map = map;
-
             //TODO: Implement Dynamic Minion spawn mechanics for Map8
             //SpawnEnabled = map.IsMinionSpawnEnabled();
             AddSurrender(1200000.0f, 300000.0f, 30.0f);
 
+            LevelScriptObjects.LoadObjects(mapObjects);
             CreateLevelProps.CreateProps(this);
         }
 
+        Dictionary<TeamId, int> TeamScores = new Dictionary<TeamId, int> { { TeamId.TEAM_BLUE, 500 }, { TeamId.TEAM_PURPLE, 500 } };
         public void OnMatchStart()
         {
-
-            AddParticleTarget(Nexus[TeamId.TEAM_BLUE], Nexus[TeamId.TEAM_BLUE], "Odin_Crystal_blue", Nexus[TeamId.TEAM_BLUE], 25000);
-            AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], Nexus[TeamId.TEAM_PURPLE], "Odin_Crystal_purple", Nexus[TeamId.TEAM_PURPLE], 25000);
+            LevelScriptObjects.OnMatchStart();
+            AddParticle(null, Nexus[TeamId.TEAM_BLUE], "Odin_Crystal_blue", Nexus[TeamId.TEAM_BLUE].Position, 25000, bone: "center_crystal");
+            AddParticle(null, Nexus[TeamId.TEAM_PURPLE], "Odin_Crystal_purple", Nexus[TeamId.TEAM_PURPLE].Position, 25000, bone: "center_crystal");
 
             AddParticle(null, null, "Odin_Forcefield_blue", new Vector2(580f, 4124f), 80.0f);
             AddParticle(null, null, "Odin_Forcefield_purple", new Vector2(13310f, 4124f), 80.0f);
@@ -193,19 +168,20 @@ namespace MapScripts.Map8
                 AddBuff("OdinPlayerBuff", 25000, 1, null, champion, null);
             }
 
-            NeutralMinionSpawn.InitializeNeutrals(_map);
+            foreach (var team in TeamScores.Keys)
+            {
+                NotifyGameScore(team, TeamScores[team]);
+            }
+
+            NeutralMinionSpawn.InitializeNeutrals();
         }
 
         public void Update(float diff)
         {
-            var gameTime = GameTime();
-
+            LevelScriptObjects.OnUpdate(diff);
             NeutralMinionSpawn.OnUpdate(diff);
 
-            foreach (var fountain in _map.FountainList.Values)
-            {
-                fountain.Update(diff);
-            }
+            var gameTime = GameTime();
 
             if (!NotifiedAllInitialAnimations)
             {
@@ -223,6 +199,11 @@ namespace MapScripts.Map8
             NeutralMinionSpawn.ForceCampSpawn();
         }
 
+        public Vector2 GetFountainPosition(TeamId team)
+        {
+            return LevelScriptObjects.FountainList[team].Position;
+        }
+
         bool AllAnnouncementsAnnounced = false;
         List<EventID> AnnouncedEvents = new List<EventID>();
         public void CheckInitialMapAnnouncements(float time)
@@ -236,19 +217,19 @@ namespace MapScripts.Map8
             if (time >= 80.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage2))
             {
                 // The Battle Has Beguns!
-                NotifyMapAnnouncement(EventID.OnStartGameMessage2, _map.Id);
+                NotifyMapAnnouncement(EventID.OnStartGameMessage2, 8);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage2);
             }
             else if (time >= 50.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage1))
             {
                 // The battle will begin in 30 seconds!
-                NotifyMapAnnouncement(EventID.OnStartGameMessage1, _map.Id);
+                NotifyMapAnnouncement(EventID.OnStartGameMessage1, 8);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage1);
             }
             else if (time >= 30.0f * 1000 && !AnnouncedEvents.Contains(EventID.OnStartGameMessage3))
             {
                 // Welcome to the Crystal Scar!
-                NotifyMapAnnouncement(EventID.OnStartGameMessage3, _map.Id);
+                NotifyMapAnnouncement(EventID.OnStartGameMessage3, 8);
                 AnnouncedEvents.Add(EventID.OnStartGameMessage3);
             }
         }
@@ -276,16 +257,16 @@ namespace MapScripts.Map8
             else if (gameTime >= 80.0f * 1000 && !AnimationsNotified.Contains("Particles4"))
             {
                 //Blue Team Lasers
-                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_l_1_aim", teamOnly: TeamId.TEAM_BLUE);
-                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_r_1_aim", teamOnly: TeamId.TEAM_BLUE);
-                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_r_1_aim", teamOnly: TeamId.TEAM_PURPLE);
-                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_l_1_aim", teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_l_1_aim", "center_crystal", teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_r_1_aim", "center_crystal", teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_r_1_aim", "center_crystal", teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_l_1_aim", "center_crystal", teamOnly: TeamId.TEAM_PURPLE);
 
                 //Purple Team Lasers
-                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_1_aim", teamOnly: TeamId.TEAM_PURPLE);
-                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_1_aim", teamOnly: TeamId.TEAM_PURPLE);
-                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_1_aim", teamOnly: TeamId.TEAM_BLUE);
-                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_1_aim", teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_1_aim", "center_crystal", teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_1_aim", "center_crystal", teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_1_aim", "center_crystal", teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_1_aim", "center_crystal", teamOnly: TeamId.TEAM_BLUE);
 
                 AnimationsNotified.Add("Particles4");
             }
@@ -300,16 +281,16 @@ namespace MapScripts.Map8
             else if (gameTime >= 59.6f * 1000 && !AnimationsNotified.Contains("Particles3"))
             {
                 //Blue Team Lasers
-                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_l_2_aim", teamOnly: TeamId.TEAM_BLUE);
-                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_r_2_aim", teamOnly: TeamId.TEAM_BLUE);
-                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_l_2_aim", teamOnly: TeamId.TEAM_PURPLE);
-                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_r_2_aim", teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_l_2_aim", "center_crystal", teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_r_2_aim", "center_crystal", teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_l_2_aim", "center_crystal", teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_r_2_aim", "center_crystal", teamOnly: TeamId.TEAM_PURPLE);
 
                 //Purple Team Lasers
-                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_2_aim", teamOnly: TeamId.TEAM_PURPLE);
-                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_2_aim", teamOnly: TeamId.TEAM_PURPLE);
-                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_2_aim", teamOnly: TeamId.TEAM_BLUE);
-                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_2_aim", teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_2_aim", "center_crystal", teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_2_aim", "center_crystal", teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_2_aim", "center_crystal", teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_2_aim", "center_crystal", teamOnly: TeamId.TEAM_BLUE);
 
                 AnimationsNotified.Add("Particles3");
             }
@@ -324,16 +305,16 @@ namespace MapScripts.Map8
             else if (gameTime >= 40.0f * 1000 && !AnimationsNotified.Contains("Particles2"))
             {
                 //Blue Team Lasers
-                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000, 1, "Crystal_l_3_aim", teamOnly: TeamId.TEAM_BLUE);
-                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000, 1, "Crystal_r_3_aim", teamOnly: TeamId.TEAM_BLUE);
-                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000, 1, "Crystal_l_3_aim", teamOnly: TeamId.TEAM_PURPLE);
-                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000, 1, "Crystal_r_3_aim", teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000, 1, "Crystal_l_3_aim", "center_crystal", teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000, 1, "Crystal_r_3_aim", "center_crystal", teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000, 1, "Crystal_l_3_aim", "center_crystal", teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000, 1, "Crystal_r_3_aim", "center_crystal", teamOnly: TeamId.TEAM_PURPLE);
 
                 //Purple Team Lasers
-                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_3_aim", teamOnly: TeamId.TEAM_PURPLE);
-                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_3_aim", teamOnly: TeamId.TEAM_PURPLE);
-                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_3_aim", teamOnly: TeamId.TEAM_BLUE);
-                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_3_aim", teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_3_aim", "center_crystal", teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_3_aim", "center_crystal", teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_3_aim", "center_crystal", teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_3_aim", "center_crystal", teamOnly: TeamId.TEAM_BLUE);
 
                 AnimationsNotified.Add("Particles2");
             }
@@ -349,20 +330,20 @@ namespace MapScripts.Map8
             else if (gameTime >= 16.0f * 1000 && !AnimationsNotified.Contains("Particles1"))
             {
                 //Blue Team Lasers
-                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_l_4_aim", teamOnly: TeamId.TEAM_BLUE);
-                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_r_4_aim", teamOnly: TeamId.TEAM_BLUE);
-                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_l_4_aim", teamOnly: TeamId.TEAM_PURPLE);
-                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_r_4_aim", teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_l_4_aim", "center_crystal", teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_r_4_aim", "center_crystal", teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_l_4_aim", "center_crystal", teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(null, TeamStairs[TeamId.TEAM_BLUE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_BLUE], 25000.0f, 1, "Crystal_r_4_aim", "center_crystal", teamOnly: TeamId.TEAM_PURPLE);
 
                 //Purple Team Lasers
-                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_4_aim", teamOnly: TeamId.TEAM_PURPLE);
-                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_4_aim", teamOnly: TeamId.TEAM_PURPLE);
-                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_4_aim", teamOnly: TeamId.TEAM_BLUE);
-                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], TeamStairs[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_4_aim", teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(null, Nexus[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_4_aim", teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(null, Nexus[TeamId.TEAM_PURPLE], "odin_crystal_beam_green", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_4_aim", teamOnly: TeamId.TEAM_PURPLE);
+                AddParticleTarget(null, Nexus[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_l_4_aim", teamOnly: TeamId.TEAM_BLUE);
+                AddParticleTarget(null, Nexus[TeamId.TEAM_PURPLE], "odin_crystal_beam_red", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 1, "chaos_Crystal_r_4_aim", teamOnly: TeamId.TEAM_BLUE);
 
                 //Center Crystal Particles
-                AddParticleTarget(Nexus[TeamId.TEAM_BLUE], Nexus[TeamId.TEAM_BLUE], "Odin_crystal_beam_hit_blue", Nexus[TeamId.TEAM_BLUE], 25000.0f, 2);
-                AddParticleTarget(Nexus[TeamId.TEAM_PURPLE], Nexus[TeamId.TEAM_PURPLE], "Odin_crystal_beam_hit_purple", Nexus[TeamId.TEAM_PURPLE], 25000.0f, 2);
+                AddParticle(null, Nexus[TeamId.TEAM_BLUE], "Odin_crystal_beam_hit_blue", Nexus[TeamId.TEAM_BLUE].Position, 25000.0f, 1, "center_crystal");
+                AddParticle(null, Nexus[TeamId.TEAM_PURPLE], "Odin_crystal_beam_hit_purple", Nexus[TeamId.TEAM_PURPLE].Position, 25000.0f, 1, "center_crystal");
 
                 AnimationsNotified.Add("Particles1");
             }
@@ -374,12 +355,6 @@ namespace MapScripts.Map8
                 }
                 AnimationsNotified.Add("Close1");
             }
-        }
-
-        //Tower type enumeration might vary slightly from map to map, so we set that up here
-        public TurretType GetTurretType(int trueIndex, LaneID lane, TeamId teamId)
-        {
-            return TurretType.NEXUS_TURRET;
         }
 
         //Here you setup the conditions of which wave will be spawned

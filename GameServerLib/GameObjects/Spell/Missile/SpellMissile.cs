@@ -69,16 +69,18 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell.Missile
 
         public override void Update(float diff)
         {
-            if (HasTarget())
+            if (HasTarget() && !TargetUnit.IsDead && TargetUnit.Status.HasFlag(StatusFlags.Targetable))
             {
                 _timeSinceCreation += diff;
                 Move(diff);
+                API.ApiEventManager.OnSpellMissileUpdate.Publish(this, diff);
             }
             else
             {
+                // Destroy any missiles which are targeting an untargetable unit.
+                // TODO: Verify if this should apply to SpellSector.
                 //Direction = new Vector3();
                 SetToRemove();
-                return;
             }
         }
 

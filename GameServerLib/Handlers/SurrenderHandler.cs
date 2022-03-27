@@ -2,7 +2,6 @@
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using GameServerCore.Maps;
 using GameServerCore.NetInfo;
 using GameServerCore.Packets.Enums;
 using LeagueSandbox.GameServer.Logging;
@@ -11,7 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace LeagueSandbox.GameServer.Maps
+namespace LeagueSandbox.GameServer.Handlers
 {
     // TODO: Make the surrender UI button become clickable upon hitting SurrenderMinimumTime
     public class SurrenderHandler : IUpdate
@@ -19,6 +18,8 @@ namespace LeagueSandbox.GameServer.Maps
         private Dictionary<IChampion, bool> _votes = new Dictionary<IChampion, bool>();
         private Game _game;
         private ILog _log;
+        private bool toEnd = false;
+        private float toEndTimer = 3000.0f;
 
         public float SurrenderMinimumTime { get; set; }
         public float SurrenderRestTime { get; set; }
@@ -49,14 +50,14 @@ namespace LeagueSandbox.GameServer.Maps
         {
             if (_game.GameTime < SurrenderMinimumTime)
             {
-                _game.PacketNotifier.NotifyTeamSurrenderStatus(userId, who.Team, SurrenderReason.SURRENDER_TOO_EARLY, 0, 0);
+                _game.PacketNotifier.NotifyTeamSurrenderStatus(userId, who.Team, SurrenderReason.NotAllowedYet, 0, 0);
                 return;
             }
             
             bool open = !IsSurrenderActive;
             if (!IsSurrenderActive && _game.GameTime < LastSurrenderTime + SurrenderRestTime)
             {
-                _game.PacketNotifier.NotifyTeamSurrenderStatus(userId, who.Team, SurrenderReason.SURRENDER_TOO_QUICKLY, 0, 0);
+                _game.PacketNotifier.NotifyTeamSurrenderStatus(userId, who.Team, SurrenderReason.DontSpamSurrender, 0, 0);
                 return;
             }
             IsSurrenderActive = true;
@@ -65,7 +66,7 @@ namespace LeagueSandbox.GameServer.Maps
 
             if (_votes.ContainsKey(who))
             {
-                _game.PacketNotifier.NotifyTeamSurrenderStatus(userId, who.Team, SurrenderReason.SURRENDER_ALREADY_VOTED, 0, 0);
+                _game.PacketNotifier.NotifyTeamSurrenderStatus(userId, who.Team, SurrenderReason.AlreadyVoted, 0, 0);
                 return;
             }
             _votes[who] = vote;
@@ -81,19 +82,10 @@ namespace LeagueSandbox.GameServer.Maps
                 IsSurrenderActive = false;
                 foreach (var p in _game.PlayerManager.GetPlayers(true))
                 {
-                    _game.PacketNotifier.NotifyTeamSurrenderStatus((int)p.Item1, Team, SurrenderReason.SURRENDER_PASSED, (byte)voteCounts.Item1, (byte)voteCounts.Item2); // TOOD: fix id casting
+                    _game.PacketNotifier.NotifyTeamSurrenderStatus((int)p.Item1, Team, SurrenderReason.SurrenderAgreed, (byte)voteCounts.Item1, (byte)voteCounts.Item2); // TOOD: fix id casting
                 }
 
-                API.ApiFunctionManager.CreateTimer(3.0f, () =>
-                {
-                    INexus ourNexus = (INexus)_game.ObjectManager.GetObjects().First(o => o.Value is INexus && o.Value.Team == Team).Value;
-                    if (ourNexus == null)
-                    {
-                        _log.Error("Unable to surrender correctly, couldn't find the nexus!");
-                        return;
-                    }
-                    ourNexus.Die(null);
-                });
+                toEnd = true;
             }
         }
 
@@ -104,7 +96,23 @@ namespace LeagueSandbox.GameServer.Maps
                 IsSurrenderActive = false;
                 Tuple<int, int> count = GetVoteCounts();
                 foreach (var p in _game.PlayerManager.GetPlayers().Where(kv => kv.Item2.Team == Team))
-                    _game.PacketNotifier.NotifyTeamSurrenderStatus((int)p.Item1, Team, SurrenderReason.SURRENDER_FAILED, (byte)count.Item1, (byte)count.Item2); // TODO: fix id casting
+                    _game.PacketNotifier.NotifyTeamSurrenderStatus((int)p.Item1, Team, SurrenderReason.VoteWasNoSurrender, (byte)count.Item1, (byte)count.Item2); // TODO: fix id casting
+            }
+
+            if (toEnd)
+            {
+                toEndTimer -= diff;
+                if(toEndTimer <= 0)
+                {
+                    //This will have to be changed in the future in order to properly support Map8 surrender.
+                    INexus ourNexus = (INexus)_game.ObjectManager.GetObjects().First(o => o.Value is INexus && o.Value.Team == Team).Value;
+                    if (ourNexus == null)
+                    {
+                        _log.Error("Unable to surrender correctly, couldn't find the nexus!");
+                        return;
+                    }
+                    ourNexus.Die(null);
+                }
             }
         }
     }

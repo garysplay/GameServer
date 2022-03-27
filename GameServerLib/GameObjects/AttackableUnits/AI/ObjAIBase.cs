@@ -291,19 +291,17 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public override bool CanMove()
         {
-            // TODO: Verify if Dashes should bypass this.
-            return !IsDead
-                // TODO: Verify if priority is still maintained with the MovementParameters checks.
-                && ((Status.HasFlag(StatusFlags.CanMove) && Status.HasFlag(StatusFlags.CanMoveEver)) || MovementParameters != null)
-                && ((MoveOrder != OrderType.CastSpell && _castingSpell == null) || MovementParameters != null)
+            return (!IsDead
+                && MovementParameters != null)
+                || (Status.HasFlag(StatusFlags.CanMove) && Status.HasFlag(StatusFlags.CanMoveEver)
+                && (MoveOrder != OrderType.CastSpell && _castingSpell == null)
                 && (ChannelSpell == null || (ChannelSpell != null && ChannelSpell.SpellData.CanMoveWhileChanneling))
                 && (!IsAttacking || !AutoAttackSpell.SpellData.CantCancelWhileWindingUp)
-                && (!(Status.HasFlag(StatusFlags.Netted)
+                && !(Status.HasFlag(StatusFlags.Netted)
                 || Status.HasFlag(StatusFlags.Rooted)
                 || Status.HasFlag(StatusFlags.Sleep)
                 || Status.HasFlag(StatusFlags.Stunned)
-                || Status.HasFlag(StatusFlags.Suppressed))
-                || MovementParameters != null);
+                || Status.HasFlag(StatusFlags.Suppressed)));
         }
 
         public override bool CanChangeWaypoints()
@@ -337,10 +335,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <summary>
         /// Whether or not this AI is able to cast spells.
         /// </summary>
-        public bool CanCast()
+        /// <param name="spell">Spell to check.</param>
+        public bool CanCast(ISpell spell = null)
         {
             // TODO: Verify if all cases are accounted for.
-            return Status.HasFlag(StatusFlags.CanCast)
+            return ApiEventManager.OnCanCast.Publish(this, spell)
+                && Status.HasFlag(StatusFlags.CanCast)
                 && !Status.HasFlag(StatusFlags.Charmed)
                 && !Status.HasFlag(StatusFlags.Feared)
                 // TODO: Verify what pacified is
@@ -498,6 +498,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             // TODO: Take into account the rest of the arguments
             MovementParameters = new ForceMovementParameters
             {
+                SetStatus = StatusFlags.None,
                 ElapsedTime = 0,
                 PathSpeedOverride = dashSpeed,
                 ParabolicGravity = leapGravity,
@@ -509,9 +510,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 FollowTravelTime = travelTime
             };
 
+            if (consideredCC)
+            {
+                MovementParameters.SetStatus = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove;
+            }
+
             _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
 
-            SetDashingState(true, consideredCC);
+            SetDashingState(true);
 
             if (animation != null && animation != "")
             {
@@ -537,9 +543,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return false;
             }
 
-            var nearestObjects = _game.Map.CollisionHandler.QuadDynamic.GetNodesInside(
-                new Circle(Position, DETECT_RANGE)
-            );
+            var nearestObjects = _game.Map.CollisionHandler.GetNearestObjects(new Circle(Position, DETECT_RANGE));
 
             foreach (var gameObject in nearestObjects)
             {
@@ -585,6 +589,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     else
                     {
                         SetWaypoints(new List<Vector2> { Position, TargetUnit.Position });
+                    }
+                }
+                else
+                {
+                    if (IsPathEnded())
+                    {
+                        SetDashingState(false);
                     }
                 }
 
@@ -651,12 +662,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     }
                     else
                     {
-                        if (!_game.Map.NavigationGrid.IsWalkable(targetPos, PathfindingRadius))
+                        if (!_game.Map.PathingHandler.IsWalkable(targetPos, PathfindingRadius))
                         {
                             targetPos = _game.Map.NavigationGrid.GetClosestTerrainExit(targetPos, PathfindingRadius);
                         }
 
-                        var newWaypoints = _game.Map.NavigationGrid.GetPath(Position, targetPos);
+                        var newWaypoints = _game.Map.PathingHandler.GetPath(Position, targetPos);
                         if (newWaypoints.Count > 1)
                         {
                             SetWaypoints(newWaypoints);
@@ -863,7 +874,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             if (location != Vector2.Zero)
             {
                 var exit = _game.Map.NavigationGrid.GetClosestTerrainExit(location, PathfindingRadius);
-                var path = _game.Map.NavigationGrid.GetPath(Position, exit);
+                var path = _game.Map.PathingHandler.GetPath(Position, exit);
 
                 if (path != null)
                 {

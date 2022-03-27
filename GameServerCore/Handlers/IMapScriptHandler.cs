@@ -7,7 +7,7 @@ using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using LeaguePackets.Game.Common;
 
-namespace GameServerCore.Maps
+namespace GameServerCore.Handlers
 {
     /// <summary>
     /// Contains all map related game settings such as collision handler, navigation grid, announcer events, and map properties. Doubles as a Handler/Manager for all MapScripts.
@@ -23,6 +23,10 @@ namespace GameServerCore.Maps
         /// </summary>
         ICollisionHandler CollisionHandler { get; }
         /// <summary>
+        /// Pathing Handler to be instanced by the map. Used for pathfinding for units.
+        /// </summary>
+        IPathingHandler PathingHandler { get; }
+        /// <summary>
         /// Navigation Grid to be instanced by the map. Used for terrain data.
         /// </summary>
         INavigationGrid NavigationGrid { get; }
@@ -32,44 +36,12 @@ namespace GameServerCore.Maps
         /// </summary>
         IMapScript MapScript { get; }
         /// <summary>
-        /// List of all nexus in-game
-        /// </summary>
-        List<INexus> NexusList { get; }
-        /// <summary>
-        /// List of all turrets in-game
-        /// </summary>
-        Dictionary<TeamId, Dictionary<LaneID, List<ILaneTurret>>> TurretList { get; }
-        /// <summary>
-        /// List of all capture points in-game
-        /// </summary>
-        List<MapObject> InfoPoints { get; }
-        /// <summary>
-        /// List of all inhibitors in-game
-        /// </summary>
-        Dictionary<TeamId, Dictionary<LaneID, List<IInhibitor>>> InhibitorList { get; }
-        /// <summary>
-        /// List of fountains
-        /// </summary>
-        Dictionary<TeamId, IFountain> FountainList { get; }
-        /// <summary>
-        /// List of map Shops
-        /// </summary>
-        Dictionary<TeamId, IGameObject> ShopList { get; set; }
-        /// <summary>
         /// Coordinates for player SpawnPositions when the match first begins
         /// </summary>
         Dictionary<TeamId, Dictionary<int, Dictionary<int, Vector2>>> PlayerSpawnPoints { get; set; }
         /// <summary>
-        /// List of LaneMinion's spawn points
-        /// </summary>
-        Dictionary<string, MapObject> SpawnBarracks { get; }
-        /// <summary>
         /// Initializes MapProperties. Usually only occurs once before players are added to Game.
         /// </summary>
         void Init();
-
-        //Adding these temporarily here
-        Dictionary<LaneID, List<Vector2>> BlueMinionPathing { get; }
-        Dictionary<LaneID, List<Vector2>> PurpleMinionPathing { get; }
     }
 }

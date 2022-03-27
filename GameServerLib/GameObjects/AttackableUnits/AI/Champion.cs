@@ -156,17 +156,12 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return _game.Map.PlayerSpawnPoints[Team][1][1];
             }
 
-            if (_game.Map.FountainList.ContainsKey(Team))
-            {
-                return _game.Map.FountainList[Team].Position;
-            }
-
-            return Vector2.Zero;
+            return _game.Map.MapScript.GetFountainPosition(Team);
         }
 
         public Vector2 GetRespawnPosition()
         {
-            return _game.Map.FountainList[Team].Position;
+            return _game.Map.MapScript.GetFountainPosition(Team);
         }
 
         public override ISpell LevelUpSpell(byte slot)
@@ -252,7 +247,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public bool OnDisconnect()
         {
             this.StopMovement();
-            this.SetWaypoints(_game.Map.NavigationGrid.GetPath(Position, GetRespawnPosition()));
+            this.SetWaypoints(_game.Map.PathingHandler.GetPath(Position, GetRespawnPosition()));
             this.UpdateMoveOrder(OrderType.MoveTo, true);
 
             return true;
@@ -275,14 +270,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     _game.PacketNotifier.NotifyUnitAddEXP(this, experience);
                 }
 
-                while (Stats.Experience >= _game.Config.MapData.ExpCurve[Stats.Level - 1] && LevelUp()) ;
+                while (Stats.Experience >= _game.Map.MapData.ExpCurve[Stats.Level - 1] && LevelUp()) ;
             }
         }
 
         public bool LevelUp(bool force = false)
         {
             var stats = Stats;
-            var expMap = _game.Config.MapData.ExpCurve;
+            var expMap = _game.Map.MapData.ExpCurve;
 
             if (force && stats.Level > 0)
             {
@@ -344,11 +339,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         {
             var mapScript = _game.Map.MapScript;
             var mapScriptMetaData = mapScript.MapScriptMetadata;
-            var mapData = _game.Config.MapData;
+            var mapData = _game.Map.MapData;
 
             ApiEventManager.OnDeath.Publish(data);
 
-            RespawnTimer = _game.Config.MapData.DeathTimes[Stats.Level] * 1000.0f;
+            RespawnTimer = _game.Map.MapData.DeathTimes[Stats.Level] * 1000.0f;
             ChampStats.Deaths += 1;
 
             var cKiller = data.Killer as IChampion;
