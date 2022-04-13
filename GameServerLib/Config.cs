@@ -6,7 +6,6 @@ using System.Numerics;
 using System.Reflection;
 using GameServerCore.Domain;
 using GameServerCore.Enums;
-using LeagueSandbox.GameServer;
 using LeagueSandbox.GameServer.Content;
 using Newtonsoft.Json.Linq;
 
@@ -58,7 +57,7 @@ namespace LeagueSandbox.GameServer
             var playerConfigurations = data.SelectToken("players");
             foreach (var player in playerConfigurations)
             {
-                var playerConfig = new PlayerConfig(player, game);
+                var playerConfig = new PlayerConfig(player);
                 Players.Add($"player{playerConfig.PlayerID}", playerConfig);
             }
 
@@ -241,9 +240,8 @@ public class PlayerConfig : IPlayerConfig
     public int Icon { get; private set; }
     public string BlowfishKey { get; private set; }
     public IRuneCollection Runes { get; }
-    public IMasteryCollection Masteries { get; }
 
-    public PlayerConfig(JToken playerData, Game game)
+    public PlayerConfig(JToken playerData)
     {
         PlayerID = (long)playerData.SelectToken("playerId");
         Rank = (string)playerData.SelectToken("rank");
@@ -270,18 +268,6 @@ public class PlayerConfig : IPlayerConfig
         catch (Exception)
         {
             // no runes set in config
-        }
-
-        var masteries = playerData.SelectToken("masteries");
-        if(masteries != null)
-        {
-            Masteries = new MasteryCollection(game);
-            foreach(JProperty mastery in masteries)
-            {
-                var name = mastery.Name;
-                var level = mastery.Value<byte>();
-                Masteries.Add(name, level );
-            }
         }
     }
 
