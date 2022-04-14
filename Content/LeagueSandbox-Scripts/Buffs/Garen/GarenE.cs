@@ -12,13 +12,10 @@ namespace Buffs
 {
     internal class GarenE : IBuffGameScript
     {
-        public BuffType BuffType => BuffType.COMBAT_ENCHANCER;
-
-        public BuffAddType BuffAddType => BuffAddType.STACKS_AND_OVERLAPS;
-
-        public bool IsHidden => false;
-
-        public int MaxStacks => 1;
+        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        {
+            BuffType = BuffType.COMBAT_ENCHANCER
+        };
 
         public IStatsModifier StatsModifier { get; private set; }
 
@@ -34,7 +31,7 @@ namespace Buffs
             damage = 10f + 12.5f * (ownerSpell.CastInfo.SpellLevel - 1) + ADratio;
             Owner = owner;
 
-            SetAnimStates(owner, new Dictionary<string, string> { { "RUN", "Spell3" } });
+            OverrideAnimation(unit, "Spell3", "RUN");
             p = AddParticleTarget(owner, unit, "Garen_Base_E_Spin.troy", unit, buff.Duration);
 
             SetStatus(unit, StatusFlags.CanAttack, false);

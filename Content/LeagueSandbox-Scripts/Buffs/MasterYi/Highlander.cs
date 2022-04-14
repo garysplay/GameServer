@@ -5,15 +5,16 @@ using GameServerCore.Domain.GameObjects.Spell;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using GameServerCore.Scripting.CSharp;
 using LeagueSandbox.GameServer.API;
+using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Buffs
 {
     internal class Highlander : IBuffGameScript
     {
-        public BuffType BuffType => BuffType.COMBAT_ENCHANCER;
-        public BuffAddType BuffAddType => BuffAddType.RENEW_EXISTING;
-        public int MaxStacks => 1;
-        public bool IsHidden => false;
+        public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
+        {
+            BuffType = BuffType.COMBAT_ENCHANCER
+        };
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
@@ -27,13 +28,13 @@ namespace Buffs
             {
                 case 1:
                     particle = "MasterYi_Base_R_Buf.troy";
-                        break;
+                    break;
                 case 2:
                     particle = "MasterYi_Base_R_Buf_Lvl2.troy";
-                        break;
+                    break;
                 case 3:
                     particle = "MasterYi_Base_R_Buf_Lvl3.troy";
-                        break;
+                    break;
             }
             p = AddParticleTarget(owner, unit, particle, unit, buff.Duration);
 
