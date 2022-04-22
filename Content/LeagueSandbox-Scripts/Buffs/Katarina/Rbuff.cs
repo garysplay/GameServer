@@ -31,7 +31,7 @@ namespace Buffs
 
             ApiEventManager.OnUnitUpdateMoveOrder.AddListener(this, champion, OnUpdateMoveOrder, true);
         }
-        public void OnUpdateMoveOrder(IObjAiBase unit, OrderType order)
+        public bool OnUpdateMoveOrder(IObjAiBase unit, OrderType order)
         {
             var buff = unit.GetBuffWithName("KatarinaR");
             if (buff != null)
@@ -45,7 +45,9 @@ namespace Buffs
                     // After the callback ends, it will remove the listener, so we make a new one before the callback ends.
                     ApiEventManager.OnUnitUpdateMoveOrder.AddListener(this, unit, OnUpdateMoveOrder, true);
                 }
+                return true;
             }
+            return false;
         }
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
