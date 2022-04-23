@@ -739,6 +739,20 @@ namespace PacketDefinitions420
             _packetHandlerManager.BroadcastPacketVision(attacker, targetPacket.GetBytes(), Channel.CHL_S2C);
         }
 
+        public void NotifyAttackFlexParticle(IFlexParticle flexParticle)
+        {
+            var packet = new AttachFlexParticleS2C
+            {
+                NetID = flexParticle.Target.NetId,
+                ParticleFlexID = flexParticle.ParticleFlexID,
+                CpIndex = flexParticle.CpIndex,
+                ParticleAttachType = flexParticle.ParticleAttachType
+            };
+
+            //Verify how this packet is sent
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+        }
+
         /// <summary>
         /// Sends a packet to the specified user or all users informing them of the given client's summoner data such as runes, summoner spells, masteries (or talents as named internally), etc.
         /// </summary>
@@ -3499,7 +3513,6 @@ namespace PacketDefinitions420
         {
             var p = new S2C_UnitChangeTeam
             {
-                SenderNetID = unit.NetId,
                 UnitNetID = unit.NetId,
                 TeamID = (uint)unit.Team // TODO: Verify if TeamID is actually supposed to be a uint
             };

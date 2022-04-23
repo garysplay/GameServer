@@ -76,6 +76,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="attacker">AI that is targeting a champion.</param>
         /// <param name="target">Champion that is being targeted by the attacker.</param>
         void NotifyAI_TargetHeroS2C(IObjAiBase attacker, IChampion target);
+        void NotifyAttackFlexParticle(IFlexParticle flexParticle);
         /// <summary>
         /// Sends a packet to the specified user or all users informing them of the given client's summoner data such as runes, summoner spells, masteries (or talents as named internally), etc.
         /// </summary>

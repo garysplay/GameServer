@@ -485,7 +485,8 @@ namespace LeagueSandbox.GameServer.API
             bool revealStealthed = false,
             IAttackableUnit revealSpecificUnitOnly = null,
             float collisionArea = 0f,
-            IGameObject collisionOwner = null
+            IGameObject collisionOwner = null,
+            RegionType regionType = RegionType.Default
         )
         {
             var useCollision = false;
@@ -495,7 +496,7 @@ namespace LeagueSandbox.GameServer.API
             }
 
             // TODO: Implement revealSpecificUnitOnly
-            return new Region(_game, team, position, collisionUnit: collisionOwner, giveVision: true, visionRadius: radius, revealStealth: revealStealthed, hasCollision: useCollision, collisionRadius: collisionArea, lifetime: duration);
+            return new Region(_game, team, position, regionType, collisionUnit: collisionOwner, giveVision: true, visionRadius: radius, revealStealth: revealStealthed, hasCollision: useCollision, collisionRadius: collisionArea, lifetime: duration);
         }
 
         /// <summary>

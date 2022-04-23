@@ -464,5 +464,12 @@ namespace LeagueSandbox.GameServer.API
         {
             _game.PacketNotifier.NotifyS2C_MapPing(position, (Pings)ping);
         }
+
+        public static IFlexParticle AttachFlexParticle(IAttackableUnit target, byte particleFlexId, byte cpIndex, uint particleAttachType)
+        {
+            var flexP = new FlexParticle(target, particleFlexId, cpIndex, particleAttachType);
+            _game.PacketNotifier.NotifyAttackFlexParticle(flexP);
+            return flexP;
+        }
     }
 }

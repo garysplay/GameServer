@@ -4,6 +4,7 @@ using GameServerCore.Enums;
 using System.Collections.Generic;
 using System.Numerics;
 using static LeagueSandbox.GameServer.API.ApiMapFunctionManager;
+using static LeagueSandbox.GameServer.API.ApiFunctionManager;
 
 namespace MapScripts.Map10
 {
@@ -81,6 +82,16 @@ namespace MapScripts.Map10
             {
                 CreateJungleMonster("TT_Spiderboss8.1.1", "TT_Spiderboss", new Vector2(7711.15f, 10080.0f), new Vector3(7726.41f, -108.603f, 9234.69f), spiderBoss)
             });
+
+            AddPosPerceptionBubble(new Vector2(5328.4f, 6757.1f), 1.0f, 25000.0f, TeamId.TEAM_BLUE, true, regionType: RegionType.Unknown2);
+            AddPosPerceptionBubble(new Vector2(5328.4f, 6757.1f), 1.0f, 25000.0f, TeamId.TEAM_PURPLE, true, regionType: RegionType.Unknown2);
+            var plate = CreateMinion("TT_Buffplat_L", "TT_Buffplat_L", new Vector2(5328.4f, 6757.1f), isTargetable: true);
+            NotifySpawnBroadcast(plate);
+
+            var pushMinion = CreateMinion("TT_DummyPusher", "TT_DummyPusher", new Vector2(200.595f, 7340.51f), isTargetable: true);
+            pushMinion.SetTeam(TeamId.TEAM_BLUE);
+            pushMinion.FaceDirection(new Vector3(200.0f, 0.0f, 0.0f), true);
+
         }
 
         public static void OnUpdate(float diff)
