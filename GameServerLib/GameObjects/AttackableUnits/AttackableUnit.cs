@@ -36,11 +36,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         public bool IsDead { get; protected set; }
         /// <summary>
-        /// Whether or not this Unit's model has been changeds this tick. Resets to False when the next tick update happens in ObjectManager.
-        /// </summary>
-        public bool IsModelUpdated { get; set; }
-        /// <summary>
-        /// Number of minions this Unit has killed. Unused besides in replication which is used for packets, refer to NotifyUpdateStats in PacketNotifier.
+        /// Number of minions this Unit has killed. Unused besides in replication which is used for packets, refer to NotifyOnReplication in PacketNotifier.
         /// </summary>
         /// TODO: Verify if we want to move this to ObjAIBase since AttackableUnits cannot attack or kill anything.
         public int MinionCounter { get; protected set; }
@@ -123,25 +119,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             BuffList = new List<IBuff>();
         }
 
-        public override void OnAdded()
-        {
-            base.OnAdded();
-            _game.ObjectManager.AddVisionProvider(this, Team);
-        }
-
-        public override void OnRemoved()
-        {
-            base.OnRemoved();
-            _game.ObjectManager.RemoveVisionProvider(this, Team);
-        }
-
-        public override void SetTeam(TeamId team)
-        {
-            _game.ObjectManager.RemoveVisionProvider(this, Team);
-            base.SetTeam(team);
-            _game.ObjectManager.AddVisionProvider(this, Team);
-        }
-
         /// <summary>
         /// Gets the HashString for this unit's model. Used for packets so clients know what data to load.
         /// </summary>
@@ -178,10 +155,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             Position = vec;
             _movementUpdated = true;
 
-            if(!IsPathEnded())
+            if (!IsPathEnded())
             {
                 // Reevaluate our current path to account for the starting position being changed.
-                if(repath)
+                if (repath)
                 {
                     List<Vector2> safePath = _game.Map.PathingHandler.GetPath(Position, _game.Map.NavigationGrid.GetClosestTerrainExit(Waypoints.Last(), PathfindingRadius));
 
@@ -525,9 +502,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).PlayerId;
             }
             // Show damage text for owner of pet
-            if (attacker is IMinion attackerMinion && attackerMinion.IsPet && attackerMinion.Owner is IChampion)
+            if (attacker is IPet attackerPet && attackerPet.Owner is IChampion)
             {
-                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion((IChampion)attackerMinion.Owner).PlayerId;
+                attackerId = (int)_game.PlayerManager.GetClientInfoByChampion((IChampion)attackerPet.Owner).PlayerId;
             }
 
             if (attacker.Team != Team)
@@ -655,7 +632,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 targetId = (int)_game.PlayerManager.GetClientInfoByChampion(targetChamp).PlayerId;
             }
             // Show damage text for owner of pet
-            if (attacker is IMinion attackerMinion && attackerMinion.IsPet && attackerMinion.Owner is IChampion)
+            if (attacker is IMinion attackerMinion && attackerMinion is IPet && attackerMinion.Owner is IChampion)
             {
                 attackerId = (int)_game.PlayerManager.GetClientInfoByChampion((IChampion)attackerMinion.Owner).PlayerId;
             }
@@ -717,9 +694,9 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             ApiEventManager.OnDeath.Publish(data);
             if (data.Unit is IObjAiBase obj)
             {
-                if(!(obj is IMonster))
+                if (!(obj is IMonster))
                 {
-                    var champs = _game.ObjectManager.GetChampionsInRangeFromTeam(Position, _game.Map.MapScript.MapScriptMetadata.ExpRange, Team, true);
+                    var champs = _game.ObjectManager.GetChampionsInRangeFromTeam(Position, _game.Map.MapScript.MapScriptMetadata.AIVars.EXPRadius, CustomConvert.GetEnemyTeam(Team), true);
                     if (champs.Count > 0)
                     {
                         var expPerChamp = obj.Stats.ExpGivenOnDeath.Total / champs.Count;
@@ -758,7 +735,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 return false;
             }
             Model = model;
-            IsModelUpdated = true;
+            _game.PacketNotifier.NotifyS2C_ChangeCharacterData(this);
             return true;
         }
 
@@ -883,8 +860,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                         case StatusFlags.Targetable:
                         {
                             Stats.IsTargetable = enabled;
-                            // TODO: Verify.
-                            Stats.SetActionState(ActionState.TARGETABLE, enabled);
+                            // TODO: Refactor this.
+                            if (this is IObjAiBase obj && !obj.CharData.IsUseable)
+                            {
+                                Stats.SetActionState(ActionState.TARGETABLE, enabled);
+                            }
                             break;
                         }
                         case StatusFlags.Taunted:
@@ -983,8 +963,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public void TeleportTo(Vector2 position, bool repath = false)
         {
             position = _game.Map.NavigationGrid.GetClosestTerrainExit(position, PathfindingRadius + 1.0f);
-            
-            if(repath)
+
+            if (repath)
             {
                 SetPosition(position, true);
             }
@@ -1130,7 +1110,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             // Dashes are excluded as their paths should be set before being applied.
             // TODO: Find out the specific cases where we shouldn't be able to set our waypoints. Perhaps CC?
             // Setting waypoints during auto attacks is allowed.
-            if (newWaypoints.Count <= 1 || newWaypoints[0] != Position || !CanChangeWaypoints())
+            if (newWaypoints == null || newWaypoints.Count <= 1 || newWaypoints[0] != Position || !CanChangeWaypoints())
             {
                 return;
             }
@@ -1203,7 +1183,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     // Add the buff to the visual hud.
                     if (!b.IsHidden)
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffAdd2(b, b.Duration, b.TimeElapsed);
+                        _game.PacketNotifier.NotifyNPC_BuffAdd2(b);
                     }
                     // Activate the buff for BuffScripts
                     b.ActivateBuff();
@@ -1371,7 +1351,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     }
                     // TODO: Unload and reload all data of buff script here.
                 }
-            }    
+            }
         }
 
         /// <summary>
@@ -1543,7 +1523,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     // Add the buff to the visual hud.
                     if (!b.IsHidden)
                     {
-                        _game.PacketNotifier.NotifyNPC_BuffAdd2(tempBuff, tempBuff.Duration, tempBuff.TimeElapsed);
+                        _game.PacketNotifier.NotifyNPC_BuffAdd2(tempBuff);
                     }
                     // Activate the buff for BuffScripts
                     tempBuff.ActivateBuff();

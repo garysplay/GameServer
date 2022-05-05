@@ -128,10 +128,12 @@ namespace LeagueSandbox.GameServer
                 if (obj is IAttackableUnit u)
                 {
                     u.Replication.MarkAsUnchanged();
-                    u.IsModelUpdated = false;
                     u.ClearMovementUpdated();
                 }
             }
+
+            _game.PacketNotifier.NotifyOnReplication();
+            _game.PacketNotifier.NotifyWaypointGroup();
 
             _currentlyInUpdate = false;
         }
@@ -203,7 +205,6 @@ namespace LeagueSandbox.GameServer
                 obj.SetVisibleForPlayer(pid, shouldBeVisibleForPlayer);
                 obj.SetSpawnedForPlayer(pid);
 
-                // TODO: Centralize this, should only be done once at start of game.
                 if (obj is ILaneTurret turret)
                 {
                     foreach (var item in turret.Inventory)
@@ -223,20 +224,12 @@ namespace LeagueSandbox.GameServer
             {
                 if(u.Replication.Changed)
                 {
-                    _game.PacketNotifier.NotifyUpdatedStats(u, userId, true);
-                }
-
-                if (u.IsModelUpdated)
-                {
-                    _game.PacketNotifier.NotifyS2C_ChangeCharacterData(u, userId);
+                    _game.PacketNotifier.HoldReplicationDataUntilOnReplicationNotification(u, userId, true);
                 }
 
                 if (u.IsMovementUpdated())
                 {
-                    // TODO: Verify which one we want to use. WaypointList does not require conversions, however WaypointGroup does (and it has TeleportID functionality).
-                    //_game.PacketNotifier.NotifyWaypointList(u);
-                    // TODO: Verify if we want to use TeleportID.
-                    _game.PacketNotifier.NotifyWaypointGroup(u, userId, false);
+                    _game.PacketNotifier.HoldMovementDataUntilWaypointGroupNotification(u, userId, false);
                 }
             }
         }
@@ -263,6 +256,10 @@ namespace LeagueSandbox.GameServer
                     // Stop targeting an untargetable unit.
                     if (ai.TargetUnit != null && !ai.TargetUnit.Status.HasFlag(StatusFlags.Targetable))
                     {
+                        if(ai.TargetUnit is IObjAiBase aiTar && aiTar.CharData.IsUseable)
+                        {
+                            return;
+                        }
                         StopTargeting(ai.TargetUnit);
                     }
                 }
@@ -286,6 +283,13 @@ namespace LeagueSandbox.GameServer
                 else
                 {
                     _objects.Add(o.NetId, o);
+                }
+                // TODO: This is a hack-fix for units which have packets being sent before spawning (ex: AscWarp minion)
+                // Instead, we need a dedicated packet queue system which takes all packets which are not vision/spawn related,
+                // and queues them if the object is not spawned yet for clients.
+                if (!(o is IChampion))
+                {
+                    SpawnObject(o);
                 }
                 o.OnAdded();
             }
@@ -331,11 +335,18 @@ namespace LeagueSandbox.GameServer
         /// <summary>
         /// Gets a GameObject from the list of objects in ObjectManager that is identified by the specified NetID.
         /// </summary>
-        /// <param name="netId">NetID to check.</param>
-        /// <returns>GameObject instance that has the specified NetID.</returns>
+        /// <param name="id">NetID to check.</param>
+        /// <returns>GameObject instance that has the specified NetID. Null otherwise.</returns>
         public IGameObject GetObjectById(uint id)
         {
-            return _objects.GetValueOrDefault(id, null);
+            IGameObject obj = _objectsToAdd.Find(o => o.NetId == id);
+
+            if (obj == null)
+            {
+                obj = _objects.GetValueOrDefault(id, null);
+            }
+
+            return obj;
         }
 
         /// <summary>
@@ -484,10 +495,7 @@ namespace LeagueSandbox.GameServer
                 var ai = u as IObjAiBase;
                 if (ai != null)
                 {
-                    if (ai.TargetUnit == target)
-                    {
-                        ai.SetTargetUnit(null, true);
-                    }
+                    ai.Untarget(target);
                 }
             }
         }
