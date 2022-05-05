@@ -40,6 +40,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public byte SkillPoints { get; set; }
 
+        public override bool SpawnShouldBeHidden => false;
+
         public Champion(Game game,
                         string model,
                         uint playerId,
@@ -103,6 +105,54 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             _game.ObjectManager.AddChampion(this);
             base.OnAdded();
             TalentInventory.Initialize(this);
+
+            var bluePill = _itemManager.GetItemType(_game.Map.MapScript.MapScriptMetadata.RecallSpellItemId);
+            Inventory.SetExtraItem(7, bluePill);
+
+            // Runes
+            byte runeItemSlot = 14;
+            foreach (var rune in RuneList.Runes)
+            {
+                var runeItem = _itemManager.GetItemType(rune.Value);
+                var newRune = Inventory.SetExtraItem(runeItemSlot, runeItem);
+                Stats.AddModifier(runeItem);
+                runeItemSlot++;
+            }
+            Stats.SetSummonerSpellEnabled(0, true);
+            Stats.SetSummonerSpellEnabled(1, true);
+        }
+
+        protected override void OnSpawn(int userId, TeamId team, bool doVision)
+        {
+            var peerInfo = _game.PlayerManager.GetClientInfoByChampion(this);
+            _game.PacketNotifier.NotifyS2C_CreateHero(peerInfo, userId, doVision);
+            _game.PacketNotifier.NotifyAvatarInfo(peerInfo, userId);
+            
+            bool ownChamp = peerInfo.PlayerId == userId;
+            if (ownChamp)
+            {
+                // Buy blue pill
+                var itemInstance = Inventory.GetItem(7);
+                _game.PacketNotifier.NotifyBuyItem(userId, this, itemInstance);
+
+                // Set spell levels
+                foreach (var spell in Spells)
+                {
+                    var castInfo = spell.Value.CastInfo;
+                    if (castInfo.SpellLevel > 0)
+                    {
+                        // NotifyNPC_UpgradeSpellAns has no effect here 
+                        _game.PacketNotifier.NotifyS2C_SetSpellLevel(userId, NetId, castInfo.SpellSlot, castInfo.SpellLevel);
+
+                        float currentCD = spell.Value.CurrentCooldown;
+                        float totalCD = spell.Value.GetCooldown();
+                        if (currentCD > 0)
+                        {
+                            _game.PacketNotifier.NotifyCHAR_SetCooldown(this, castInfo.SpellSlot, currentCD, totalCD, userId);
+                        }
+                    }
+                }
+            }
         }
 
         public override void OnRemoved()
@@ -156,7 +206,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return _game.Map.PlayerSpawnPoints[Team][teamSize][index];
             }
 
-            if (_game.Map.PlayerSpawnPoints[Team].ContainsKey(1) && _game.Map.PlayerSpawnPoints[Team][1][1] != null)
+            if (_game.Map.PlayerSpawnPoints[Team].ContainsKey(1) && _game.Map.PlayerSpawnPoints[Team][1].ContainsKey(1))
             {
                 return _game.Map.PlayerSpawnPoints[Team][1][1];
             }
@@ -317,7 +367,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
         public void OnKill(IDeathData deathData)
         {
-            ApiEventManager.OnKillUnit.Publish(deathData);
+            ApiEventManager.OnKillUnit.Publish(deathData.Killer, deathData);
 
             if (deathData.Unit is IMinion)
             {
@@ -354,7 +404,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             var mapScriptMetaData = mapScript.MapScriptMetadata;
             var mapData = _game.Map.MapData;
 
-            ApiEventManager.OnDeath.Publish(data);
+            ApiEventManager.OnDeath.Publish(data.Unit, data);
 
             RespawnTimer = _game.Map.MapData.DeathTimes[Stats.Level] * 1000.0f;
             ChampStats.Deaths += 1;
@@ -373,7 +423,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 return;
             }
 
-            ApiEventManager.OnKill.Publish(data);
+            ApiEventManager.OnKill.Publish(data.Killer, data);
 
             // TODO: Find out if we can unhardcode some of the fractions used here.
             var gold = mapScriptMetaData.ChampionBaseGoldValue;
@@ -468,7 +518,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 _game.PacketNotifier.NotifyDisplayFloatingText(new FloatingTextData(this, $"+{(int)points} Points", FloatTextType.Score, 1073741833), Team);
             }
 
-            ApiEventManager.OnIncrementChampionScore.Publish(scoreData);
+            ApiEventManager.OnIncrementChampionScore.Publish(scoreData.Owner, scoreData);
         }
     }
 }
