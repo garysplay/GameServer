@@ -187,36 +187,16 @@ namespace PacketDefinitions420
 
             charStackDataList.Add(charStackData);
 
-            var type = MovementDataType.Normal;
-            SpeedParams speeds = null;
+            MovementData md;
 
-            if (o is IAttackableUnit u)
+            if (o is IAttackableUnit u && u.Waypoints.Count > 1)
             {
-                if (u.Waypoints.Count <= 1)
-                {
-                    type = MovementDataType.Stop;
-                }
-
-                if (u.MovementParameters != null)
-                {
-                    type = MovementDataType.WithSpeed;
-
-                    speeds = new SpeedParams
-                    {
-                        PathSpeedOverride = u.MovementParameters.PathSpeedOverride,
-                        ParabolicGravity = u.MovementParameters.ParabolicGravity,
-                        // TODO: Implement as parameter (ex: Aatrox Q).
-                        ParabolicStartPoint = u.MovementParameters.ParabolicStartPoint,
-                        Facing = u.MovementParameters.KeepFacingDirection,
-                        FollowNetID = u.MovementParameters.FollowNetID,
-                        FollowDistance = u.MovementParameters.FollowDistance,
-                        FollowBackDistance = u.MovementParameters.FollowBackDistance,
-                        FollowTravelTime = u.MovementParameters.FollowTravelTime
-                    };
-                }
+                md = PacketExtensions.CreateMovementDataWithSpeedIfPossible(u, _navGrid, useTeleportID: true);
             }
-
-            var md = PacketExtensions.CreateMovementData(o, _navGrid, type, speeds, useTeleportID: true);
+            else
+            {
+                md = PacketExtensions.CreateMovementDataStop(o);
+            }
 
             var enterVis = new OnEnterVisibilityClient
             {
@@ -773,7 +753,7 @@ namespace PacketDefinitions420
                 };
             }
 
-            if (userId < 0)
+            if (userId <= 0)
             {
                 _packetHandlerManager.BroadcastPacket(avatar.GetBytes(), Channel.CHL_S2C);
                 return;
@@ -1026,7 +1006,7 @@ namespace PacketDefinitions420
             {
                 cdPacket.IsSummonerSpell = true; // TODO: Verify functionality
             }
-            if (userId == 0)
+            if (userId <= 0)
             {
                 _packetHandlerManager.BroadcastPacketVision(u, cdPacket.GetBytes(), Channel.CHL_S2C);
             }
@@ -1144,7 +1124,7 @@ namespace PacketDefinitions420
                 Message = floatTextData.Message
             };
 
-            if (userId == 0)
+            if (userId <= 0)
             {
                 if (team != 0)
                 {
@@ -1202,7 +1182,7 @@ namespace PacketDefinitions420
         {
             var enterLocalVis = ConstructEnterLocalVisibilityClientPacket(o);
 
-            if (userId == 0)
+            if (userId <= 0)
             {
                 if (ignoreVision)
                 {
@@ -1297,7 +1277,7 @@ namespace PacketDefinitions420
         {
             var fxPacket = ConstructFXCreateGroupPacket(particle);
 
-            if (userId == 0)
+            if (userId <= 0)
             {
                 // Broadcast only to specific team.
                 if (particle.SpecificTeam != TeamId.TEAM_NEUTRAL)
@@ -1394,7 +1374,7 @@ namespace PacketDefinitions420
                 fxVisPacket.VisibilityTeam = 1;
             }
 
-            if (userId == 0)
+            if (userId <= 0)
             {
                 _packetHandlerManager.BroadcastPacketTeam(team, fxVisPacket.GetBytes(), Channel.CHL_S2C);
             }
@@ -1414,7 +1394,7 @@ namespace PacketDefinitions420
             {
                 EnablePause = true
             };
-            if (userId == 0)
+            if (userId <= 0)
             {
                 _packetHandlerManager.BroadcastPacket(start.GetBytes(), Channel.CHL_S2C);
             }
@@ -1662,7 +1642,7 @@ namespace PacketDefinitions420
                 }
             };
 
-            if (userId == 0)
+            if (userId <= 0)
             {
                 _packetHandlerManager.BroadcastPacketVision(obj, newCharData.GetBytes(), Channel.CHL_S2C);
             }
@@ -2242,7 +2222,7 @@ namespace PacketDefinitions420
                 CritSlot = critSlot
             };
 
-            if (critSlot == 0)
+            if (critSlot <= 0)
             {
                 autoCast.CritSlot = autoCast.Slot;
             }
@@ -2267,7 +2247,7 @@ namespace PacketDefinitions420
                 CritSlot = critSlot
             };
 
-            if (critSlot == 0)
+            if (critSlot <= 0)
             {
                 autoCast.CritSlot = autoCast.Slot;
             }
@@ -2295,7 +2275,7 @@ namespace PacketDefinitions420
                     }
                 };
                 var channel = Channel.CHL_LOW_PRIORITY;
-                if (userId == 0)
+                if (userId <= 0)
                 {
                     _packetHandlerManager.BroadcastPacketVision(u, us.GetBytes(), channel, PacketFlags.UNSEQUENCED);
                 }
@@ -2584,7 +2564,7 @@ namespace PacketDefinitions420
         /// </summary>
         /// <param name="clientInfo">Information about the client which had their hero created.</param>
         /// <param name="userId">User to send the packet to. Set to -1 to broadcast.</param>
-        public void NotifyS2C_CreateHero(ClientInfo clientInfo, int userId = -1)
+        public void NotifyS2C_CreateHero(ClientInfo clientInfo, int userId = -1, bool doVision = false)
         {
             var champion = clientInfo.Champion;
             var heroPacket = new S2C_CreateHero()
@@ -2604,25 +2584,22 @@ namespace PacketDefinitions420
                 Skin = champion.Model,
                 DeathDurationRemaining = champion.RespawnTimer,
                 // TimeSinceDeath
+                TeamIsOrder = champion.Team == TeamId.TEAM_BLUE,
             };
-
-            if (champion.Team == TeamId.TEAM_BLUE)
+            if (doVision)
             {
-                heroPacket.TeamIsOrder = true;
+                NotifyEnterTeamVision(champion, 0, userId, heroPacket);
+            }
+            else if (userId <= 0)
+            {
+                _packetHandlerManager.BroadcastPacket(heroPacket.GetBytes(), Channel.CHL_S2C);
             }
             else
             {
-                heroPacket.TeamIsOrder = false;
+                _packetHandlerManager.SendPacket(userId, heroPacket.GetBytes(), Channel.CHL_S2C);
             }
-
-            if (userId < 0)
-            {
-                _packetHandlerManager.BroadcastPacket(heroPacket.GetBytes(), Channel.CHL_S2C);
-                return;
-            }
-
-            _packetHandlerManager.SendPacket(userId, heroPacket.GetBytes(), Channel.CHL_S2C);
         }
+
         public void NotifyS2C_CreateMinionCamp(IMonsterCamp monsterCamp)
         {
             var packet = new S2C_CreateMinionCamp
@@ -2900,7 +2877,7 @@ namespace PacketDefinitions420
         {
             var enterTeamVis = ConstructOnEnterTeamVisibilityPacket(o, team);
 
-            if (userId == 0)
+            if (userId <= 0)
             {
                 // TODO: Verify if we should use BroadcastPacketTeam instead.
                 _packetHandlerManager.BroadcastPacket(enterTeamVis.GetBytes(), Channel.CHL_S2C);
@@ -2952,7 +2929,7 @@ namespace PacketDefinitions420
                 leaveTeamVis.VisibilityTeam = 1;
             }
 
-            if (userId == 0)
+            if (userId <= 0)
             {
                 // TODO: Verify if we should use BroadcastPacketTeam instead.
                 _packetHandlerManager.BroadcastPacket(leaveTeamVis.GetBytes(), Channel.CHL_S2C);
@@ -3161,7 +3138,7 @@ namespace PacketDefinitions420
                 BotCountOrder = 0,
                 BotCountChaos = 0
             };
-            if (userId == 0)
+            if (userId <= 0)
             {
                 _packetHandlerManager.BroadcastPacket(start.GetBytes(), Channel.CHL_S2C);
             }
@@ -3499,7 +3476,7 @@ namespace PacketDefinitions420
         /// <param name="userId">UserId to send the packet to.</param>
         /// <param name="gameTime">Time elapsed since the start of the game</param>
         /// <param name="doVision">Whether or not to package the packets into a vision packet.</param>
-        public void NotifySpawn(IGameObject obj, TeamId team, int userId, float gameTime, bool doVision = true)
+        public void NotifySpawn(IGameObject obj, TeamId team, int userId, float gameTime, bool doVision = false)
         {
             var spawnPacket = ConstructSpawnPacket(obj, gameTime);
             if (spawnPacket != null)
@@ -3975,7 +3952,7 @@ namespace PacketDefinitions420
                     }
                 };
 
-                if (userId == 0)
+                if (userId <= 0)
                 {
                     _packetHandlerManager.BroadcastPacketTeam(team, visibilityPacket.GetBytes(), Channel.CHL_S2C);
                     _packetHandlerManager.BroadcastPacketTeam(team, healthbarPacket.GetBytes(), Channel.CHL_S2C);
@@ -4002,7 +3979,7 @@ namespace PacketDefinitions420
                         packet = ConstructOnEnterTeamVisibilityPacket(obj, team); // Generic visibility packet
                     }
                 };
-                if (userId == 0)
+                if (userId <= 0)
                 {
                     _packetHandlerManager.BroadcastPacketTeam(team, packet.GetBytes(), Channel.CHL_S2C);
                 }
@@ -4037,7 +4014,7 @@ namespace PacketDefinitions420
         /// <param name="useTeleportID">Whether or not to teleport the unit to its current position in its path.</param>
         public void HoldMovementDataUntilWaypointGroupNotification(IAttackableUnit u, int userId, bool useTeleportID = false)
         {
-            var data = (MovementDataNormal)PacketExtensions.CreateMovementData(u, _navGrid, MovementDataType.Normal, useTeleportID: useTeleportID);
+            var data = PacketExtensions.CreateMovementDataNormal(u, _navGrid, useTeleportID);
             
             List<MovementDataNormal> list = null;
             if (!_heldMovementData.TryGetValue(userId, out list))
@@ -4123,8 +4100,7 @@ namespace PacketDefinitions420
         /// <param name="useTeleportID">Whether or not to teleport the unit to its current position in its path.</param>
         public void NotifyWaypointGroup(IAttackableUnit u, int userId = 0, bool useTeleportID = false)
         {
-            // TODO: Verify if casts correctly
-            var move = (MovementDataNormal)PacketExtensions.CreateMovementData(u, _navGrid, MovementDataType.Normal, useTeleportID: useTeleportID);
+            var move = PacketExtensions.CreateMovementDataNormal(u, _navGrid, useTeleportID);
 
             // TODO: Implement support for multiple movements.
             var packet = new WaypointGroup
@@ -4133,7 +4109,7 @@ namespace PacketDefinitions420
                 Movements = new List<MovementDataNormal>() { move }
             };
 
-            if (userId == 0)
+            if (userId <= 0)
             {
                 _packetHandlerManager.BroadcastPacketVision(u, packet.GetBytes(), Channel.CHL_LOW_PRIORITY);
             }
@@ -4156,21 +4132,7 @@ namespace PacketDefinitions420
         )
         {
             // TODO: Implement Dash class and house a List of these with waypoints.
-            var speeds = new SpeedParams
-            {
-                PathSpeedOverride = u.MovementParameters.PathSpeedOverride,
-                ParabolicGravity = u.MovementParameters.ParabolicGravity,
-                // TODO: Implement as parameter (ex: Aatrox Q).
-                ParabolicStartPoint = u.MovementParameters.ParabolicStartPoint,
-                Facing = u.MovementParameters.KeepFacingDirection,
-                FollowNetID = u.MovementParameters.FollowNetID,
-                FollowDistance = u.MovementParameters.FollowDistance,
-                FollowBackDistance = u.MovementParameters.FollowBackDistance,
-                FollowTravelTime = u.MovementParameters.FollowTravelTime
-            };
-
-            // TODO: Verify if cast works.
-            var md = (MovementDataWithSpeed)PacketExtensions.CreateMovementData(u, _navGrid, MovementDataType.WithSpeed, speeds);
+            var md = PacketExtensions.CreateMovementDataWithSpeed(u, _navGrid);
 
             var speedWpGroup = new WaypointGroupWithSpeed
             {
