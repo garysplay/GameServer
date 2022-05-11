@@ -42,6 +42,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             SetPosition(position.X, position.Y);
 
             StopMovement();
+            Stats.SetActionState(ActionState.IS_GHOSTED, true);
 
             MoveOrder = OrderType.Hold;
             Replication = new ReplicationLaneMinion(this);
