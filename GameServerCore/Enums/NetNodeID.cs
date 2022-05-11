@@ -1,4 +1,4 @@
-﻿namespace LeaguePackets.Common
+﻿namespace SiphoningStrike.Common
 {
     public enum NetNodeID : byte
     {

@@ -1,4 +1,4 @@
-﻿using LeaguePackets.Game.Common;
+﻿using SiphoningStrike.Game.Common;
 namespace GameServerCore.Domain
 {
     public interface IReplication

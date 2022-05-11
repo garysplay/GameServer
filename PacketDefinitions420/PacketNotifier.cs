@@ -8,24 +8,24 @@ using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
 using GameServerCore.NetInfo;
 using GameServerCore.Packets.Interfaces;
-using LeaguePackets.Game;
 using System;
 using System.Collections.Generic;
 using System.Numerics;
 using System.Timers;
 using PingLoadInfoRequest = GameServerCore.Packets.PacketDefinitions.Requests.PingLoadInfoRequest;
 using ViewRequest = GameServerCore.Packets.PacketDefinitions.Requests.ViewRequest;
-using LeaguePackets.Game.Common;
-using LeaguePackets.Common;
 using static GameServerCore.Content.HashFunctions;
 using System.Text;
 using Force.Crc32;
 using System.Linq;
-using LeaguePackets;
-using LeaguePackets.LoadScreen;
-using LeaguePackets.Game.Events;
 using Channel = GameServerCore.Packets.Enums.Channel;
 using GameServerCore.Packets.Enums;
+using SiphoningStrike;
+using SiphoningStrike.Game;
+using SiphoningStrike.Game.Events;
+using SiphoningStrike.Game.Common;
+using SiphoningStrike.LoadScreen;
+using SiphoningStrike.Common;
 
 namespace PacketDefinitions420
 {
@@ -569,7 +569,7 @@ namespace PacketDefinitions420
         public void NotifyAddDebugObject(int userId, IAttackableUnit unit, uint objNetId, float lifetime, float radius, Vector3 pos1, Vector3 pos2, int objID = 0, byte type = 0x0, string name = "debugobj", byte r = 0xFF, byte g = 0x46, byte b = 0x0)
         {
             //TODO: Implement a DebugObject class so this is cleaner
-            var color = new LeaguePackets.Game.Common.Color
+            var color = new SiphoningStrike.Game.Common.Color
             {
                 Red = r,
                 Green = g,
@@ -1686,7 +1686,7 @@ namespace PacketDefinitions420
                 SenderNetID = sender,
                 ObjectID = objID
             };
-            var color = new LeaguePackets.Game.Common.Color();
+            var color = new SiphoningStrike.Game.Common.Color();
             color.Red = r;
             color.Green = g;
             color.Blue = b;
@@ -3798,7 +3798,7 @@ namespace PacketDefinitions420
         /// <param name="color">Color of the tint.</param>
         public void NotifyTint(TeamId team, bool enable, float speed, GameServerCore.Content.Color color)
         {
-            var c = new LeaguePackets.Game.Common.Color
+            var c = new SiphoningStrike.Game.Common.Color
             {
                 Blue = color.B,
                 Green = color.G,

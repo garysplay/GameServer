@@ -11,7 +11,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\GameServerCore\GameServerCore.csproj" />
-		<ProjectReference Include="..\LeaguePackets\LeaguePackets\LeaguePackets.csproj" />
+		<ProjectReference Include="..\LeaguePackets\SiphoningStrike\SiphoningStrike.csproj" />
 	</ItemGroup>
 
 </Project>

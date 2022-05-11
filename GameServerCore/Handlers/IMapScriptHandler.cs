@@ -5,7 +5,7 @@ using GameServerCore.Content;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
-using LeaguePackets.Game.Common;
+using SiphoningStrike.Game.Common;
 
 namespace GameServerCore.Handlers
 {

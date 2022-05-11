@@ -5,7 +5,7 @@ using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerLib.GameObjects;
 using GameServerLib.GameObjects.AttackableUnits;
-using LeaguePackets.Game.Common;
+using SiphoningStrike.Game.Common;
 using LeagueSandbox.GameServer.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
 using LeagueSandbox.GameServer.GameObjects.AttackableUnits.Buildings;

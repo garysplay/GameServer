@@ -5,7 +5,7 @@ using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Enums;
 using GameServerCore.Scripting.CSharp;
-using LeaguePackets.Game.Events;
+using SiphoningStrike.Game.Events;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Inventory;
 

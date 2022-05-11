@@ -1,7 +1,7 @@
 ﻿using GameServerCore.Content;
 using GameServerCore.Domain.GameObjects;
-using LeaguePackets.Game.Common;
-using LeaguePackets.Game.Events;
+using SiphoningStrike.Game.Common;
+using SiphoningStrike.Game.Events;
 using System;
 using System.Collections.Generic;
 using System.Linq;

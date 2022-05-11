@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using GameServerCore.Domain;
 using GameServerCore.Domain.GameObjects;
-using LeaguePackets.Game.Common;
+using SiphoningStrike.Game.Common;
 
 namespace LeagueSandbox.GameServer.GameObjects.Stats
 {

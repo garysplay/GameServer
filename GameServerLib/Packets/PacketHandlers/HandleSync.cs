@@ -1,7 +1,7 @@
 ﻿using GameServerCore.Packets.PacketDefinitions.Requests;
 using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using LeaguePackets.Game;
+using SiphoningStrike.Game;
 using LeagueSandbox.GameServer.Logging;
 using log4net;
 

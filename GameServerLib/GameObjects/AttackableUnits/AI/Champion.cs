@@ -9,7 +9,7 @@ using GameServerCore.Enums;
 using LeagueSandbox.GameServer.GameObjects.Stats;
 using LeagueSandbox.GameServer.Inventory;
 using LeagueSandbox.GameServer.API;
-using LeaguePackets.Game.Events;
+using SiphoningStrike.Game.Events;
 using System;
 using GameServerLib.GameObjects.AttackableUnits;
 

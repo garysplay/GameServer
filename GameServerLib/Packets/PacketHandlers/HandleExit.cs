@@ -1,7 +1,7 @@
 ﻿using GameServerCore.Packets.PacketDefinitions.Requests;
 using GameServerCore;
 using GameServerCore.Packets.Handlers;
-using LeaguePackets.Game.Events;
+using SiphoningStrike.Game.Events;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {

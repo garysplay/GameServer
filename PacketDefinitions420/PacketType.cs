@@ -1,5 +1,5 @@
 ﻿using GameServerCore.Packets.Enums;
-using LeaguePackets;
+using SiphoningStrike;
 using System;
 
 namespace PacketDefinitions420

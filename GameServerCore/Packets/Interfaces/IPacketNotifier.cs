@@ -9,9 +9,9 @@ using GameServerCore.NetInfo;
 using GameServerCore.Enums;
 using GameServerCore.Packets.Enums;
 using GameServerCore.Packets.PacketDefinitions.Requests;
-using LeaguePackets;
-using LeaguePackets.Game.Common;
-using LeaguePackets.Game.Events;
+using SiphoningStrike;
+using SiphoningStrike.Game.Common;
+using SiphoningStrike.Game.Events;
 
 namespace GameServerCore.Packets.Interfaces
 {

@@ -1,8 +1,8 @@
 ﻿using GameServerCore.Packets.PacketDefinitions.Requests;
 using GameServerCore.Packets.Enums;
-using LeaguePackets;
-using LeaguePackets.Game;
-using LeaguePackets.LoadScreen;
+using SiphoningStrike;
+using SiphoningStrike.Game;
+using SiphoningStrike.LoadScreen;
 using GameServerCore.Enums;
 using System;
 using static PacketDefinitions420.PacketExtensions;
