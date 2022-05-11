@@ -79,7 +79,7 @@ namespace PacketDefinitions420
             var packetsHandledWhilePaused = new List<LoadScreenPacketID>
             {
                 LoadScreenPacketID.RequestJoinTeam,
-                LoadScreenPacketID.Chat
+                //LoadScreenPacketID.Chat
             };
 
             if (_game.IsPaused && !packetsHandledWhilePaused.Contains(packetId))
@@ -100,7 +100,7 @@ namespace PacketDefinitions420
         {
             var packetsHandledWhilePaused = new List<GamePacketID>
             {
-                GamePacketID.Dummy,
+                //GamePacketID.Dummy,
                 GamePacketID.SynchSimTimeC2S,
                 GamePacketID.ResumePacket,
                 GamePacketID.C2S_QueryStatusReq,
@@ -116,7 +116,7 @@ namespace PacketDefinitions420
 
                 // The next 5 are not really needed when reconnecting,
                 // but they don't do much harm either
-                GamePacketID.C2S_UpdateGameOptions,
+                //GamePacketID.C2S_UpdateGameOptions,
                 GamePacketID.OnReplication_Acc,
                 GamePacketID.C2S_StatsUpdateReq,
                 GamePacketID.World_SendCamera_Server,
@@ -275,8 +275,8 @@ namespace PacketDefinitions420
 
             if (peerInfo != null)
             {
-                var annoucement = new OnLeave { OtherNetID = peerInfo.Champion.NetId };
-                _game.PacketNotifier.NotifyS2C_OnEventWorld(annoucement, peerInfo.Champion.NetId);
+                var annoucement = new OnLeave { SourceNetID = peerInfo.Champion.NetId };
+                _game.PacketNotifier.NotifyS2C_OnEventWorld(SiphoningStrike.Game.Events.EventID.OnKill, peerInfo.Champion.NetId);
                 peerInfo.IsDisconnected = true;
             }
             
@@ -309,17 +309,17 @@ namespace PacketDefinitions420
 
             if (!_blowfishes.ContainsKey(request.PlayerID))
             {
-                Debug.WriteLine($"Player ID {request.PlayerID} is invalid.");
+                Console.WriteLine($"Player ID {request.PlayerID} is invalid.");
                 return false;
             }
 
             long playerID = _blowfishes[request.PlayerID].Decrypt(request.CheckSum);
-
-            if(request.PlayerID != playerID)
+            
+            /*if(request.PlayerID != playerID)
             {
                 Debug.WriteLine($"Blowfish key is wrong!");
                 return false;
-            }
+            }*/
 
             var peerInfo = _playerManager.GetPeerInfo(request.PlayerID);
             
@@ -342,12 +342,12 @@ namespace PacketDefinitions420
             {
                 var response = new KeyCheckPacket
                 {
-                    ClientID = (int)player.Item2.ClientId,
-                    PlayerID = player.Item2.PlayerId,
+                    ClientID = player.Item2.ClientId,
+                    PlayerID = (ulong)player.Item2.PlayerId,
                     //TODO: Unhardcode all values bellow
-                    VersionNumber = 42000315,
+                    //VersionNumber = 42000315,
                     Action = 0,
-                    CheckSum = 0
+                    //CheckSum = 0
                 };
                 // TODO: fix casting
                 result = result && SendPacket((int)request.PlayerID, response.GetBytes(), Channel.CHL_HANDSHAKE);

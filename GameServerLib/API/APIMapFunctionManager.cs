@@ -327,7 +327,7 @@ namespace LeagueSandbox.GameServer.API
         /// <param name="mapId"></param>
         public static void NotifyWorldEvent(EventID Event, int mapId = 0, uint sourceNetId = 0)
         {
-            _game.PacketNotifier.NotifyS2C_OnEventWorld(PacketExtensions.GetAnnouncementID(Event, mapId), sourceNetId);
+            //_game.PacketNotifier.NotifyS2C_OnEventWorld(PacketExtensions.GetAnnouncementID(Event, mapId), sourceNetId);
         }
 
         /// <summary>

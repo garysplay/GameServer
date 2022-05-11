@@ -33,8 +33,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                 {
                     peerInfo.IsDisconnected = false;
 
-                    var announcement = new OnReconnect { OtherNetID = peerInfo.Champion.NetId };
-                    _game.PacketNotifier.NotifyS2C_OnEventWorld(announcement, peerInfo.Champion.NetId);
+                    //var announcement = new OnReconnect { OtherNetID = peerInfo.Champion.NetId };
+                    //_game.PacketNotifier.NotifyS2C_OnEventWorld(announcement, peerInfo.Champion.NetId);
                 }
 
                 SyncTime(userId);

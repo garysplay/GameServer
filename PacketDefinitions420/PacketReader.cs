@@ -6,6 +6,7 @@ using SiphoningStrike.LoadScreen;
 using GameServerCore.Enums;
 using System;
 using static PacketDefinitions420.PacketExtensions;
+using System.Numerics;
 
 namespace PacketDefinitions420
 {
@@ -20,7 +21,7 @@ namespace PacketDefinitions420
         {
             var rq = new KeyCheckPacket();
             rq.Read(data);
-            return new KeyCheckRequest(rq.PlayerID, rq.ClientID, rq.VersionNumber, rq.CheckSum);
+            return new KeyCheckRequest((long)rq.PlayerID, (int)rq.ClientID, 0, rq.Action);
         }
 
         [PacketType(GamePacketID.SynchSimTimeC2S, Channel.CHL_GAMEPLAY)]
@@ -44,7 +45,7 @@ namespace PacketDefinitions420
         {
             var rq = new ResumePacket();
             rq.Read(data);
-            return new UnpauseRequest(rq.ClientID, rq.Delayed);
+            return new UnpauseRequest((int)rq.ClientID, rq.Delayed);
         }
 
         [PacketType(GamePacketID.C2S_QueryStatusReq)]
@@ -60,7 +61,7 @@ namespace PacketDefinitions420
         {
             var rq = new C2S_Ping_Load_Info();
             rq.Read(data);
-            return new PingLoadInfoRequest(rq.ConnectionInfo.ClientID, rq.ConnectionInfo.PlayerID, rq.ConnectionInfo.Percentage, rq.ConnectionInfo.ETA, rq.ConnectionInfo.Count, rq.ConnectionInfo.Ping, rq.ConnectionInfo.Ready);
+            return new PingLoadInfoRequest((int)rq.ConnectionInfo.ClientID, (int)rq.ConnectionInfo.PlayerID, rq.ConnectionInfo.Percentage, rq.ConnectionInfo.ETA, (ushort)rq.ConnectionInfo.Count, rq.ConnectionInfo.Ping, rq.ConnectionInfo.Ready);
         }
 
         [PacketType(GamePacketID.SwapItemReq)]
@@ -76,7 +77,7 @@ namespace PacketDefinitions420
         {
             var rq = new World_SendCamera_Server();
             rq.Read(data);
-            return new ViewRequest(rq.CameraPosition, rq.CameraDirection, rq.ClientID, rq.SyncID);
+            return new ViewRequest(rq.CameraPosition, rq.CameraDirection, (int)rq.ClientID, (byte)rq.SyncID);
         }
 
         [PacketType(GamePacketID.NPC_UpgradeSpellReq)]
@@ -84,7 +85,7 @@ namespace PacketDefinitions420
         {
             var rq = new NPC_UpgradeSpellReq();
             rq.Read(data);
-            return new UpgradeSpellReq(rq.Slot, rq.IsEvolve);
+            return new UpgradeSpellReq(rq.Slot, true);
         }
 
         [PacketType(GamePacketID.UseObjectC2S)]
@@ -95,13 +96,13 @@ namespace PacketDefinitions420
             return new UseObjectRequest(rq.TargetNetID);
         }
 
-        [PacketType(GamePacketID.C2S_UpdateGameOptions)]
+        /*[PacketType(GamePacketID.C2S_UpdateGameOptions)]
         public static AutoAttackOptionRequest ReadAutoAttackOptionRequest(byte[] data)
         {
             var rq = new C2S_UpdateGameOptions();
             rq.Read(data);
             return new AutoAttackOptionRequest(rq.AutoAttackEnabled);
-        }
+        }*/
 
         [PacketType(GamePacketID.C2S_PlayEmote)]
         public static EmotionPacketRequest ReadEmotionPacketRequest(byte[] data)
@@ -116,7 +117,7 @@ namespace PacketDefinitions420
         {
             var rq = new C2S_ClientReady();
             rq.Read(data);
-            return new StartGameRequest(rq.TipConfig.TipID, rq.TipConfig.ColorID, rq.TipConfig.DurationID, rq.TipConfig.Flags);
+            return new StartGameRequest(0, 0, 0, 0);
         }
 
         [PacketType(GamePacketID.C2S_StatsUpdateReq)]
@@ -132,7 +133,7 @@ namespace PacketDefinitions420
         {
             var rq = new C2S_MapPing();
             rq.Read(data);
-            return new AttentionPingRequest(rq.Position, rq.TargetNetID, (Pings)rq.PingCategory);
+            return new AttentionPingRequest(new Vector2(rq.Position.X, rq.Position.Z), rq.TargetNetID, (Pings)rq.PingCategory);
         }
 
         [PacketType(LoadScreenPacketID.RequestJoinTeam)]
@@ -140,15 +141,15 @@ namespace PacketDefinitions420
         {
             var rq = new RequestJoinTeam();
             rq.Read(data);
-            return new JoinTeamRequest(rq.ClientID, rq.NetTeamID);
+            return new JoinTeamRequest((int)rq.ClientID, rq.TeamID);
         }
 
-        [PacketType(LoadScreenPacketID.Chat, Channel.CHL_COMMUNICATION)]
+        [PacketType(GamePacketID.CHAT, Channel.CHL_COMMUNICATION)]
         public static ChatMessageRequest ReadChatMessageRequest(byte[] data)
         {
-            var rq = new Chat();
+            var rq = new ChatPacket();
             rq.Read(data);
-            return new ChatMessageRequest(rq.Message, (ChatType)rq.ChatType, rq.Params, rq.Localized, rq.NetID, rq.ClientID);
+            return new ChatMessageRequest(rq.Message, (ChatType)rq.ChatType, "", true, 0, (int)rq.ClientID);
         }
 
         [PacketType(GamePacketID.C2S_OnTipEvent)]
@@ -165,7 +166,7 @@ namespace PacketDefinitions420
             var rq = new NPC_IssueOrderReq();
             rq.Read(data);
             var test = rq.MovementData.Waypoints.ConvertAll(WaypointToVector2);
-            return new MovementRequest((OrderType)rq.OrderType, rq.Position, rq.TargetNetID, rq.MovementData.TeleportNetID, rq.MovementData.HasTeleportID, rq.MovementData.Waypoints.ConvertAll(WaypointToVector2));
+            return new MovementRequest((OrderType)rq.OrderType, new Vector2(rq.Position.X, rq.Position.Z), rq.TargetNetID, rq.MovementData.TeleportNetID, rq.MovementData.HasTeleportID, rq.MovementData.Waypoints.ConvertAll(WaypointToVector2));
         }
 
         [PacketType(GamePacketID.Waypoint_Acc)]
@@ -181,7 +182,7 @@ namespace PacketDefinitions420
         {
             var rq = new World_LockCamera_Server();
             rq.Read(data);
-            return new LockCameraRequest(rq.Locked, rq.ClientID);
+            return new LockCameraRequest(rq.Locked, (int)rq.ClientID);
         }
 
         [PacketType(GamePacketID.BuyItemReq)]
@@ -205,7 +206,7 @@ namespace PacketDefinitions420
         {
             var rq = new NPC_CastSpellReq();
             rq.Read(data);
-            return new CastSpellRequest(rq.Slot, rq.IsSummonerSpellBook, rq.IsHudClickCast, rq.Position, rq.EndPosition, rq.TargetNetID);
+            return new CastSpellRequest(rq.Slot, rq.IsSummonerSpellSlot, false, new Vector2(rq.Position.X, rq.Position.Z), new Vector2(rq.EndPosition.X, rq.EndPosition.Z), rq.TargetNetID);
         }
 
         [PacketType(GamePacketID.PausePacket)]
@@ -236,7 +237,7 @@ namespace PacketDefinitions420
         {
             var rq = new SendSelectedObjID();
             rq.Read(data);
-            return new ClickRequest(rq.SelectedNetID, rq.ClientID);
+            return new ClickRequest(rq.SelectedNetID, (int)rq.ClientID);
         }
 
         [PacketType(GamePacketID.SynchVersionC2S)]
@@ -244,7 +245,7 @@ namespace PacketDefinitions420
         {
             var rq = new SynchVersionC2S();
             rq.Read(data);
-            return new SynchVersionRequest(rq.ClientID, rq.Version);
+            return new SynchVersionRequest((int)rq.ClientID, rq.VersionString);
         }
 
         [PacketType(GamePacketID.C2S_CharSelected)]
@@ -263,12 +264,12 @@ namespace PacketDefinitions420
             return new QuestClickedRequest(rq.QuestID, (QuestEvent)rq.QuestEvent);
         }
 
-        [PacketType(GamePacketID.C2S_SpellChargeUpdateReq)]
+        /*[PacketType(GamePacketID.C2S_SpellChargeUpdateReq)]
         public static SpellChargeUpdateReq ReadSpellChargeUpdateReq(byte[] data)
         {
             var rq = new C2S_SpellChargeUpdateReq();
             rq.Read(data);
             return new SpellChargeUpdateReq(rq.Slot, rq.IsSummonerSpellBook, rq.Position, rq.ForceStop);
-        }
+        }*/
     }
 }

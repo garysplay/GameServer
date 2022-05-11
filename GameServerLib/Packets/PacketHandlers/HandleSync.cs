@@ -31,7 +31,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             // Version might be an invalid value, currently it trusts the client
             if (req.Version != Config.VERSION_STRING)
             {
-                versionMatch = false;
+                //versionMatch = false;
                 _logger.Warn($"Client's version ({req.Version}) does not match server's {Config.VERSION}");
             }
             else

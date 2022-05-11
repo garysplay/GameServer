@@ -82,7 +82,10 @@ namespace LeagueSandbox.GameServer.Handlers
         /// <param name="diff">Number of milliseconds since this tick occurred.</param>
         public void Update(float diff)
         {
-            CollisionHandler.Update();
+            if(CollisionHandler != null)
+            {
+                CollisionHandler.Update();
+            }
             PathingHandler.Update(diff);
             MapScript.Update(diff);
 

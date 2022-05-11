@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\LeaguePackets\LeaguePackets\LeaguePackets.csproj" />
-    <ProjectReference Include="..\QuadTree\QuadTree.csproj" />
+	  <ProjectReference Include="..\LeaguePackets\SiphoningStrike\SiphoningStrike.csproj" />
+	  <ProjectReference Include="..\QuadTree\QuadTree.csproj" />
   </ItemGroup>
 
 </Project>

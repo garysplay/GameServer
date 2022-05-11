@@ -124,7 +124,10 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// </summary>
         public virtual void OnAdded()
         {
-            _game.Map.CollisionHandler.AddObject(this);
+            if(_game.Map.CollisionHandler != null)
+            {
+                _game.Map.CollisionHandler.AddObject(this);
+            }
             _game.ObjectManager.AddVisionProvider(this, Team);
         }
 

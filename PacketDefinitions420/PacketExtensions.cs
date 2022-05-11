@@ -69,7 +69,7 @@ namespace PacketDefinitions420
             // mapSize contains the real center point coordinates, meaning width/2, height/2
             return new Vector2((vector.X - grid.MiddleOfMap.X) / 2, (vector.Y - grid.MiddleOfMap.Y) / 2);
         }
-        public static IEventEmptyHistory GetAnnouncementID(GameServerCore.Enums.EventID Event, int mapId = 0)
+        /*public static IEventEmptyHistory GetAnnouncementID(GameServerCore.Enums.EventID Event, int mapId = 0)
         {
             var worldEvent = (EventID)(byte)Event;
             switch (worldEvent)
@@ -96,7 +96,7 @@ namespace PacketDefinitions420
                     return new OnClearAscended();
             }
             return null;
-        }
+        }*/
 
         /// <summary>
         /// Creates the MovementDataStop.

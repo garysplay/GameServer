@@ -71,14 +71,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// <param name="killer">Unit that killed this unit.</param>
         public override void Die(IDeathData data)
         {
-            var announce = new OnTurretDie
+            /*var announce = new OnTurretDie
             {
                 AssistCount = 0,
                 GoldGiven = 0.0f,
                 OtherNetID = data.Killer.NetId
             };
             _game.PacketNotifier.NotifyS2C_OnEventWorld(announce, NetId);
-
+            */
             base.Die(data);
         }
 

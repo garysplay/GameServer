@@ -444,8 +444,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             if (mapScript.HasFirstBloodHappened)
             {
-                var onKill = new OnChampionKill { OtherNetID = NetId };
-                _game.PacketNotifier.NotifyS2C_OnEventWorld(onKill, data.Killer.NetId);
+                //var onKill = new OnChampionKill { OtherNetID = NetId };
+                //_game.PacketNotifier.NotifyS2C_OnEventWorld(onKill, data.Killer.NetId);
             }
             else
             {
@@ -468,13 +468,13 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             cKiller.AddGold(this, gold);
             cKiller.AddExperience(EXP);
 
-            var worldEvent = new OnChampionDie
+            /*var worldEvent = new OnChampionDie
             {
                 GoldGiven = gold,
                 OtherNetID = data.Killer.NetId,
                 AssistCount = 0
                 //Todo: implement assists when an assist system gets implemented
-            };
+            };*/
 
             cKiller.GoldFromMinions = 0;
             cKiller.ChampStats.Kills++;
@@ -484,7 +484,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             KillSpree = 0;
             DeathSpree++;
 
-            _game.PacketNotifier.NotifyS2C_OnEventWorld(worldEvent, NetId);
+            //_game.PacketNotifier.NotifyS2C_OnEventWorld(worldEvent, NetId);
 
             _game.PacketNotifier.NotifyDeath(data);
             //CORE_INFO("After: getGoldFromChamp: %f Killer: %i Victim: %i", gold, cKiller.killDeathCounter,this.killDeathCounter);

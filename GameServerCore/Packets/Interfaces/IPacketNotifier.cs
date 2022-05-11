@@ -626,7 +626,7 @@ namespace GameServerCore.Packets.Interfaces
         /// </summary>
         /// <param name="eventId">Id of the event to happen.</param>
         /// <param name="sourceNetID">Not yet know it's use.</param>
-        void NotifyS2C_OnEventWorld(IEvent mapEvent, uint sourceNetId = 0);
+        void NotifyS2C_OnEventWorld(SiphoningStrike.Game.Events.EventID mapEvent, uint sourceNetId = 0);
         /// <summary>
         /// Sends a packet to either all players with vision of the specified GameObject or a specified user.
         /// The packet contains details of which team lost visibility of the GameObject and should only be used after it is first initialized into vision (NotifyEnterVisibility).

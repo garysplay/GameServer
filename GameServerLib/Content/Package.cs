@@ -137,7 +137,8 @@ namespace LeagueSandbox.GameServer.Content
             try
             {
                 // Read the room file.
-                var mapData = JObject.Parse(File.ReadAllText(roomFilePath));
+                var text = File.ReadAllText(roomFilePath);
+                var mapData = JObject.Parse(text);
 
                 // Grab the array of object reference entries.
                 mapObjects = (JArray)mapData.SelectToken("entries");

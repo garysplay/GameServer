@@ -39,7 +39,7 @@ namespace PacketDefinitions420
         public void InitServer(ushort port, Dictionary<long, string> blowfishKeys, IGame game, NetworkHandler<ICoreRequest> netReq, NetworkHandler<ICoreRequest> netResp)
         {
             _game = game;
-            _server = new Host(Version.Patch420, new Address(_serverHost, port), 32, 32, 0, 0);
+            _server = new Host(Version.Seasson12, new Address(_serverHost, port), 32, 32, 0, 0);
 
             Dictionary<long, BlowFish> blowfishes = new Dictionary<long, BlowFish>();
             foreach(var rawKey in blowfishKeys)

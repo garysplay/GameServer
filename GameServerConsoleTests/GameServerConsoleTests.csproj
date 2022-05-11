@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GameServerConsole\GameServerConsole.csproj" />
+	<ProjectReference Include="..\LeaguePackets\SiphoningStrike\SiphoningStrike.csproj" />
   </ItemGroup>
 
 </Project>
