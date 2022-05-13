@@ -231,7 +231,7 @@ namespace LeagueSandbox.GameServer.GameObjects
         /// <param name="o">An object that could be colliding with this object.</param>
         public virtual bool IsCollidingWith(IGameObject o)
         {
-            return Vector2.DistanceSquared(new Vector2(Position.X, Position.Y), o.Position) < (CollisionRadius + o.CollisionRadius) * (CollisionRadius + o.CollisionRadius);
+            return Vector2.DistanceSquared(Position, o.Position) < (CollisionRadius + o.CollisionRadius) * (CollisionRadius + o.CollisionRadius);
         }
 
         /// <summary>
@@ -345,6 +345,22 @@ namespace LeagueSandbox.GameServer.GameObjects
         public void SetVisibleByTeam(TeamId team, bool visible = true)
         {
             _visibleByTeam[team] = visible;
+        }
+
+        /// <summary>
+        /// Gets a list of all teams that have vision of this object.
+        /// </summary>
+        public List<TeamId> TeamsWithVision()
+        {
+            List<TeamId> toReturn = new List<TeamId>();
+            foreach(var team in _visibleByTeam.Keys)
+            {
+                if (_visibleByTeam[team])
+                {
+                    toReturn.Add(team);
+                }
+            }
+            return toReturn;
         }
 
         /// <summary>
