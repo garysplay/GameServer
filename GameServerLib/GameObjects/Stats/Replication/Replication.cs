@@ -88,49 +88,25 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
 
         public ReplicationData GetData(bool partial = true)
         {
-            var data = new ReplicationData(){
-                UnitNetID = Owner.NetId
+            var data = new ReplicationData()
+            {
+                UnitNetID = Owner.NetId,
+                Values = new Dictionary<int, Dictionary<int, uint>>(),
             };
 
             for (byte primaryId = 0; primaryId < 6; primaryId++)
             {
-                uint secondaryIdArray = 0;
-                List<byte> bytes = new List<byte>(8);
                 for (byte secondaryId = 0; secondaryId < 32; secondaryId++)
                 {
                     var rep = Values[primaryId, secondaryId];
                     if (rep != null && (!partial || rep.Changed))
                     {
-                        secondaryIdArray |= 1u << secondaryId;
-
-                        if (rep.IsFloat)
+                        if (!data.Values.ContainsKey(primaryId))
                         {
-                            var source = BitConverter.GetBytes(rep.Value);
-
-                            if (source[0] >= 0xFE)
-                            {
-                                bytes.Add((byte)0xFE);
-                            }
-
-                            bytes.AddRange(source);
+                            data.Values[primaryId] = new Dictionary<int, uint>();
                         }
-                        else
-                        {
-                            var num = rep.Value;
-                            while (num >= 0x80)
-                            {
-                                bytes.Add((byte)(num | 0x80));
-                                num >>= 7;
-                            }
-
-                            bytes.Add((byte)num);
-                        }
+                        data.Values[primaryId][secondaryId] = rep.Value;
                     }
-                }
-
-                if(bytes.Count > 0)
-                {
-                    //data.Data[primaryId] = new Tuple<uint, byte[]>(secondaryIdArray, bytes.ToArray());
                 }
             }
 

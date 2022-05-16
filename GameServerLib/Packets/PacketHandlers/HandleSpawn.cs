@@ -42,6 +42,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
             }
 
             _game.PacketNotifier.NotifySpawnEnd(userId);
+            //_game.PacketNotifier.NotifyEnterVisibilityClient(userInfo.Champion, userId, true, true);
             return true;
         }
     }

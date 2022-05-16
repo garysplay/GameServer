@@ -118,15 +118,15 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 Stats.AddModifier(runeItem);
                 runeItemSlot++;
             }
-            Stats.SetSummonerSpellEnabled(0, true);
-            Stats.SetSummonerSpellEnabled(1, true);
+            //Stats.SetSummonerSpellEnabled(0, true);
+            //Stats.SetSummonerSpellEnabled(1, true);
         }
 
         protected override void OnSpawn(int userId, TeamId team, bool doVision)
         {
             var peerInfo = _game.PlayerManager.GetClientInfoByChampion(this);
             _game.PacketNotifier.NotifyS2C_CreateHero(peerInfo, userId, doVision);
-            _game.PacketNotifier.NotifyAvatarInfo(peerInfo, userId);
+            //_game.PacketNotifier.NotifyAvatarInfo(peerInfo, userId);
 
             bool ownChamp = peerInfo.PlayerId == userId;
             if (ownChamp)
@@ -141,14 +141,14 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                     var castInfo = spell.Value.CastInfo;
                     if (castInfo.SpellLevel > 0)
                     {
-                        // NotifyNPC_UpgradeSpellAns has no effect here
-                        _game.PacketNotifier.NotifyS2C_SetSpellLevel(userId, NetId, castInfo.SpellSlot, castInfo.SpellLevel);
+                         //NotifyNPC_UpgradeSpellAns has no effect here
+                        //_game.PacketNotifier.NotifyS2C_SetSpellLevel(userId, NetId, castInfo.SpellSlot, castInfo.SpellLevel);
 
                         float currentCD = spell.Value.CurrentCooldown;
                         float totalCD = spell.Value.GetCooldown();
                         if (currentCD > 0)
                         {
-                            _game.PacketNotifier.NotifyCHAR_SetCooldown(this, castInfo.SpellSlot, currentCD, totalCD, userId);
+                            //_game.PacketNotifier.NotifyCHAR_SetCooldown(this, castInfo.SpellSlot, currentCD, totalCD, userId);
                         }
                     }
                 }

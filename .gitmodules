@@ -4,5 +4,4 @@
 	branch = indev
 [submodule "LeaguePackets"]
 	path = LeaguePackets
-	url = https://github.com/cabeca1143/LeaguePackets.git
-	branch = SyphoningStrike
+	url = https://github.com/cabeca1143/SiphoningStrike.git

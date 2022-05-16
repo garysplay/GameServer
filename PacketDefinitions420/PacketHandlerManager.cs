@@ -78,8 +78,7 @@ namespace PacketDefinitions420
         {
             var packetsHandledWhilePaused = new List<LoadScreenPacketID>
             {
-                LoadScreenPacketID.RequestJoinTeam,
-                //LoadScreenPacketID.Chat
+                LoadScreenPacketID.RequestJoinTeam
             };
 
             if (_game.IsPaused && !packetsHandledWhilePaused.Contains(packetId))
@@ -101,25 +100,26 @@ namespace PacketDefinitions420
             var packetsHandledWhilePaused = new List<GamePacketID>
             {
                 //GamePacketID.Dummy,
-                GamePacketID.SynchSimTimeC2S,
-                GamePacketID.ResumePacket,
+                GamePacketID.C2S_SynchSimTime,
+                GamePacketID.BID_ResumePacket,
                 GamePacketID.C2S_QueryStatusReq,
                 GamePacketID.C2S_ClientReady,
                 GamePacketID.C2S_Exit,
-                GamePacketID.World_SendGameNumber,
-                GamePacketID.SendSelectedObjID,
+                //DoubleCheck
+                GamePacketID.S2C_World_SendGameNumber,
+                GamePacketID.C2S_SendSelectedObjID,
                 GamePacketID.C2S_CharSelected,
 
                 // The next two are required to reconnect 
-                GamePacketID.SynchVersionC2S,
+                GamePacketID.C2S_SynchVersion,
                 GamePacketID.C2S_Ping_Load_Info,
 
                 // The next 5 are not really needed when reconnecting,
                 // but they don't do much harm either
                 //GamePacketID.C2S_UpdateGameOptions,
-                GamePacketID.OnReplication_Acc,
+                GamePacketID.C2S_OnReplication_Acc,
                 GamePacketID.C2S_StatsUpdateReq,
-                GamePacketID.World_SendCamera_Server,
+                GamePacketID.C2S_World_SendCamera_Server,
                 GamePacketID.C2S_OnTipEvent
             };
             if (_game.IsPaused && !packetsHandledWhilePaused.Contains(packetId))
@@ -166,7 +166,6 @@ namespace PacketDefinitions420
                 {
                     temp = source;
                 }
-
                 return _peers[playerId].Send((byte)channelNo, new LENet.Packet(temp, flag)) == 0;
             }
             return false;
@@ -238,9 +237,9 @@ namespace PacketDefinitions420
 
                 switch (gamePacketId)
                 {
-                    case GamePacketID.World_SendCamera_Server:
-                    case GamePacketID.Waypoint_Acc:
-                    case GamePacketID.OnReplication_Acc:
+                    case GamePacketID.C2S_World_SendCamera_Server:
+                    case GamePacketID.C2S_Waypoint_Acc:
+                    case GamePacketID.C2S_OnReplication_Acc:
                         break;
                 }
             }
@@ -347,6 +346,7 @@ namespace PacketDefinitions420
                     //TODO: Unhardcode all values bellow
                     //VersionNumber = 42000315,
                     Action = 0,
+                    EncryptedPlayerID = request.EncryptedPlayerId
                     //CheckSum = 0
                 };
                 // TODO: fix casting

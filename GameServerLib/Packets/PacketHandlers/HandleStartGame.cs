@@ -68,7 +68,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                         }
 
                         // TODO: send this in one place only
-                        _game.PacketNotifier.NotifyS2C_HandleTipUpdatep((int)player.Item2.PlayerId, "Welcome to League Sandbox!",
+                        /*_game.PacketNotifier.NotifyS2C_HandleTipUpdatep((int)player.Item2.PlayerId, "Welcome to League Sandbox!",
                             "This is a WIP project.", "", 0, player.Item2.Champion.NetId,
                             _game.NetworkIdManager.GetNewNetId());
                         _game.PacketNotifier.NotifyS2C_HandleTipUpdatep((int)player.Item2.PlayerId, "Server Build Date",
@@ -78,7 +78,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                             player.Item2.Champion.Model, "", 0, player.Item2.Champion.NetId,
                             _game.NetworkIdManager.GetNewNetId());
 
-                        SyncTime(player.Item2.PlayerId);
+                        SyncTime(player.Item2.PlayerId);*/
+                        //_game.PacketNotifier.NotifyEnterVisibilityClient(player.Item2.Champion, userId, true, true);
                     }
                     _game.Start();
                 }

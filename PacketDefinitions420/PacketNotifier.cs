@@ -26,7 +26,7 @@ using SiphoningStrike.Game.Events;
 using SiphoningStrike.Game.Common;
 using SiphoningStrike.LoadScreen;
 using SiphoningStrike.Common;
-using static SiphoningStrike.Game.OnEnterVisiblityClient;
+using static SiphoningStrike.Game.S2C_OnEnterVisiblityClient;
 
 namespace PacketDefinitions420
 {
@@ -123,7 +123,7 @@ namespace PacketDefinitions420
             return createTurret;
         }
 
-        OnEnterVisiblityClient ConstructEnterVisibilityClientPacket(IGameObject o, bool isChampion = false, List<GamePacket> packets = null)
+        S2C_OnEnterVisiblityClient ConstructEnterVisibilityClientPacket(IGameObject o, bool isChampion = false, List<GamePacket> packets = null)
         {
             var itemDataList = new List<ItemData>();
             //var shields = new ShieldValues(); //TODO: Implement shields so this can be finished
@@ -160,19 +160,24 @@ namespace PacketDefinitions420
 
 
             // TODO: if (a.IsDashing), requires SpeedParams, add it to AttackableUnit so it can be accessed outside of initialization
+            //TODO: Unhardcode
+            MovementData md = new MovementDataStop
+            {
+                SyncID = Environment.TickCount,
+                Position = new Vector2(26.0f, 280.0f),
+                Forward = new Vector2(26.0f, 280.0f)
+            };
 
-            MovementData md;
-
-            if (o is IAttackableUnit u && u.Waypoints.Count > 1)
+            /*if (o is IAttackableUnit u && u.Waypoints.Count > 1)
             {
                 md = PacketExtensions.CreateMovementDataWithSpeedIfPossible(u, _navGrid, useTeleportID: true);
             }
             else
             {
                 md = PacketExtensions.CreateMovementDataStop(o);
-            }
+            }*/
 
-            var enterVis = new OnEnterVisiblityClient
+            var enterVis = new S2C_OnEnterVisiblityClient
             {
                 SenderNetID = o.NetId,
                 Items = itemDataList,
@@ -184,7 +189,7 @@ namespace PacketDefinitions420
             return enterVis;
         }
 
-        FX_Create_Group ConstructFXCreateGroupPacket(IParticle particle)
+        S2C_FX_Create_Group ConstructFXCreateGroupPacket(IParticle particle)
         {
             uint bindNetID = 0;
             uint targetNetID = 0;
@@ -206,7 +211,7 @@ namespace PacketDefinitions420
                 ownerPos = particle.Caster.GetPosition3D();
             }
 
-            var fxPacket = new FX_Create_Group();
+            var fxPacket = new S2C_FX_Create_Group();
             var fxDataList = new List<FXCreateGroupItem>();
 
             var targetPos = particle.StartPosition;
@@ -279,15 +284,14 @@ namespace PacketDefinitions420
             }
 
             fxGroups.Add(fxGroupData1);
-
             fxPacket.Entries = fxGroups;
 
             return fxPacket;
         }
 
-        Barrack_SpawnUnit ConstructLaneMinionSpawnedPacket(ILaneMinion m)
+        S2C_Barrack_SpawnUnit ConstructLaneMinionSpawnedPacket(ILaneMinion m)
         {
-            return new Barrack_SpawnUnit
+            return new S2C_Barrack_SpawnUnit
             {
                 SenderNetID = m.NetId,
                 UnitNetID = m.NetId,
@@ -299,9 +303,9 @@ namespace PacketDefinitions420
             };
         }
 
-        SpawnMinionS2C ConstructMinionSpawnedPacket(IMinion minion)
+        S2C_SpawnMinion ConstructMinionSpawnedPacket(IMinion minion)
         {
-            var spawnPacket = new SpawnMinionS2C
+            var spawnPacket = new S2C_SpawnMinion
             {
                 SenderNetID = minion.NetId,
                 UnitNetID = minion.NetId,
@@ -321,7 +325,7 @@ namespace PacketDefinitions420
             return spawnPacket;
         }
 
-        MissileReplication ConstructMissileReplicationPacket(ISpellMissile m)
+        S2C_MissileReplication ConstructMissileReplicationPacket(ISpellMissile m)
         {
             var castInfo = new CastInfo
             {
@@ -350,12 +354,12 @@ namespace PacketDefinitions420
 
                 SpellSlot = m.CastInfo.SpellSlot,
                 ManaCost = m.CastInfo.ManaCost,
-                CasterPosition = m.CastInfo.SpellCastLaunchPosition,
+                CastLaunchPosition = m.CastInfo.SpellCastLaunchPosition,
             };
 
             if (m.CastInfo.Targets.Count > 0)
             {
-                foreach(var target in m.CastInfo.Targets)
+                foreach (var target in m.CastInfo.Targets)
                 {
                     if (target.Unit != null)
                     {
@@ -364,7 +368,7 @@ namespace PacketDefinitions420
                 }
             }
 
-            var misPacket = new MissileReplication
+            var misPacket = new S2C_MissileReplication
             {
                 SenderNetID = m.CastInfo.Owner.NetId,
                 Position = m.GetPosition3D(),
@@ -393,9 +397,9 @@ namespace PacketDefinitions420
             return misPacket;
         }
 
-        SpawnLevelPropS2C ConstructSpawnLevelPropPacket(ILevelProp levelProp, int userId = 0)
+        S2C_SpawnLevelProp ConstructSpawnLevelPropPacket(ILevelProp levelProp, int userId = 0)
         {
-            return new SpawnLevelPropS2C
+            return new S2C_SpawnLevelProp
             {
                 UniNetID = levelProp.NetId,
                 UnitNetNodeID = levelProp.NetNodeID,
@@ -420,7 +424,7 @@ namespace PacketDefinitions420
                 case ILevelProp prop:
                     return ConstructSpawnLevelPropPacket(prop);
                 //case IRegion region:
-                    //return ConstructAddRegionPacket(region);
+                //return ConstructAddRegionPacket(region);
 
                 case ILaneTurret turret:
                     return ConstructCreateTurretPacket(turret);
@@ -431,7 +435,7 @@ namespace PacketDefinitions420
                 case IPet pet:
                     return ConstructSpawnPetPacket(pet);
                 //case IMonster monster:
-                    //return ConstructCreateNeutralPacket(monster, gameTime);
+                //return ConstructCreateNeutralPacket(monster, gameTime);
                 case ILaneMinion minion:
                     return ConstructLaneMinionSpawnedPacket(minion);
                 case IMinion minion:
@@ -444,9 +448,9 @@ namespace PacketDefinitions420
             return ConstructEnterVisibilityClientPacket(o);
         }
 
-        public CHAR_SpawnPet ConstructSpawnPetPacket(IPet pet)
+        public S2C_CHAR_SpawnPet ConstructSpawnPetPacket(IPet pet)
         {
-            var packet = new CHAR_SpawnPet
+            var packet = new S2C_CHAR_SpawnPet
             {
                 UnitNetID = pet.NetId,
                 UnitNetNodeID = (byte)NetNodeID.Spawned,
@@ -601,7 +605,7 @@ namespace PacketDefinitions420
         /// <param name="target">AttackableUnit that is being targeted by the attacker.</param>
         public void NotifyAI_TargetS2C(IObjAiBase attacker, IAttackableUnit target)
         {
-            var targetPacket = new AI_TargetS2C
+            var targetPacket = new S2C_AI_TargetHero
             {
                 SenderNetID = attacker.NetId,
                 TargetNetID = 0
@@ -630,7 +634,7 @@ namespace PacketDefinitions420
         /// <param name="target">Champion that is being targeted by the attacker.</param>
         public void NotifyAI_TargetHeroS2C(IObjAiBase attacker, IChampion target)
         {
-            var targetPacket = new AI_TargetHeroS2C
+            var targetPacket = new S2C_AI_TargetHero
             {
                 SenderNetID = attacker.NetId,
                 TargetNetID = 0
@@ -651,7 +655,7 @@ namespace PacketDefinitions420
         /// <param name="userId">User to send the packet to. Set to -1 to broadcast.</param>
         public void NotifyAvatarInfo(ClientInfo client, int userId = -1)
         {
-            var avatar = new AvatarInfo_Server();
+            var avatar = new S2C_AvatarInfo_Server();
             avatar.SenderNetID = client.Champion.NetId;
             var skills = new uint[] {
                 HashFunctions.HashString(client.SummonerSkills[0]),
@@ -710,7 +714,7 @@ namespace PacketDefinitions420
             // TODO: Find out what should go here.
             basicAttackData.ExtraTime = -attacker.AutoAttackSpell.CurrentDelayTime;
 
-            var basicAttackPacket = new Basic_Attack
+            var basicAttackPacket = new S2C_Basic_Attack
             {
                 SenderNetID = attacker.NetId,
                 BasicAttackData = basicAttackData
@@ -742,7 +746,7 @@ namespace PacketDefinitions420
             // TODO: Find out what should go here.
             basicAttackData.ExtraTime = -attacker.AutoAttackSpell.CurrentDelayTime;
 
-            var basicAttackPacket = new Basic_Attack_Pos
+            var basicAttackPacket = new S2C_Basic_Attack_Pos
             {
                 SenderNetID = attacker.NetId,
                 BasicAttackData = basicAttackData,
@@ -756,7 +760,7 @@ namespace PacketDefinitions420
         /// <param name="deathData"></param>
         public void NotifyBuilding_Die(IDeathData deathData)
         {
-            var buildingDie = new Building_Die
+            var buildingDie = new S2C_Building_Die
             {
                 SenderNetID = deathData.Unit.NetId,
                 AttackerNetID = deathData.Killer.NetId,
@@ -780,7 +784,7 @@ namespace PacketDefinitions420
             };
 
             //TODO find out what bitfield does, currently unknown
-            var buyItemPacket = new BuyItemAns
+            var buyItemPacket = new S2C_BuyItemAns
             {
                 SenderNetID = gameObject.NetId,
                 ItemID = itemData.ItemID,
@@ -914,7 +918,7 @@ namespace PacketDefinitions420
         /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
         public void NotifyCHAR_SetCooldown(IObjAiBase u, byte slotId, float currentCd, float totalCd, int userId = 0)
         {
-            var cdPacket = new CHAR_SetCooldown
+            var cdPacket = new S2C_CHAR_SetCooldown
             {
                 SenderNetID = u.NetId,
                 Slot = slotId,
@@ -953,7 +957,7 @@ namespace PacketDefinitions420
 
         public void NotifyDampenerSwitchStates(IInhibitor inhibitor)
         {
-            var inhibState = new DampenerSwitch
+            var inhibState = new S2C_DampenerSwitch
             {
                 SenderNetID = inhibitor.NetId,
                 State = inhibitor.InhibitorState == InhibitorState.ALIVE,
@@ -1035,7 +1039,7 @@ namespace PacketDefinitions420
         /// <param name="param">Optional parameters for the text. Untested, function unknown.</param>
         public void NotifyDisplayFloatingText(IFloatingTextData floatTextData, TeamId team = 0, int userId = 0)
         {
-            var textPacket = new DisplayFloatingText
+            var textPacket = new S2C_DisplayFloatingText
             {
                 TargetNetID = floatTextData.Target.NetId,
                 FloatingTextType = (byte)floatTextData.FloatTextType,
@@ -1067,7 +1071,7 @@ namespace PacketDefinitions420
         /// <param name="netId">NetID of the GameObject coming into vision.</param>
         public void NotifyEnterLocalVisibilityClient(int userId, uint netId)
         {
-            var enterLocalVis = new OnEnterLocalVisiblityClient
+            var enterLocalVis = new S2C_OnEnterLocalVisiblityClient
             {
                 SenderNetID = netId,
             };
@@ -1075,9 +1079,9 @@ namespace PacketDefinitions420
             _packetHandlerManager.SendPacket(userId, enterLocalVis.GetBytes(), Channel.CHL_S2C);
         }
 
-        OnEnterLocalVisiblityClient ConstructEnterLocalVisibilityClientPacket(IGameObject o)
+        S2C_OnEnterLocalVisiblityClient ConstructEnterLocalVisibilityClientPacket(IGameObject o)
         {
-            var enterLocalVis = new OnEnterLocalVisiblityClient
+            var enterLocalVis = new S2C_OnEnterLocalVisiblityClient
             {
                 SenderNetID = o.NetId,
             };
@@ -1174,7 +1178,7 @@ namespace PacketDefinitions420
         /// Sends a packet to all players that (usually) an auto attack missile has been created.
         /// </summary>
         /// <param name="p">Projectile that was created.</param>
-       public void NotifyForceCreateMissile(ISpellMissile p)
+        public void NotifyForceCreateMissile(ISpellMissile p)
         {
             /*var misPacket = new S2C_ForceCreateMissile
             {
@@ -1258,7 +1262,7 @@ namespace PacketDefinitions420
         /// TODO: Change to only broadcast to players who have vision of the particle (maybe?).
         public void NotifyFXKill(IParticle particle)
         {
-            var fxKill = new FX_Kill
+            var fxKill = new S2C_FX_Kill
             {
                 SenderNetID = particle.NetId,
                 UnknownNetID = particle.NetId
@@ -1395,7 +1399,7 @@ namespace PacketDefinitions420
         /// TODO: Verify where this should be used.
         public void NotifyLeaveLocalVisibilityClient(int userId, uint netId)
         {
-            var leaveLocalVis = new OnLeaveLocalVisiblityClient
+            var leaveLocalVis = new S2C_OnLeaveLocalVisiblityClient
             {
                 SenderNetID = netId
             };
@@ -1412,7 +1416,7 @@ namespace PacketDefinitions420
         /// TODO: Verify where this should be used.
         public void NotifyLeaveLocalVisibilityClient(IGameObject o, TeamId team, int userId = 0)
         {
-            var leaveLocalVis = new OnLeaveLocalVisiblityClient
+            var leaveLocalVis = new S2C_OnLeaveLocalVisiblityClient
             {
                 SenderNetID = o.NetId
             };
@@ -1435,7 +1439,7 @@ namespace PacketDefinitions420
         /// TODO: Verify where this should be used.
         public void NotifyLeaveVisibilityClient(IGameObject o, TeamId team, int userId = 0)
         {
-            var leaveVis = new OnLeaveVisiblityClient
+            var leaveVis = new S2C_OnLeaveVisiblityClient
             {
                 SenderNetID = o.NetId
             };
@@ -1608,7 +1612,7 @@ namespace PacketDefinitions420
         /// <param name="StopShieldFade">Whether the shield should stay static or fade.</param>
         public void NotifyModifyShield(IAttackableUnit unit, float amount, bool IsPhysical, bool IsMagical, bool StopShieldFade)
         {
-            var mods = new ModifyShield
+            var mods = new S2C_ModifyShield
             {
                 SenderNetID = unit.NetId,
                 Physical = IsPhysical,
@@ -1665,7 +1669,7 @@ namespace PacketDefinitions420
         /// <param name="b">Buff being added.</param>
         public void NotifyNPC_BuffAdd2(IBuff b)
         {
-            var addPacket = new NPC_BuffAdd2
+            var addPacket = new S2C_NPC_BuffAdd2
             {
                 SenderNetID = b.TargetUnit.NetId,
                 BuffSlot = b.Slot,
@@ -1694,7 +1698,7 @@ namespace PacketDefinitions420
         /// <param name="duration">Total amount of time the group of buffs should be active.</param>
         public void NotifyNPC_BuffAddGroup(IAttackableUnit target, List<IBuff> buffs, BuffType buffType, string buffName, float runningTime, float duration)
         {
-            var addGroupPacket = new NPC_BuffAddGroup
+            var addGroupPacket = new S2C_NPC_BuffAddGroup
             {
                 BuffType = (byte)buffType,
                 BuffNameHash = HashFunctions.HashString(buffName),
@@ -1731,7 +1735,7 @@ namespace PacketDefinitions420
         /// <param name="b">Buff that was removed.</param>
         public void NotifyNPC_BuffRemove2(IBuff b)
         {
-            var removePacket = new NPC_BuffRemove2
+            var removePacket = new S2C_NPC_BuffRemove2
             {
                 SenderNetID = b.TargetUnit.NetId, //TODO: Verify if this should change depending on the removal source
                 BuffSlot = b.Slot,
@@ -1748,7 +1752,7 @@ namespace PacketDefinitions420
         /// <param name="buffName">Internal name of the buff that is applicable to the entire group of buffs.</param>
         public void NotifyNPC_BuffRemoveGroup(IAttackableUnit target, List<IBuff> buffs, string buffName)
         {
-            var removeGroupPacket = new NPC_BuffRemoveGroup
+            var removeGroupPacket = new S2C_NPC_BuffRemoveGroup
             {
                 BuffNameHash = HashFunctions.HashString(buffName),
             };
@@ -1773,10 +1777,10 @@ namespace PacketDefinitions420
         /// <param name="b">Buff that will replace the old buff in the same slot.</param>
         public void NotifyNPC_BuffReplace(IBuff b)
         {
-            var replacePacket = new NPC_BuffReplace
+            var replacePacket = new S2C_NPC_BuffReplace
             {
                 SenderNetID = b.TargetUnit.NetId,
-                NumInGroup = b.Slot,
+                BuffSlot = b.Slot,
                 RunningTime = b.TimeElapsed,
                 Duration = b.Duration,
                 CasterNetID = 0
@@ -1799,7 +1803,7 @@ namespace PacketDefinitions420
         /// <param name="duration">Total time the group of buffs should be active.</param>
         public void NotifyNPC_BuffReplaceGroup(IAttackableUnit target, List<IBuff> buffs, float runningtime, float duration)
         {
-            var replaceGroupPacket = new NPC_BuffReplaceGroup
+            var replaceGroupPacket = new S2C_NPC_BuffReplaceGroup
             {
                 RunningTime = runningtime,
                 Duration = duration
@@ -1834,7 +1838,7 @@ namespace PacketDefinitions420
         /// <param name="runningTime">Time since the buff's creation.</param>
         public void NotifyNPC_BuffUpdateCount(IBuff b, float duration, float runningTime)
         {
-            var updatePacket = new NPC_BuffUpdateCount
+            var updatePacket = new S2C_NPC_BuffUpdateCount
             {
                 SenderNetID = b.TargetUnit.NetId,
                 BuffSlot = b.Slot,
@@ -1859,7 +1863,7 @@ namespace PacketDefinitions420
         /// <param name="runningTime">Time since the buff's creation.</param>
         public void NotifyNPC_BuffUpdateCountGroup(IAttackableUnit target, List<IBuff> buffs, float duration, float runningTime)
         {
-            var updateGroupPacket = new NPC_BuffUpdateCountGroup
+            var updateGroupPacket = new S2C_NPC_BuffUpdateCountGroup
             {
                 Duration = duration,
                 RunningTime = runningTime
@@ -1892,7 +1896,7 @@ namespace PacketDefinitions420
         /// <param name="b">Buff who's stacks will be updated.</param>
         public void NotifyNPC_BuffUpdateNumCounter(IBuff b)
         {
-            var updateNumPacket = new NPC_BuffUpdateCount
+            var updateNumPacket = new S2C_NPC_BuffUpdateCount
             {
                 SenderNetID = b.TargetUnit.NetId,
                 BuffSlot = b.Slot,
@@ -1927,12 +1931,12 @@ namespace PacketDefinitions420
                 IsForceCastingOrChannel = s.CastInfo.IsForceCastingOrChannel,
                 IsOverrideCastPosition = s.CastInfo.IsOverrideCastPosition,
                 SpellSlot = s.CastInfo.SpellSlot,
-                CasterPosition = s.CastInfo.SpellCastLaunchPosition,
+                CastLaunchPosition = s.CastInfo.SpellCastLaunchPosition,
             };
 
             if (s.CastInfo.Targets.Count > 0)
             {
-                foreach(var target in s.CastInfo.Targets)
+                foreach (var target in s.CastInfo.Targets)
                 {
                     castInfo.TargetsInfo.Add(new CastTargetInfo { HitResult = (byte)target.HitResult, UnitNetID = target.Unit.NetId, Position = target.Unit.GetPosition3D() });
                 }
@@ -1947,7 +1951,7 @@ namespace PacketDefinitions420
                 castInfo.ManaCost = s.SpellData.ManaCost[0];
             }
 
-            var castAnsPacket = new NPC_CastSpellAns
+            var castAnsPacket = new S2C_NPC_CastSpellAns
             {
                 SenderNetID = s.CastInfo.Owner.NetId,
                 CasterPositionSyncID = s.CastInfo.Owner.SyncId,
@@ -1963,7 +1967,7 @@ namespace PacketDefinitions420
         /// <param name="data">Data of the death.</param>
         public void NotifyNPC_Die_Broadcast(IDeathData data)
         {
-            var dieMapView = new NPC_Die
+            var dieMapView = new S2C_NPC_Die
             {
                 SenderNetID = data.Unit.NetId,
                 DeathData = new DeathData
@@ -1984,7 +1988,7 @@ namespace PacketDefinitions420
         /// <param name="unit"></param>
         public void NotifyNPC_ForceDead(IAttackableUnit unit, float duration)
         {
-            var forceDead = new NPC_ForceDead
+            var forceDead = new S2C_NPC_ForceDead
             {
                 SenderNetID = unit.NetId,
             };
@@ -2002,7 +2006,7 @@ namespace PacketDefinitions420
         {
             NotifyS2C_UpdateDeathTimer(deathData.Unit as IChampion);
 
-            var cd = new NPC_Hero_Die
+            var cd = new S2C_NPC_Hero_Die
             {
                 SenderNetID = deathData.Unit.NetId,
                 DeathData = new DeathData
@@ -2034,7 +2038,7 @@ namespace PacketDefinitions420
             bool forceClient = false,
             uint missileNetID = 0)
         {
-            var stopAttack = new NPC_InstantStop_Attack
+            var stopAttack = new S2C_NPC_InstantStop_Attack
             {
                 SenderNetID = attacker.NetId,
                 KeepAnimating = keepAnimating,
@@ -2051,7 +2055,7 @@ namespace PacketDefinitions420
         /// <param name="userId">UserId to send the packet to. If not specified or zero, the packet is broadcasted to all players that have vision of the specified unit.</param>
         public void NotifyNPC_LevelUp(IObjAiBase obj)
         {
-            var levelUp = new NPC_LevelUp()
+            var levelUp = new S2C_NPC_LevelUp()
             {
                 SenderNetID = obj.NetId,
                 Level = obj.Stats.Level,
@@ -2076,7 +2080,7 @@ namespace PacketDefinitions420
         /// <param name="points">Number of skill points available after the skill has been leveled up.</param>
         public void NotifyNPC_UpgradeSpellAns(int userId, uint netId, byte slot, byte level, byte points)
         {
-            var upgradeSpellPacket = new NPC_UpgradeSpellAns
+            var upgradeSpellPacket = new S2C_NPC_UpgradeSpellAns
             {
                 SenderNetID = netId,
                 Slot = slot,
@@ -2096,7 +2100,7 @@ namespace PacketDefinitions420
         /// <param name="critSlot">Optional spell slot to cast when a crit is going to occur.</param>
         public void NotifyNPC_SetAutocast(IObjAiBase caster, ISpell spell, byte critSlot = 0)
         {
-            var autoCast = new NPC_SetAutocast
+            var autoCast = new S2C_NPC_SetAutocast
             {
                 SenderNetID = caster.NetId,
                 Slot = spell.CastInfo.SpellSlot,
@@ -2115,7 +2119,7 @@ namespace PacketDefinitions420
         /// <param name="critSlot">Optional spell slot to cast when a crit is going to occur.</param>
         public void NotifyNPC_SetAutocast(int userId, IObjAiBase caster, ISpell spell, byte critSlot = 0)
         {
-            var autoCast = new NPC_SetAutocast
+            var autoCast = new S2C_NPC_SetAutocast
             {
                 SenderNetID = caster.NetId,
                 Slot = spell.CastInfo.SpellSlot,
@@ -2135,7 +2139,7 @@ namespace PacketDefinitions420
         {
             if (u.Replication != null)
             {
-                var us = new OnReplication()
+                var us = new S2C_OnReplication()
                 {
                     SyncID = Environment.TickCount,
                     // TODO: Support multi-unit replication creation (perhaps via a separate function which takes in a list of units).
@@ -2146,11 +2150,11 @@ namespace PacketDefinitions420
                 var channel = Channel.CHL_LOW_PRIORITY;
                 if (userId <= 0)
                 {
-                    _packetHandlerManager.BroadcastPacketVision(u, us.GetBytes(), channel, PacketFlags.UNSEQUENCED);
+                    //_packetHandlerManager.BroadcastPacketVision(u, us.GetBytes(), channel, PacketFlags.UNSEQUENCED);
                 }
                 else
                 {
-                    _packetHandlerManager.SendPacket(userId, us.GetBytes(), channel, PacketFlags.UNSEQUENCED);
+                    //_packetHandlerManager.SendPacket(userId, us.GetBytes(), channel, PacketFlags.UNSEQUENCED);
                 }
             }
         }
@@ -2162,7 +2166,7 @@ namespace PacketDefinitions420
         /// <param name="showWindow">Whether or not to show a pause window.</param>
         public void NotifyPausePacket(ClientInfo player, int seconds, bool isTournament)
         {
-            var pg = new PausePacket
+            var pg = new BID_PausePacket
             {
                 //Check if SenderNetID should be the person that requested the pause or just 0
                 ClientID = player.ClientId,
@@ -2203,7 +2207,7 @@ namespace PacketDefinitions420
         /// <param name="c">Champion that respawned.</param>
         public void NotifyHeroReincarnateAlive(IChampion c, float parToRestore)
         {
-            var cr = new HeroReincarnateAlive
+            var cr = new S2C_HeroReincarnateAlive
             {
                 SenderNetID = c.NetId,
                 Position = c.GetPosition3D(),
@@ -2235,7 +2239,7 @@ namespace PacketDefinitions420
         /// <param name="remaining">Number of stacks of the item left (0 if not applicable).</param>
         public void NotifyRemoveItem(IObjAiBase ai, byte slot, byte remaining)
         {
-            var ria = new RemoveItemAns()
+            var ria = new S2C_RemoveItemAns()
             {
                 SenderNetID = ai.NetId,
                 Slot = slot,
@@ -2250,7 +2254,7 @@ namespace PacketDefinitions420
         /// <param name="region">Region to remove.</param>
         public void NotifyRemoveRegion(IRegion region)
         {
-            var removeRegion = new RemovePerceptionBubble()
+            var removeRegion = new S2C_RemovePerceptionBubble()
             {
                 BubbleID = region.NetId
             };
@@ -2315,7 +2319,7 @@ namespace PacketDefinitions420
         /// <param name="showWindow">Whether or not to show a window before unpausing (delay).</param>
         public void NotifyResumePacket(IChampion unpauser, ClientInfo player, bool isDelayed)
         {
-            var resume = new ResumePacket
+            var resume = new BID_ResumePacket
             {
                 SenderNetID = 0,
                 Delayed = isDelayed,
@@ -2443,36 +2447,28 @@ namespace PacketDefinitions420
             var champion = clientInfo.Champion;
             var heroPacket = new S2C_CreateHero()
             {
-                UnitNetID = champion.NetId,
                 ClientID = clientInfo.ClientId,
-                // NetNodeID,
-                // For bots (0 = Beginner, 1 = Intermediate)
-                SkillLevel = 0,
-                // TODO: Implement bots and unhardcode this.
-                IsBot = champion.IsBot,
-                // BotRank, deprecated as of v4.18
-                // TODO: Unhardcode
-                SpawnPositionIndex = 0,
-                SkinID = (uint)champion.SkinID,
                 Name = clientInfo.Name,
-                Skin = champion.Model,
-                // TimeSinceDeath
-                TeamIsOrder = champion.Team == TeamId.TEAM_BLUE,
-                BotRank = 0,
+                Skin = clientInfo.Champion.Model,
+                SkinID = (uint)clientInfo.Champion.SkinID,
                 NetNodeID = 64,
-                SenderNetID = champion.NetId
+                UnitNetID = champion.NetId,
+                TeamIsOrder = true,
+                SkillLevel = 1,
+                SpawnPositionIndex = 1,
+                IsBot = false
             };
             if (doVision)
             {
-                //NotifyEnterTeamVision(champion, 0, userId, heroPacket);
+                NotifyEnterTeamVision(champion, 0, userId, heroPacket);
             }
             else if (userId <= 0)
             {
-                //_packetHandlerManager.BroadcastPacket(heroPacket.GetBytes(), Channel.CHL_S2C);
+                _packetHandlerManager.BroadcastPacket(heroPacket.GetBytes(), Channel.CHL_S2C);
             }
             else
             {
-                //_packetHandlerManager.SendPacket(userId, heroPacket.GetBytes(), Channel.CHL_S2C);
+                _packetHandlerManager.SendPacket(userId, heroPacket.GetBytes(), Channel.CHL_S2C);
             }
         }
 
@@ -2722,7 +2718,7 @@ namespace PacketDefinitions420
         /// <param name="data">Data of the death.</param>
         public void NotifyS2C_NPC_Die_MapView(IDeathData data)
         {
-            var dieMapView = new NPC_Hero_Die
+            var dieMapView = new S2C_NPC_Hero_Die
             {
                 SenderNetID = data.Unit.NetId,
                 DeathData = new DeathData
@@ -3282,7 +3278,7 @@ namespace PacketDefinitions420
         /// <param name="delta">Time it took to tick.</param>
         public void NotifyServerTick(float delta)
         {
-            var tickPacket = new ServerTick
+            var tickPacket = new S2C_ServerTick
             {
                 Delta = delta
             };
@@ -3419,7 +3415,7 @@ namespace PacketDefinitions420
         public void NotifySwapItemAns(IChampion c, byte fromSlot, byte toSlot)
         {
             //TODO: reorganize in alphabetic order
-            var swapItem = new SwapItemAns
+            var swapItem = new S2C_SwapItemAns
             {
                 SenderNetID = c.NetId,
                 Source = fromSlot,
@@ -3435,7 +3431,7 @@ namespace PacketDefinitions420
         /// <param name="time">Time since the game started (in milliseconds).</param>
         public void NotifySyncMissionStartTimeS2C(int userId, float time)
         {
-            var sync = new SyncMissionStartTimeS2C()
+            var sync = new S2C_SyncMissionStartTime()
             {
                 StartTime = time / 1000.0f
             };
@@ -3449,7 +3445,7 @@ namespace PacketDefinitions420
         /// <param name="gameTime">Time since the game started (in milliseconds).</param>
         public void NotifySynchSimTimeS2C(float gameTime)
         {
-            var sync = new SynchSimTimeS2C()
+            var sync = new S2C_SynchSimTime()
             {
                 SynchTime = gameTime / 1000.0f
             };
@@ -3464,7 +3460,7 @@ namespace PacketDefinitions420
         /// <param name="time">Time since the game started (in milliseconds).</param>
         public void NotifySynchSimTimeS2C(int userId, float time)
         {
-            var sync = new SynchSimTimeS2C()
+            var sync = new S2C_SynchSimTime()
             {
                 SynchTime = time / 1000.0f
             };
@@ -3482,7 +3478,7 @@ namespace PacketDefinitions420
         /// <param name="mapId">ID of the map being played.</param>
         public void NotifySynchVersion(int userId, List<Tuple<uint, ClientInfo>> players, string version, string gameMode, int mapId)
         {
-            var syncVersion = new SynchVersionS2C
+            var syncVersion = new S2C_SynchVersion
             {
                 IsVersionOK = true,
                 MapToLoad = mapId,
@@ -3574,7 +3570,7 @@ namespace PacketDefinitions420
                 Waypoints = new List<CompressedWaypoint> { PacketExtensions.Vector2ToWaypoint(PacketExtensions.TranslateToCenteredCoordinates(position, _navGrid)) },
             };
 
-            var wpGroup = new WaypointGroup()
+            var wpGroup = new S2C_WaypointGroup()
             {
                 SyncID = Environment.TickCount,
                 Movements = new List<MovementDataNormal> { md }
@@ -3618,7 +3614,7 @@ namespace PacketDefinitions420
         /// TODO: Verify if sending to all players is correct.
         public void NotifyUnitAddEXP(IChampion champion, float experience)
         {
-            var xp = new UnitAddEXP
+            var xp = new S2C_UnitAddEXP
             {
                 // TODO: Verify if this is correct. Usually 0.
                 SenderNetID = champion.NetId,
@@ -3639,7 +3635,7 @@ namespace PacketDefinitions420
         public void NotifyUnitAddGold(IChampion c, IAttackableUnit died, float gold)
         {
             // TODO: Verify if this handles self-gold properly.
-            var ag = new UnitAddGold
+            var ag = new S2C_UnitAddGold
             {
                 SenderNetID = died.NetId,
                 TargetNetID = c.NetId,
@@ -3662,7 +3658,7 @@ namespace PacketDefinitions420
         /// <param name="targetId">ID of the user who is taking the damage that should receive the packet.</param>
         public void NotifyUnitApplyDamage(IAttackableUnit source, IAttackableUnit target, float amount, DamageType type, DamageResultType damagetext, bool isGlobal = true, int sourceId = 0, int targetId = 0)
         {
-            var damagePacket = new UnitApplyDamage
+            var damagePacket = new S2C_UnitApplyDamage
             {
                 SenderNetID = source.NetId,
                 DamageResultType = (byte)damagetext,
@@ -3710,7 +3706,7 @@ namespace PacketDefinitions420
 
         public void NotifyUpdateLevelPropS2C(UpdateLevelPropData propData)
         {
-            var packet = new UpdateLevelPropS2C
+            var packet = new S2C_UpdateLevelProp
             {
                 UpdateLevelPropData = propData
             };
@@ -3725,7 +3721,7 @@ namespace PacketDefinitions420
         /// <param name="itemInstance">Item instance housing all information about the item that has been used.</param>
         public void NotifyUseItemAns(int userId, IObjAiBase ai, IItem itemInstance)
         {
-            var useItemPacket = new UseItemAns
+            var useItemPacket = new S2C_UseItemAns
             {
                 SenderNetID = ai.NetId,
                 Slot = ai.Inventory.GetItemSlot(itemInstance),
@@ -3762,7 +3758,7 @@ namespace PacketDefinitions420
         {
             if (obj is IAttackableUnit u)
             {
-                var visibilityPacket = spawnPacket as OnEnterVisiblityClient;
+                var visibilityPacket = spawnPacket as S2C_OnEnterVisiblityClient;
                 if (visibilityPacket == null)
                 {
                     List<GamePacket> packets = null;
@@ -3774,7 +3770,7 @@ namespace PacketDefinitions420
                 }
                 var healthbarPacket = ConstructEnterLocalVisibilityClientPacket(obj);
                 //TODO: try to include it to packets too?
-                var us = new OnReplication()
+                var us = new S2C_OnReplication()
                 {
                     SyncID = Environment.TickCount,
                     ReplicationData = new List<ReplicationData>(1){
@@ -3786,13 +3782,13 @@ namespace PacketDefinitions420
                 {
                     _packetHandlerManager.BroadcastPacketTeam(team, visibilityPacket.GetBytes(), Channel.CHL_S2C);
                     _packetHandlerManager.BroadcastPacketTeam(team, healthbarPacket.GetBytes(), Channel.CHL_S2C);
-                    _packetHandlerManager.BroadcastPacketTeam(team, us.GetBytes(), Channel.CHL_S2C);
+                    //_packetHandlerManager.BroadcastPacketTeam(team, us.GetBytes(), Channel.CHL_S2C);
                 }
                 else
                 {
                     _packetHandlerManager.SendPacket(userId, visibilityPacket.GetBytes(), Channel.CHL_S2C);
                     _packetHandlerManager.SendPacket(userId, healthbarPacket.GetBytes(), Channel.CHL_S2C);
-                    _packetHandlerManager.SendPacket(userId, us.GetBytes(), Channel.CHL_S2C);
+                    //_packetHandlerManager.SendPacket(userId, us.GetBytes(), Channel.CHL_S2C);
                 }
             }
             else //if(obj is IRegion || obj is ISpellMissile || obj is ILevelProp || obj is IParticle)
@@ -3866,7 +3862,7 @@ namespace PacketDefinitions420
 
                 if (list.Count > 0)
                 {
-                    var packet = new WaypointGroup
+                    var packet = new S2C_WaypointGroup
                     {
                         SyncID = Environment.TickCount,
                         Movements = list
@@ -3894,7 +3890,7 @@ namespace PacketDefinitions420
             {
                 _heldReplicationData[userId] = list = new List<ReplicationData>();
             }
-            list.Add(data);
+            //list.Add(data);
         }
 
         /// <summary>
@@ -3909,13 +3905,13 @@ namespace PacketDefinitions420
 
                 if (list.Count > 0)
                 {
-                    var packet = new OnReplication()
+                    var packet = new S2C_OnReplication()
                     {
                         SyncID = Environment.TickCount,
                         ReplicationData = list
                     };
 
-                    _packetHandlerManager.SendPacket(userId, packet.GetBytes(), Channel.CHL_LOW_PRIORITY, PacketFlags.UNSEQUENCED);
+                    //_packetHandlerManager.SendPacket(userId, packet.GetBytes(), Channel.CHL_LOW_PRIORITY, PacketFlags.UNSEQUENCED);
 
                     list.Clear();
                 }
@@ -3933,7 +3929,7 @@ namespace PacketDefinitions420
             var move = PacketExtensions.CreateMovementDataNormal(u, _navGrid, useTeleportID);
 
             // TODO: Implement support for multiple movements.
-            var packet = new WaypointGroup
+            var packet = new S2C_WaypointGroup
             {
                 SyncID = Environment.TickCount,
                 Movements = new List<MovementDataNormal>() { move }
@@ -3964,7 +3960,7 @@ namespace PacketDefinitions420
             // TODO: Implement Dash class and house a List of these with waypoints.
             var md = PacketExtensions.CreateMovementDataWithSpeed(u, _navGrid);
 
-            var speedWpGroup = new WaypointGroupWithSpeed
+            var speedWpGroup = new S2C_WaypointGroupWithSpeed
             {
                 SyncID = u.SyncId,
                 // TOOD: Implement support for multiple speed-based movements (functionally known as dashes).
@@ -3980,7 +3976,7 @@ namespace PacketDefinitions420
         /// <param name="unit">Unit to send.</param>
         public void NotifyWaypointList(IAttackableUnit unit)
         {
-            var wpList = new WaypointList
+            var wpList = new S2C_WaypointList
             {
                 SenderNetID = unit.NetId,
                 SyncID = unit.SyncId,
@@ -3996,7 +3992,7 @@ namespace PacketDefinitions420
         /// <param name="obj">GameObject to send.</param>
         public void NotifyWaypointList(IGameObject obj, List<Vector2> waypoints)
         {
-            var wpList = new WaypointList
+            var wpList = new S2C_WaypointList
             {
                 SenderNetID = obj.NetId,
                 SyncID = obj.SyncId,
@@ -4051,7 +4047,7 @@ namespace PacketDefinitions420
                 speeds.FollowNetID = target.NetId;
             }
 
-            var speedWpGroup = new WaypointListHeroWithSpeed
+            var speedWpGroup = new S2C_WaypointListHeroWithSpeed
             {
                 SenderNetID = u.NetId,
                 SyncID = u.SyncId,
@@ -4071,7 +4067,7 @@ namespace PacketDefinitions420
         /// TODO: Verify if this is the correct implementation.
         public void NotifyWorld_SendCamera_Server_Acknologment(ClientInfo client, ViewRequest request)
         {
-            var answer = new World_SendCamera_Server_Acknologment
+            var answer = new S2C_World_SendCamera_Server_Ack
             {
                 //TODO: Check these values
                 SenderNetID = client.Champion.NetId,

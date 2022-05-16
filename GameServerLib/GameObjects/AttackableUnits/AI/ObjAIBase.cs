@@ -351,8 +351,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public virtual bool LevelUp(bool force = true)
         {
             Stats.LevelUp();
-            _game.PacketNotifier.NotifyNPC_LevelUp(this);
-            _game.PacketNotifier.NotifyOnReplication(this, partial: false);
+            //_game.PacketNotifier.NotifyNPC_LevelUp(this);
+            //_game.PacketNotifier.NotifyOnReplication(this, partial: false);
             ApiEventManager.OnLevelUp.Publish(this);
             return true;
         }
@@ -459,7 +459,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 IsAttacking = false;
                 HasMadeInitialAttack = false;
             }
-            _game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
+            //_game.PacketNotifier.NotifyNPC_InstantStop_Attack(this, false);
         }
 
         /// <summary>
@@ -512,7 +512,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 MovementParameters.SetStatus = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove;
             }
 
-            _game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
+            //_game.PacketNotifier.NotifyWaypointGroupWithSpeed(this);
 
             SetDashingState(true);
 
@@ -861,10 +861,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
             {
                 int userId = (int)_game.PlayerManager.GetClientInfoByChampion(champion).PlayerId;
                 // TODO: Verify if this is all that is needed.
-                _game.PacketNotifier.NotifyChangeSlotSpellData(userId, champion, slot, ChangeSlotSpellDataType.SpellName, slot == 4 || slot == 5, newName: name);
+                //_game.PacketNotifier.NotifyChangeSlotSpellData(userId, champion, slot, ChangeSlotSpellDataType.SpellName, slot == 4 || slot == 5, newName: name);
                 if (networkOld)
                 {
-                    _game.PacketNotifier.NotifyS2C_SetSpellData(userId, NetId, name, slot);
+                    //_game.PacketNotifier.NotifyS2C_SetSpellData(userId, NetId, name, slot);
                 }
             }
 
@@ -975,11 +975,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             if (networked)
             {
-                _game.PacketNotifier.NotifyAI_TargetS2C(this, target);
+                //_game.PacketNotifier.NotifyAI_TargetS2C(this, target);
 
                 if (target is IChampion c)
                 {
-                    _game.PacketNotifier.NotifyAI_TargetHeroS2C(this, c);
+                    //_game.PacketNotifier.NotifyAI_TargetHeroS2C(this, c);
                 }
             }
         }
@@ -1009,8 +1009,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
 
             if (this is IChampion champion)
             {
-                _game.PacketNotifier.NotifyS2C_SetSpellData((int)_game.PlayerManager.GetClientInfoByChampion(champion).PlayerId, NetId, slot2Name, slot1);
-                _game.PacketNotifier.NotifyS2C_SetSpellData((int)_game.PlayerManager.GetClientInfoByChampion(champion).PlayerId, NetId, slot1Name, slot2);
+                //_game.PacketNotifier.NotifyS2C_SetSpellData((int)_game.PlayerManager.GetClientInfoByChampion(champion).PlayerId, NetId, slot2Name, slot1);
+                //_game.PacketNotifier.NotifyS2C_SetSpellData((int)_game.PlayerManager.GetClientInfoByChampion(champion).PlayerId, NetId, slot1Name, slot2);
             }
         }
 

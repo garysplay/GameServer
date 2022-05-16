@@ -331,7 +331,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
         public override void OnAfterSync()
         {
-            Replication.MarkAsUnchanged();
+            //Replication.MarkAsUnchanged();
             ClearMovementUpdated();
         }
 
