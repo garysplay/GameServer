@@ -51,43 +51,21 @@ namespace PacketDefinitions420
             _navGrid = navGrid;
         }
 
-        /*AddRegion ConstructAddRegionPacket(IRegion region)
+        S2C_AddUnitPerceptionBubble ConstructUnitPerceptionBubble(IRegion region)
         {
-            var regionPacket = new AddRegion
+            var regionPacket = new S2C_AddUnitPerceptionBubble
             {
-                TeamID = (uint)region.Team,
-                // TODO: Find out what values this can be and make an enum for it (so far: -2 & -1 for turrets)
-                RegionType = region.Type,
-                ClientID = region.OwnerClientID,
-                // TODO: Verify (usually 0 for vision only?)
-                UnitNetID = 0,
-                // TODO: Verify (is usually different from UnitNetID in packets, may also be a remnant or for internal use)
-                BubbleNetID = region.VisionNetID,
-                VisionTargetNetID = region.VisionBindNetID,
-                Position = region.Position,
-                // For turrets, usually 25000.0 is used
+                PerceptionBubbleType = 0,
+                ClientNetID = 4294967294,
+                Radius = region.VisionRadius,
+                UnitNetID = region.VisionBindNetID,
                 TimeToLive = region.Lifetime,
-                // 88.4 for turrets
-                ColisionRadius = region.PathfindingRadius,
-                // 130.0 for turrets
-                GrassRadius = region.GrassRadius,
-                SizeMultiplier = region.Scale,
-                SizeAdditive = region.AdditionalSize,
-
-                HasCollision = region.HasCollision,
-                GrantVision = region.GrantVision,
-                RevealStealth = region.RevealsStealth,
-
-                BaseRadius = region.VisionRadius // 800.0 for turrets
+                BubbleID = region.NetId,
+                Flags = 107446493,
             };
 
-            if (region.CollisionUnit != null)
-            {
-                regionPacket.UnitNetID = region.CollisionUnit.NetId;
-            }
-
             return regionPacket;
-        }*/
+        }
 
         S2C_CreateNeutral ConstructCreateNeutralPacket(IMonster monster, float time)
         {
@@ -116,9 +94,8 @@ namespace PacketDefinitions420
             {
                 SenderNetID = turret.NetId,
                 UniteNetID = turret.NetId,
-                // Verify, taken from packets (does not seem to change)
                 UnitNetNodeID = 64,
-                Name = turret.Name,
+                Name = turret.Name
             };
             return createTurret;
         }
@@ -161,12 +138,20 @@ namespace PacketDefinitions420
 
             // TODO: if (a.IsDashing), requires SpeedParams, add it to AttackableUnit so it can be accessed outside of initialization
             //TODO: Unhardcode
-            MovementData md = new MovementDataStop
+            MovementData md = new MovementDataNone
             {
-                SyncID = Environment.TickCount,
-                Position = new Vector2(26.0f, 280.0f),
-                Forward = new Vector2(26.0f, 280.0f)
+                SyncID = Environment.TickCount
             };
+            if (o is IChampion)
+            {
+                md = new MovementDataStop
+                {
+                    SyncID = Environment.TickCount,
+                    Position = new Vector2(26.0f, 280.0f),
+                    Forward = new Vector2(26.0f, 280.0f)
+                };
+            }
+
 
             /*if (o is IAttackableUnit u && u.Waypoints.Count > 1)
             {
@@ -321,7 +306,7 @@ namespace PacketDefinitions420
                 SkinName = minion.Model,
                 //UseBehaviorTreeAI = 
             };
-
+            _packetHandlerManager.BroadcastPacket(spawnPacket.GetBytes(), Channel.CHL_S2C);
             return spawnPacket;
         }
 
@@ -423,19 +408,24 @@ namespace PacketDefinitions420
                     return ConstructMissileReplicationPacket(missile);
                 case ILevelProp prop:
                     return ConstructSpawnLevelPropPacket(prop);
-                //case IRegion region:
-                //return ConstructAddRegionPacket(region);
-
+                case IRegion region:
+                    if(region.VisionBindNetID != 0)
+                    {
+                        NotifyAddRegion(region);
+                        return null;
+                    }
+                    break;
                 case ILaneTurret turret:
-                    return ConstructCreateTurretPacket(turret);
+                    NotifyS2C_CreateTurret(turret);
+                    break; //return ConstructCreateTurretPacket(turret);
 
                 // Champions spawn a little differently
                 case IChampion champion:
                     return null;
                 case IPet pet:
                     return ConstructSpawnPetPacket(pet);
-                //case IMonster monster:
-                //return ConstructCreateNeutralPacket(monster, gameTime);
+                case IMonster monster:
+                return ConstructCreateNeutralPacket(monster, gameTime);
                 case ILaneMinion minion:
                     return ConstructLaneMinionSpawnedPacket(minion);
                 case IMinion minion:
@@ -540,63 +530,33 @@ namespace PacketDefinitions420
         /// <param name="grantVis">Whether or not the region should give the region's team vision of enemy units.</param>
         /// <param name="stealthVis">Whether or not invisible units should be visible in the region.</param>
         /// TODO: Implement a Region class so we can easily grab these parameters instead of listing them all in the function.
-        public void NotifyAddRegion(uint unitNetId, uint bubbleNetId, TeamId team, Vector2 position, float time, float radius = 0, int regionType = 0, ClientInfo clientInfo = null, IGameObject obj = null, float collisionRadius = 0, float grassRadius = 0, float sizemult = 1.0f, float addsize = 0, bool grantVis = true, bool stealthVis = false)
+        public void NotifyAddRegion(IRegion region)
         {
-            /*var regionPacket = new AddRegion
+            var regionPacket = new S2C_AddUnitPerceptionBubble
             {
-                TeamID = (uint)team,
-                RegionType = regionType, // TODO: Find out what values this can be and make an enum for it (so far: -2 for turrets)
-                UnitNetID = unitNetId, // TODO: Verify (usually 0 for vision only?)
-                BubbleNetID = bubbleNetId, // TODO: Verify (is usually different from UnitNetID in packets, may also be a remnant or for internal use)
-                VisionTargetNetID = 0,
-                Position = position,
-                TimeToLive = time, // For turrets, usually 25000.0 is used
-                ColisionRadius = collisionRadius, // 88.4 for turrets
-                GrassRadius = grassRadius, // 130.0 for turrets
-                SizeMultiplier = sizemult,
-                SizeAdditive = addsize,
-
-                HasCollision = false,
-                GrantVision = grantVis,
-                RevealStealth = stealthVis,
-
-                BaseRadius = radius // 800.0 for turrets
+                PerceptionBubbleType = 0,
+                ClientNetID = 4294967294,
+                Radius = region.VisionRadius,
+                UnitNetID = region.VisionBindNetID,
+                TimeToLive = region.Lifetime,
+                BubbleID = region.NetId,
+                Flags = 107446493,
             };
 
-            if (clientInfo != null)
-            {
-                if (clientInfo.Champion != null)
-                {
-                    regionPacket.VisionTargetNetID = clientInfo.Champion.NetId;
-                }
-                regionPacket.ClientID = (int)clientInfo.ClientId;
-            }
-
-            if (obj != null)
-            {
-                regionPacket.VisionTargetNetID = obj.NetId;
-            }
-
-            // TODO: Verify
-            if (collisionRadius > 0.0f)
-            {
-                regionPacket.HasCollision = true;
-            }
-
-            _packetHandlerManager.BroadcastPacketTeam(team, regionPacket.GetBytes(), Channel.CHL_S2C);*/
+            _packetHandlerManager.BroadcastPacketTeam(region.Team, regionPacket.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
         /// Sends a packet to the specified team that a part of the map has changed. Known to be used in League for initializing turret vision and collision.
         /// </summary>
         /// <param name="region">Region to add.</param>
-        public void NotifyAddRegion(IRegion region)
-        {
+        //public void NotifyAddRegion(IRegion region)
+        //{
             /*var regionPacket = ConstructAddRegionPacket(region);
 
             // Verify if this should be vision or team regulated.
             _packetHandlerManager.BroadcastPacket(regionPacket.GetBytes(), Channel.CHL_S2C);*/
-        }
+        //}
 
         /// <summary>
         /// Sends a packet to all players with vision of the specified attacker detailing that they have targeted the specified target.
@@ -2150,11 +2110,11 @@ namespace PacketDefinitions420
                 var channel = Channel.CHL_LOW_PRIORITY;
                 if (userId <= 0)
                 {
-                    //_packetHandlerManager.BroadcastPacketVision(u, us.GetBytes(), channel, PacketFlags.UNSEQUENCED);
+                    _packetHandlerManager.BroadcastPacketVision(u, us.GetBytes(), channel, PacketFlags.UNSEQUENCED);
                 }
                 else
                 {
-                    //_packetHandlerManager.SendPacket(userId, us.GetBytes(), channel, PacketFlags.UNSEQUENCED);
+                    _packetHandlerManager.SendPacket(userId, us.GetBytes(), channel, PacketFlags.UNSEQUENCED);
                 }
             }
         }
@@ -2212,7 +2172,7 @@ namespace PacketDefinitions420
                 SenderNetID = c.NetId,
                 Position = c.GetPosition3D(),
             };
-            //_packetHandlerManager.BroadcastPacket(cr.GetBytes(), Channel.CHL_S2C);
+            _packetHandlerManager.BroadcastPacket(cr.GetBytes(), Channel.CHL_S2C);
         }
 
         /// <summary>
@@ -2335,7 +2295,7 @@ namespace PacketDefinitions420
 
         public void NotifyS2C_ActivateMinionCamp(IMonsterCamp monsterCamp, int userId = 0)
         {
-            /*var packet = new S2C_ActivateMinionCamp
+            /*var packet = new S2C_Neutral_Camp_Empty
             {
                 Position = monsterCamp.Position,
                 CampIndex = monsterCamp.CampIndex,
@@ -2453,8 +2413,8 @@ namespace PacketDefinitions420
                 SkinID = (uint)clientInfo.Champion.SkinID,
                 NetNodeID = 64,
                 UnitNetID = champion.NetId,
-                TeamIsOrder = true,
-                SkillLevel = 1,
+                TeamIsOrder = champion.Team == TeamId.TEAM_BLUE,
+                SkillLevel = champion.Stats.Level,
                 SpawnPositionIndex = 1,
                 IsBot = false
             };
@@ -3192,7 +3152,7 @@ namespace PacketDefinitions420
         /// <param name="s">Spell being updated.</param>
         public void NotifyS2C_UpdateSpellToggle(int userId, ISpell s)
         {
-            /*var spellTogglePacket = new S2C_UpdateSpellToggle
+            /*var spellTogglePacket = new S2C_SetSpellData
             {
                 SenderNetID = s.CastInfo.Owner.NetId,
                 SpellSlot = s.CastInfo.SpellSlot,
@@ -3240,13 +3200,35 @@ namespace PacketDefinitions420
         /// <param name="message">Debug message to send.</param>
         public void NotifyS2C_SystemMessage(TeamId team, string message)
         {
-            /*var dm = new S2C_SystemMessage
+            /*var dm = new S2C_NPC_MessageToClient
             {
                 SourceNetID = 0,
                 //TODO: Ivestigate the cases where SenderNetID is used
                 Message = message
             };
             _packetHandlerManager.BroadcastPacketTeam(team, dm.GetBytes(), Channel.CHL_S2C);*/
+        }
+        public void NotifyChatPacket(ClientInfo sender, ChatType chatType, string message)
+        {
+            var packet = new ChatPacket
+            {
+                ClientID = sender.ClientId,
+                ChatType = (uint)chatType,
+                Message = message,
+            };
+
+            switch (chatType)
+            {
+                case ChatType.All:
+                    _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_COMMUNICATION);
+                    break;
+                case ChatType.Team:
+                    _packetHandlerManager.BroadcastPacketTeam(sender.Team, packet.GetBytes(), Channel.CHL_COMMUNICATION);
+                    break;
+                case ChatType.Private:
+                    _packetHandlerManager.SendPacket((int)sender.PlayerId, packet.GetBytes(), Channel.CHL_COMMUNICATION);
+                    break;
+            }
         }
 
         public void NotifyS2C_UnitSetMinimapIcon(IAttackableUnit unit, TeamId team)
@@ -3656,21 +3638,21 @@ namespace PacketDefinitions420
         /// <param name="isGlobal">Whether or not the packet should be sent to all players.</param>
         /// <param name="sourceId">ID of the user who dealt the damage that should receive the packet.</param>
         /// <param name="targetId">ID of the user who is taking the damage that should receive the packet.</param>
-        public void NotifyUnitApplyDamage(IAttackableUnit source, IAttackableUnit target, float amount, DamageType type, DamageResultType damagetext, bool isGlobal = true, int sourceId = 0, int targetId = 0)
+        public void NotifyUnitApplyDamage(IDamageData damageData, bool isGlobal = true, int sourceId = 0, int targetId = 0)
         {
             var damagePacket = new S2C_UnitApplyDamage
             {
-                SenderNetID = source.NetId,
-                DamageResultType = (byte)damagetext,
-                TargetNetID = target.NetId,
-                SourceNetID = source.NetId,
-                Damage = amount
+                SenderNetID = damageData.Target.NetId,
+                DamageResultType = (byte)damageData.DamageType,
+                TargetNetID = damageData.Target.NetId,
+                SourceNetID = damageData.Attacker.NetId,
+                Damage = damageData.Damage
             };
 
-            if (isGlobal)
-            {
+            //if (isGlobal)
+            //{
                 _packetHandlerManager.BroadcastPacket(damagePacket.GetBytes(), Channel.CHL_S2C);
-            }
+            /*}
             else
             {
                 if (sourceId > 0)
@@ -3681,7 +3663,7 @@ namespace PacketDefinitions420
                 {
                     _packetHandlerManager.SendPacket(targetId, damagePacket.GetBytes(), Channel.CHL_S2C);
                 }
-            }
+            }*/
         }
 
         /// <summary>
@@ -3782,13 +3764,13 @@ namespace PacketDefinitions420
                 {
                     _packetHandlerManager.BroadcastPacketTeam(team, visibilityPacket.GetBytes(), Channel.CHL_S2C);
                     _packetHandlerManager.BroadcastPacketTeam(team, healthbarPacket.GetBytes(), Channel.CHL_S2C);
-                    //_packetHandlerManager.BroadcastPacketTeam(team, us.GetBytes(), Channel.CHL_S2C);
+                    _packetHandlerManager.BroadcastPacketTeam(team, us.GetBytes(), Channel.CHL_S2C);
                 }
                 else
                 {
                     _packetHandlerManager.SendPacket(userId, visibilityPacket.GetBytes(), Channel.CHL_S2C);
                     _packetHandlerManager.SendPacket(userId, healthbarPacket.GetBytes(), Channel.CHL_S2C);
-                    //_packetHandlerManager.SendPacket(userId, us.GetBytes(), Channel.CHL_S2C);
+                    _packetHandlerManager.SendPacket(userId, us.GetBytes(), Channel.CHL_S2C);
                 }
             }
             else //if(obj is IRegion || obj is ISpellMissile || obj is ILevelProp || obj is IParticle)
@@ -3890,7 +3872,7 @@ namespace PacketDefinitions420
             {
                 _heldReplicationData[userId] = list = new List<ReplicationData>();
             }
-            //list.Add(data);
+            list.Add(data);
         }
 
         /// <summary>
@@ -3911,7 +3893,7 @@ namespace PacketDefinitions420
                         ReplicationData = list
                     };
 
-                    //_packetHandlerManager.SendPacket(userId, packet.GetBytes(), Channel.CHL_LOW_PRIORITY, PacketFlags.UNSEQUENCED);
+                    _packetHandlerManager.SendPacket(userId, packet.GetBytes(), Channel.CHL_LOW_PRIORITY, PacketFlags.UNSEQUENCED);
 
                     list.Clear();
                 }

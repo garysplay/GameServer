@@ -88,6 +88,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
 
         public ReplicationData GetData(bool partial = true)
         {
+            //This is here for testing purposes
+            partial = false;
             var data = new ReplicationData()
             {
                 UnitNetID = Owner.NetId,

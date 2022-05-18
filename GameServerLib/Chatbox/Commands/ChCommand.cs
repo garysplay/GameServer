@@ -21,9 +21,10 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.Split(' ');
+            var player = _playerManager.GetPeerInfo(userId);
             if (split.Length < 2)
             {
-                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
                 return;
             }
@@ -32,23 +33,23 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             var c = new Champion(
                 Game,
                 split[1],
-                (uint)_playerManager.GetPeerInfo(userId).PlayerId,
+                (uint)player.PlayerId,
                 0, // Doesnt matter at this point
                 currentChampion.RuneList,
                 currentChampion.TalentInventory,
-                _playerManager.GetClientInfoByChampion(currentChampion),
+                player,
                 currentChampion.NetId,
-                _playerManager.GetPeerInfo(userId).Champion.Team
+                player.Champion.Team
             );
             c.SetPosition(
-                _playerManager.GetPeerInfo(userId).Champion.Position
+                player.Champion.Position
             );
 
             c.ChangeModel(split[1]); // trigger the "modelUpdate" proc
-            c.SetTeam(_playerManager.GetPeerInfo(userId).Champion.Team);
-            Game.ObjectManager.RemoveObject(_playerManager.GetPeerInfo(userId).Champion);
+            c.SetTeam(player.Champion.Team);
+            Game.ObjectManager.RemoveObject(player.Champion);
             Game.ObjectManager.AddObject(c);
-            _playerManager.GetPeerInfo(userId).Champion = c;
+            player.Champion = c;
         }
     }
 }

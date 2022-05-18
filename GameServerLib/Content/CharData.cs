@@ -60,7 +60,7 @@ namespace LeagueSandbox.GameServer.Content
         public PrimaryAbilityResourceType ParType { get; private set; } = PrimaryAbilityResourceType.MANA;
         public float PathfindingCollisionRadius { get; private set; } = -1.0f;
         public float PerceptionBubbleRadius { get; private set; } = 0.0f;
-        public bool ShouldFaceTarget { get; private set; } = true;
+        public bool ShouldFaceTarget { get; set; } = true;
         public float SpellBlock { get; private set; }
         public float SpellBlockPerLevel { get; private set; }
         public UnitTag UnitTags { get; private set; }

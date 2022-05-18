@@ -1,4 +1,5 @@
 ﻿using LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI;
+using System;
 
 namespace LeagueSandbox.GameServer.GameObjects.Stats
 {
@@ -10,15 +11,104 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         }
         public override void Update()
         {
-            UpdateFloat(Stats.Gold, 0, 0); //mGold
-            // UpdateFloat(Stats.TotalGold, 0, 1); //mGoldTotal
-            UpdateUint((uint)Stats.SpellsEnabled, 0, 2); //mReplicatedSpellCanCastBitsLower1
-            UpdateUint((uint)(Stats.SpellsEnabled >> 32), 0, 3); //mReplicatedSpellCanCastBitsUpper1
-            UpdateUint((uint)Stats.SummonerSpellsEnabled, 0, 4); //mReplicatedSpellCanCastBitsLower2
-            UpdateUint((uint)(Stats.SummonerSpellsEnabled >> 32), 0, 5); //mReplicatedSpellCanCastBitsUpper2
+            //EXP
+            UpdateFloat(Stats.Experience, 0, 0);
+
+            //Total Gold
+            UpdateFloat(Stats.Gold, 0, 1);
+
+            //Verify
+            //UpdateUint((uint)Stats.ActionState, 1, 0);
+
+            //Base AP
+            UpdateFloat(Stats.AbilityPower.BaseValue, 1, 7);
+            
+            //Base AD(?)
+            UpdateFloat(Stats.AttackDamage.BaseValue, 1, 6);
+
+            //TODO: Implement dodge
+            //Dodge
+            //UpdateFloat(Stats.Dodge.Total, 1, 8);
+
+            //Crit Chance
+            UpdateFloat(Stats.CriticalChance.Total, 1, 9);
+
+            //Base Armor
+            UpdateFloat(Stats.Armor.BaseValue, 1, 10);
+
+            //Something replated to MR
+            UpdateFloat(Stats.MagicResist.BaseValue, 1, 11);
+            
+            //Hp regen per 5 sec
+            UpdateFloat(Stats.HealthRegeneration.Total, 1, 12);
+
+            //Mana regen per 5 sec
+            UpdateFloat(Stats.ManaRegeneration.Total, 1, 13);
+
+            //Range
+            UpdateFloat(Stats.Range.Total, 1, 14);
+
+            //Bonus Ad(?)
+            UpdateFloat(Stats.AttackDamage.FlatBonus, 1, 15);
+
+            //Bonus AP
+            UpdateFloat(Stats.AbilityPower.FlatBonus, 1, 17);
+
+            //Bonus AttackSpeed(?)
+            UpdateFloat(1, 1, 20);
+
+            //CDR
+            UpdateFloat(Stats.CooldownReduction.Total, 1, 22);
+
+            //Flat Armor Pen
+            UpdateFloat(Stats.ArmorPenetration.Total, 1, 23);
+
+            //% Armor Pen
+            //UpdateFloat(Stats.SpellVamp.Total, 1, 24);
+
+            //Flat Magic Pen
+            UpdateFloat(Stats.MagicPenetration.Total, 1, 25);
+            
+            //% Magic Pen
+            //UpdateFloat(Stats.SpellVamp.Total, 1, 26);
+
+            //Life Steal
+            UpdateFloat(Stats.LifeSteal.Total, 1, 27);
+            
+            //Spell Vamp
+            UpdateFloat(Stats.SpellVamp.Total, 1, 28);
+
+            //Current Health
+            UpdateFloat(Stats.CurrentHealth, 3, 0);
+
+            //Current Mana
+            UpdateFloat(Stats.CurrentMana, 3, 1);
+
+            //Max/Base Health
+            UpdateFloat(Stats.HealthPoints.Total, 3, 2);
+
+            //Max/Base Mana
+            UpdateFloat(Stats.ManaPoints.Total, 3, 3);
+
+            //Something related to vision/fog of war
+            UpdateFloat(0f, 3, 5);
+
+            //Bonus MovSpeed
+            UpdateFloat(Stats.MoveSpeed.Total, 3, 6);
+
+            //Size
+            UpdateFloat(Stats.Size.Total, 3, 7);
+
+            //Level
+            UpdateInt(Stats.Level, 3, 8);
+
+            //UpdateFloat(Stats.SpellsEnabled, 0, 2); //mReplicatedSpellCanCastBitsLower1
+            //UpdateUint((uint)(Stats.SpellsEnabled >> 32), 0, 5); //mReplicatedSpellCanCastBitsUpper1
+            //UpdateUint((uint)Stats.SummonerSpellsEnabled, 0, 4); //mReplicatedSpellCanCastBitsLower2
+            //UpdateUint((uint)(Stats.SummonerSpellsEnabled >> 32), 0, 5); //mReplicatedSpellCanCastBitsUpper2
             // UpdateUint(Stats.EvolvePoints, 0, 6); //mEvolvePoints
             // UpdateUint(Stats.EvolveFlags, 0, 7); //mEvolveFlag
-            for (var i = 0; i < 4; i++)
+            /*for (var i = 0; i < 4; i++)
             {
                 UpdateFloat(Stats.ManaCost[i], 0, 8 + i); //ManaCost_{i}
             }
@@ -27,9 +117,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
                 UpdateFloat(Stats.ManaCost[45 + i], 0, 12 + i); //ManaCost_Ex{i}
             }
             UpdateUint((uint)Stats.ActionState, 1, 0); //ActionState
-            UpdateBool(Stats.IsMagicImmune, 1, 1); //MagicImmune
-            UpdateBool(Stats.IsInvulnerable, 1, 2); //IsInvulnerable
-            UpdateBool(Stats.IsPhysicalImmune, 1, 3); //IsPhysicalImmune
+            
             UpdateBool(Stats.IsLifestealImmune, 1, 4); //IsLifestealImmune
             UpdateFloat(Stats.AttackDamage.BaseValue, 1, 5); //mBaseAttackDamage
             UpdateFloat(Stats.AbilityPower.BaseValue, 1, 6); //mBaseAbilityDamage
@@ -78,7 +166,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             UpdateUint(Stats.Level, 3, 13); //mLevelRef
             UpdateUint((uint)Owner.MinionCounter, 3, 14); //mNumNeutralMinionsKilled
             UpdateBool(Stats.IsTargetable, 3, 15); //mIsTargetable
-            UpdateUint((uint)Stats.IsTargetableToTeam, 3, 16); //mIsTargetableToTeamFlags
+            UpdateUint((uint)Stats.IsTargetableToTeam, 3, 16); //mIsTargetableToTeamFlags*/
         }
     }
 }

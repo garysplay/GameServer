@@ -18,14 +18,15 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
-            var champ = _playerManager.GetPeerInfo(userId).Champion;
+            var player = _playerManager.GetPeerInfo(userId);
+            var champ = player.Champion;
             if (!champ.IsDead)
             {
-                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Your champion is already alive.");
+                ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.INFO, "Your champion is already alive.");
                 return;
             }
 
-            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Your champion has revived!");
+            ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.INFO, "Your champion has revived!");
             champ.Respawn();
         }
     }

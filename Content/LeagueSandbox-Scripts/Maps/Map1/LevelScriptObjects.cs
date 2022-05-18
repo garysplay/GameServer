@@ -86,15 +86,6 @@ namespace MapScripts.Map1
             } }
         };
 
-        //Turret Items
-        static Dictionary<TurretType, int[]> TurretItems { get; set; } = new Dictionary<TurretType, int[]>
-        {
-            { TurretType.OUTER_TURRET, new[] { 1500, 1501, 1502, 1503 } },
-            { TurretType.INNER_TURRET, new[] { 1500, 1501, 1502, 1503, 1504 } },
-            { TurretType.INHIBITOR_TURRET, new[] { 1501, 1502, 1503, 1505 } },
-            { TurretType.NEXUS_TURRET, new[] { 1501, 1502, 1503, 1505 } }
-        };
-
         static IStatsModifier TurretStatsModifier = new StatsModifier();
         static IStatsModifier OuterTurretStatsModifier = new StatsModifier();
         public static void LoadBuildings(Dictionary<GameObjectTypes, List<MapObject>> mapObjects)
@@ -102,7 +93,7 @@ namespace MapScripts.Map1
             _mapObjects = mapObjects;
 
             CreateBuildings();
-            LoadProtection();
+            //LoadProtection();
 
             LoadSpawnBarracks();
             LoadFountains();
@@ -147,7 +138,6 @@ namespace MapScripts.Map1
 
                         turret.AddStatModifier(TurretHealthModifier);
                         turret.Stats.CurrentHealth += turret.Stats.HealthPoints.Total;
-                        AddTurretItems(turret, GetTurretItems(TurretItems, turret.Type));
                     }
                 }
             }
@@ -314,6 +304,7 @@ namespace MapScripts.Map1
                 InhibitorList[teamId][lane] = inhibitor;
                 AddObject(inhibitor);
             }
+
             foreach (var turretObj in _mapObjects[GameObjectTypes.ObjAIBase_Turret])
             {
                 var teamId = turretObj.GetTeamID();

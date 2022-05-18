@@ -12,8 +12,8 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         {
             UpdateFloat(Stats.CurrentHealth, 1, 0); //mHP
             UpdateBool(Stats.IsInvulnerable, 1, 1); //IsInvulnerable
-            UpdateBool(Stats.IsTargetable, 5, 0); //mIsTargetable
-            UpdateUint((uint)Stats.IsTargetableToTeam, 5, 1); //mIsTargetableToTeamFlags
+            UpdateBool(Stats.IsTargetable, 1, 2); //mIsTargetable
+            UpdateUint((uint)Stats.IsTargetableToTeam, 1, 3); //mIsTargetableToTeamFlags
         }
     }
 }

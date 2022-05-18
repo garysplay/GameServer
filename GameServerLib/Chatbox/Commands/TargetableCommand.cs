@@ -17,15 +17,16 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
+            var player = _playerManager.GetPeerInfo(userId);
 
             if (split.Length != 2 || !bool.TryParse(split[1], out var userInput))
             {
-                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
             }
             else
             {
-                _playerManager.GetPeerInfo(userId).Champion.SetStatus(GameServerCore.Enums.StatusFlags.Targetable, userInput);
+                player.Champion.SetStatus(GameServerCore.Enums.StatusFlags.Targetable, userInput);
             }
         }
     }

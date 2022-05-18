@@ -149,7 +149,7 @@ namespace PacketDefinitions420
         {
             var rq = new ChatPacket();
             rq.Read(data);
-            return new ChatMessageRequest(rq.Message, (ChatType)rq.ChatType, "", true, 0, (int)rq.ClientID);
+            return new ChatMessageRequest(rq.Message, (ChatType)rq.ChatType, (int)rq.ClientID);
         }
 
         [PacketType(GamePacketID.C2S_OnTipEvent)]

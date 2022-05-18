@@ -21,19 +21,20 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
-            var champ = _playerManager.GetPeerInfo(userId).Champion;
+            var player = _playerManager.GetPeerInfo(userId);
+            var champ = player.Champion;
             var maxLevel = _game.Map.MapScript.MapScriptMetadata.MaxLevel;
 
             if (split.Length < 2)
             {
-                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
             }
             else if (byte.TryParse(split[1], out var lvl))
             {
                 if (lvl <= champ.Stats.Level || lvl > maxLevel)
                 {
-                    ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.ERROR, $"The level must be higher than current and smaller or equal to what the gamemode allows({maxLevel})!");
+                    ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.ERROR, $"The level must be higher than current and smaller or equal to what the gamemode allows({maxLevel})!");
                     return;
                 }
 

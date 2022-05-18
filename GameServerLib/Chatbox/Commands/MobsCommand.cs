@@ -25,9 +25,11 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
+            var player = _playerManager.GetPeerInfo(userId);
+
             if (split.Length < 2)
             {
-                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
                 return;
             }
@@ -41,10 +43,9 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 .Where(xx => xx.Value.Team == team.ToTeamId())
                 .Where(xx => xx.Value is Minion || xx.Value is Monster);
 
-            var client = _playerManager.GetPeerInfo(userId);
             foreach (var unit in units)
             {
-                 _game.PacketNotifier.NotifyS2C_MapPing(unit.Value.Position, Pings.PING_DANGER, client: client);
+                 _game.PacketNotifier.NotifyS2C_MapPing(unit.Value.Position, Pings.PING_DANGER, client: player);
             }
         }
     }

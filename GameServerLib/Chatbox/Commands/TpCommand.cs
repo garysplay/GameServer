@@ -18,12 +18,13 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
+            var player = _playerManager.GetPeerInfo(userId);
             uint targetNetID = 0;
             float x, y;
 
             if (split.Length < 3 || split.Length > 4)
             {
-                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
                 return;
             }
@@ -37,13 +38,13 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 }
                 else
                 {
-                    ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR, "An object with the netID: " + targetNetID + " was not found.");
+                    ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.SYNTAXERROR, "An object with the netID: " + targetNetID + " was not found.");
                     ShowSyntax();
                 }
             }
             else if (float.TryParse(split[1], out x) && float.TryParse(split[2], out y))
             {
-                _playerManager.GetPeerInfo(userId).Champion.TeleportTo(x, y);
+                player.Champion.TeleportTo(x, y);
             }
         }
     }

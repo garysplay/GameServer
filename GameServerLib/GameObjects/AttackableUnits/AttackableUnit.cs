@@ -475,20 +475,20 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// <param name="type">Whether the damage is physical, magical, or true.</param>
         /// <param name="source">What the damage came from: attack, spell, summoner spell, or passive.</param>
         /// <param name="damageText">Type of damage the damage text should be.</param>
-        public virtual void TakeDamage(IAttackableUnit attacker, float damage, DamageType type, DamageSource source,
+        public virtual void TakeDamage(IAttackableUnit attacker, float rawDamage, DamageType type, DamageSource source,
             DamageResultType damageText)
         {
             float regain = 0;
             var attackerStats = attacker.Stats;
-            float postMitigationDamage = Stats.GetPostMitigationDamage(damage, type, attacker);
+            float postMitigationDamage = Stats.GetPostMitigationDamage(rawDamage, type, attacker);
 
             IDamageData damageData = new DamageData
             {
                 IsAutoAttack = source == DamageSource.DAMAGE_SOURCE_ATTACK,
                 Attacker = attacker,
                 Target = this,
-                Damage = damage,
-                PostMitigationdDamage = postMitigationDamage,
+                Damage = postMitigationDamage,
+                PreMitigationDamage = rawDamage,
                 DamageSource = source,
                 DamageType = type,
             };
@@ -571,8 +571,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             if (attacker.Team != Team)
             {
-                _game.PacketNotifier.NotifyUnitApplyDamage(attacker, this, postMitigationDamage, type, damageText,
-                    _game.Config.IsDamageTextGlobal, attackerId, targetId);
+                _game.PacketNotifier.NotifyUnitApplyDamage(damageData, _game.Config.IsDamageTextGlobal, attackerId, targetId);
             }
 
             // Get health from lifesteal/spellvamp
@@ -621,7 +620,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             var attackerStats = damageData.Attacker.Stats;
             var type = damageData.DamageType;
             var source = damageData.DamageSource;
-            var postMitigationDamage = damageData.PostMitigationdDamage;
+            var postMitigationDamage = damageData.Damage;
 
             ApiEventManager.OnPreTakeDamage.Publish(damageData.Target, damageData);
 
@@ -701,8 +700,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
 
             if (attacker.Team != Team)
             {
-                _game.PacketNotifier.NotifyUnitApplyDamage(attacker, this, postMitigationDamage, type, damageText,
-                    _game.Config.IsDamageTextGlobal, attackerId, targetId);
+                _game.PacketNotifier.NotifyUnitApplyDamage(damageData,_game.Config.IsDamageTextGlobal, attackerId, targetId);
             }
 
             // Get health from lifesteal/spellvamp

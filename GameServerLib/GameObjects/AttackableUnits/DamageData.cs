@@ -31,8 +31,8 @@ namespace GameServerLib.GameObjects.AttackableUnits
         /// </summary>
         public float Damage { get; set; }
         /// <summary>
-        /// Mitigated ammount of damage (after being reduced by armor/MR stats) 
+        /// Ammount of damage before being reduced by armor and MR stats 
         /// </summary>
-        public float PostMitigationdDamage { get; set; }
+        public float PreMitigationDamage { get; set; }
     }
 }

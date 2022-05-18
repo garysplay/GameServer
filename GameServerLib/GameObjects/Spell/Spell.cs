@@ -449,7 +449,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         }
 
                         var dirTemp = Vector2.Normalize(goingTo);
-                        CastInfo.Owner.FaceDirection(new Vector3(dirTemp.X, 0, dirTemp.Y), false);
+                        if (CastInfo.Owner.CharData.ShouldFaceTarget)
+                        {
+                            CastInfo.Owner.FaceDirection(new Vector3(dirTemp.X, 0, dirTemp.Y), false);
+                        }
                     }
                 }
             }
@@ -469,7 +472,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
 
             if (CastInfo.Targets[0].Unit != null && CastInfo.Targets[0].Unit != CastInfo.Owner)
             {
-                if (Script.ScriptMetadata.AutoFaceDirection)
+                if (Script.ScriptMetadata.AutoFaceDirection && CastInfo.Owner.CharData.ShouldFaceTarget)
                 {
                     ApiFunctionManager.FaceDirection(CastInfo.Targets[0].Unit.Position, CastInfo.Owner);
                 }
@@ -670,7 +673,10 @@ namespace LeagueSandbox.GameServer.GameObjects.Spell
                         }
 
                         var dirTemp = Vector2.Normalize(goingTo);
-                        CastInfo.Owner.FaceDirection(new Vector3(dirTemp.X, 0, dirTemp.Y), false);
+                        if (CastInfo.Owner.CharData.ShouldFaceTarget)
+                        {
+                            CastInfo.Owner.FaceDirection(new Vector3(dirTemp.X, 0, dirTemp.Y), false);
+                        }
                     }
                 }
             }

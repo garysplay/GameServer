@@ -3,6 +3,7 @@ using GameServerCore;
 using GameServerCore.Packets.Handlers;
 using SiphoningStrike.Game;
 using SiphoningStrike.Game.Events;
+using GameServerCore.Enums;
 
 namespace LeagueSandbox.GameServer.Packets.PacketHandlers
 {
@@ -59,7 +60,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                         {
                             var msg = "Your client version does not match the server. " +
                                     "Check the server log for more information.";
-                            _game.PacketNotifier.NotifyS2C_SystemMessage(userId, msg);
+                            _game.PacketNotifier.NotifyChatPacket(player.Item2, ChatType.Private, msg);
                         }
 
                         while (player.Item2.Champion.Stats.Level < _game.Map.MapScript.MapScriptMetadata.InitialLevel)
@@ -77,9 +78,8 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                         _game.PacketNotifier.NotifyS2C_HandleTipUpdatep((int)player.Item2.PlayerId, "Your Champion:",
                             player.Item2.Champion.Model, "", 0, player.Item2.Champion.NetId,
                             _game.NetworkIdManager.GetNewNetId());
-
-                        SyncTime(player.Item2.PlayerId);*/
-                        //_game.PacketNotifier.NotifyEnterVisibilityClient(player.Item2.Champion, userId, true, true);
+                        */
+                        SyncTime(player.Item2.PlayerId);
                     }
                     _game.Start();
                 }

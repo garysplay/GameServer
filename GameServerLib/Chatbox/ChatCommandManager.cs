@@ -1,4 +1,6 @@
-﻿using System;
+﻿using GameServerCore.Enums;
+using GameServerCore.NetInfo;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -15,35 +17,35 @@ namespace LeagueSandbox.GameServer.Chatbox
         private SortedDictionary<string, IChatCommand> _chatCommandsDictionary;
 
         // TODO: Refactor this method or maybe the packet notifier?
-        public void SendDebugMsgFormatted(DebugMsgType type, string message = "")
+        public void SendDebugMsgFormatted(ClientInfo sender, DebugMsgType type, string message = "")
         {
+            if(sender == null)
+            {
+                return;
+            }
             var formattedText = new StringBuilder();
             var fontSize = 20; // Big fonts seem to make the chatbox buggy
                                // This may need to be removed.
             switch (type)
             {
                 case DebugMsgType.ERROR: // Tag: [ERROR], Color: Red
-                    formattedText.Append("<font size=\"" + fontSize + "\" color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: ");
                     formattedText.Append(message);
-                    _game.PacketNotifier.NotifyS2C_SystemMessage(formattedText.ToString());
+                    _game.PacketNotifier.NotifyChatPacket(sender, ChatType.Private, formattedText.ToString());
                     break;
                 case DebugMsgType.INFO: // Tag: [INFO], Color: Green
-                    formattedText.Append("<font size=\"" + fontSize + "\" color =\"#00D90E\"><b>[LS INFO]</b><font color =\"#AFBF00\">: ");
                     formattedText.Append(message);
-                    _game.PacketNotifier.NotifyS2C_SystemMessage(formattedText.ToString());
+                    _game.PacketNotifier.NotifyChatPacket(sender, ChatType.Private, formattedText.ToString());
                     break;
                 case DebugMsgType.SYNTAX: // Tag: [SYNTAX], Color: Blue
-                    formattedText.Append("<font size=\"" + fontSize + "\" color =\"#006EFF\"><b>[SYNTAX]</b><font color =\"#AFBF00\">: ");
                     formattedText.Append(message);
-                    _game.PacketNotifier.NotifyS2C_SystemMessage(formattedText.ToString());
+                    _game.PacketNotifier.NotifyChatPacket(sender, ChatType.Private, formattedText.ToString());
                     break;
                 case DebugMsgType.SYNTAXERROR: // Tag: [ERROR], Color: Red
-                    formattedText.Append("<font size=\"" + fontSize + "\" color =\"#FF0000\"><b>[ERROR]</b><font color =\"#AFBF00\">: ");
                     formattedText.Append("Incorrect command syntax");
-                    _game.PacketNotifier.NotifyS2C_SystemMessage(formattedText.ToString());
+                    _game.PacketNotifier.NotifyChatPacket(sender, ChatType.Private, formattedText.ToString());
                     break;
                 case DebugMsgType.NORMAL: // No tag, no format
-                    _game.PacketNotifier.NotifyS2C_SystemMessage(message);
+                    _game.PacketNotifier.NotifyChatPacket(sender, ChatType.Private, formattedText.ToString());
                     break;
             }
         }

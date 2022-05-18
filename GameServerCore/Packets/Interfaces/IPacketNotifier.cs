@@ -58,11 +58,6 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="grantVis">Whether or not the region should give the region's team vision of enemy units.</param>
         /// <param name="stealthVis">Whether or not invisible units should be visible in the region.</param>
         /// TODO: Implement a Region class so we can easily grab these parameters instead of listing them all in the function.
-        void NotifyAddRegion(uint unitNetId, uint bubbleNetId, TeamId team, Vector2 position, float time, float radius = 0, int regionType = 0, ClientInfo clientInfo = null, IGameObject obj = null, float collisionRadius = 0, float grassRadius = 0, float sizemult = 1.0f, float addsize = 0, bool grantVis = true, bool stealthVis = false);
-        /// <summary>
-        /// Sends a packet to the specified team that a part of the map has changed. Known to be used in League for initializing turret vision and collision.
-        /// </summary>
-        /// <param name="region">Region to add.</param>
         void NotifyAddRegion(IRegion region);
         /// <summary>
         /// Sends a packet to all players with vision of the specified attacker detailing that they have targeted the specified target.
@@ -908,7 +903,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="isGlobal">Whether or not the packet should be sent to all players.</param>
         /// <param name="sourceId">ID of the user who dealt the damage that should receive the packet.</param>
         /// <param name="targetId">ID of the user who is taking the damage that should receive the packet.</param>
-        void NotifyUnitApplyDamage(IAttackableUnit source, IAttackableUnit target, float amount, DamageType type, DamageResultType damagetext, bool isGlobal = true, int sourceId = 0, int targetId = 0);
+        void NotifyUnitApplyDamage(IDamageData damageData, bool isGlobal = true, int sourceId = 0, int targetId = 0);
         /// <summary>
         /// Sends a packet to the specified player detailing that the specified target GameObject's (debug?) path drawing mode has been set to the specified mode.
         /// </summary>
@@ -1014,5 +1009,7 @@ namespace GameServerCore.Packets.Interfaces
         /// TODO: Verify if this is the correct implementation.
         /// TODO: Fix LeaguePackets Typos.
         void NotifyWorld_SendCamera_Server_Acknologment(ClientInfo client, ViewRequest request);
+        public void NotifyChatPacket(ClientInfo sender, ChatType chatType, string message);
+
     }
 }

@@ -246,10 +246,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         /// </summary>
         public virtual void AutoAttackHit(IAttackableUnit target)
         {
-            var damage = Stats.AttackDamage.Total;
+            var rawDamage = Stats.AttackDamage.Total;
             if (IsNextAutoCrit)
             {
-                damage *= Stats.CriticalDamage.Total;
+                rawDamage *= Stats.CriticalDamage.Total;
             }
 
             IDamageData damageData = new DamageData
@@ -257,8 +257,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
                 IsAutoAttack = true,
                 Attacker = this,
                 Target = target,
-                Damage = damage,
-                PostMitigationdDamage = target.Stats.GetPostMitigationDamage(damage, DamageType.DAMAGE_TYPE_PHYSICAL, this),
+                Damage = target.Stats.GetPostMitigationDamage(rawDamage, DamageType.DAMAGE_TYPE_PHYSICAL, this),
+                PreMitigationDamage = rawDamage,
                 DamageSource = DamageSource.DAMAGE_SOURCE_ATTACK,
                 DamageType = DamageType.DAMAGE_TYPE_PHYSICAL,
             };
@@ -351,8 +351,8 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits.AI
         public virtual bool LevelUp(bool force = true)
         {
             Stats.LevelUp();
-            //_game.PacketNotifier.NotifyNPC_LevelUp(this);
-            //_game.PacketNotifier.NotifyOnReplication(this, partial: false);
+            _game.PacketNotifier.NotifyNPC_LevelUp(this);
+            _game.PacketNotifier.NotifyOnReplication(this, partial: false);
             ApiEventManager.OnLevelUp.Publish(this);
             return true;
         }

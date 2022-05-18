@@ -163,14 +163,14 @@ namespace MapScripts.Map1
 
         public virtual void OnMatchStart()
         {
-            NeutralMinionSpawn.InitializeCamps();
+            //NeutralMinionSpawn.InitializeCamps();
             LevelScriptObjects.OnMatchStart();
         }
 
         public void Update(float diff)
         {
             LevelScriptObjects.OnUpdate(diff);
-            NeutralMinionSpawn.OnUpdate(diff);
+            //NeutralMinionSpawn.OnUpdate(diff);
 
             var gameTime = GameTime();
 
@@ -207,7 +207,7 @@ namespace MapScripts.Map1
 
         public void SpawnAllCamps()
         {
-            NeutralMinionSpawn.ForceCampSpawn();
+            //NeutralMinionSpawn.ForceCampSpawn();
         }
 
         public Vector2 GetFountainPosition(TeamId team)

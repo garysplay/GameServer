@@ -24,9 +24,11 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             try
             {
                 var s = arguments.Split(' ');
+                var player = _playerManager.GetPeerInfo(userId);
+
                 if (s.Length < 2)
                 {
-                    ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                    ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.SYNTAXERROR);
                     ShowSyntax();
                     return;
                 }
@@ -37,7 +39,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 {
                     if (s[i].Equals("netid"))
                     {
-                        _bytes.Add(Convert.ToByte(_playerManager.GetPeerInfo(userId).Champion.NetId));
+                        _bytes.Add(Convert.ToByte(player.Champion.NetId));
                     }
                     else
                     {

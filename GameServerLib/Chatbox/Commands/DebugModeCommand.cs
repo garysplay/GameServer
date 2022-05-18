@@ -8,6 +8,7 @@ using log4net;
 using System.Linq;
 using System.Collections.Generic;
 using System.Numerics;
+using GameServerCore.NetInfo;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
 {
@@ -19,6 +20,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         private float lastDrawTime;
         private int _userId;
         private IChampion _userChampion;
+        private ClientInfo player;
         private static readonly Dictionary<uint, Particle> _circleParticles = new Dictionary<uint, Particle>();
         private static readonly Dictionary<uint, List<Particle>> _circleParticlesList = new Dictionary<uint, List<Particle>>();
         private static readonly Dictionary<uint, List<Particle>> _arrowParticlesList = new Dictionary<uint, List<Particle>>();
@@ -41,7 +43,8 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             _userId = userId;
-            _userChampion = _playerManager.GetPeerInfo(userId).Champion;
+            player = _playerManager.GetPeerInfo(userId);
+            _userChampion = player.Champion;
             if (_debugMode != 0)
             {
                 if (_debugMode == 1)
@@ -76,7 +79,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
                 _debugMode = 0;
 
-                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, $"Stopped debugging.");
+                ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.NORMAL, $"Stopped debugging.");
                 _game.PacketNotifier.NotifyRemoveUnitHighlight(userId, _userChampion);
 
                 if (_circleParticles.Count != 0)
@@ -112,7 +115,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
                 if (split.Length < 2 || split.Length > 3)
                 {
-                    ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                    ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.SYNTAXERROR);
                     ShowSyntax();
                 }
                 else if (split[1].Contains("self"))
@@ -147,7 +150,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 }
                 else
                 {
-                    ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                    ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.SYNTAXERROR);
                     ShowSyntax();
                 }
             }
@@ -194,7 +197,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             _logger.Debug($"Started debugging self. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.PathfindingRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.PathfindingRadius + " = " + circlesize);
             var startdebugmsg = $"Started debugging self. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.PathfindingRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.PathfindingRadius + " = " + circlesize;
-            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, startdebugmsg);
+            ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.NORMAL, startdebugmsg);
 
             // Creates a blue flashing highlight around your unit
             _game.PacketNotifier.NotifyCreateUnitHighlight(userId, _userChampion);
@@ -281,7 +284,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             _logger.Debug($"Started debugging " + champions.Count + " champions. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.PathfindingRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.PathfindingRadius + " = " + circlesize);
             var startdebugmsg = $"Started debugging " + champions.Count + " champions. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.PathfindingRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.PathfindingRadius + " = " + circlesize;
-            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, startdebugmsg);
+            ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.NORMAL, startdebugmsg);
 
             // Creates a blue flashing highlight around your unit
             _game.PacketNotifier.NotifyCreateUnitHighlight(userId, _userChampion);
@@ -377,7 +380,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             _logger.Debug($"Started debugging minions. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.PathfindingRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.PathfindingRadius + " = " + circlesize);
             var startdebugmsg = $"Started debugging minions. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.PathfindingRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.PathfindingRadius + " = " + circlesize;
-            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, startdebugmsg);
+            ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.NORMAL, startdebugmsg);
 
             // Creates a blue flashing highlight around your unit
             _game.PacketNotifier.NotifyCreateUnitHighlight(userId, _userChampion);
@@ -474,7 +477,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             _logger.Debug($"Started debugging projectiles. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize);
             var startdebugmsg = $"Started debugging projectiles. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize;
-            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, startdebugmsg);
+            ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.NORMAL, startdebugmsg);
 
             // Creates a blue flashing highlight around your unit
             _game.PacketNotifier.NotifyCreateUnitHighlight(userId, _userChampion);
@@ -601,7 +604,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             _logger.Debug($"Started debugging sectors. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize);
             var startdebugmsg = $"Started debugging sectors. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.CollisionRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.CollisionRadius + " = " + circlesize;
-            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, startdebugmsg);
+            ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.NORMAL, startdebugmsg);
 
             // Creates a blue flashing highlight around your unit
             _game.PacketNotifier.NotifyCreateUnitHighlight(userId, _userChampion);
@@ -693,7 +696,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             _logger.Debug($"Started debugging all. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.PathfindingRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.PathfindingRadius + " = " + circlesize);
             var startdebugmsg = $"Started debugging all. Your Debug Circle Radius: " + "(1 / 100) * " + _userChampion.PathfindingRadius + " = " + "(" + (1f / 100f) + ") * " + _userChampion.PathfindingRadius + " = " + circlesize;
-            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, startdebugmsg);
+            ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.NORMAL, startdebugmsg);
 
             // Creates a blue flashing highlight around your unit
             _game.PacketNotifier.NotifyCreateUnitHighlight(userId, _userChampion);

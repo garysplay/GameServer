@@ -29,10 +29,11 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
             var split = arguments.ToLower().Split(' ');
+            var player = _playerManager.GetPeerInfo(userId);
 
             if (split.Length < 2)
             {
-                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.SYNTAXERROR);
                 ShowSyntax();
             }
             else if (split[1].StartsWith("minions"))
@@ -40,7 +41,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 split[1] = split[1].Replace("minions", "team_").ToUpper();
                 if (!Enum.TryParse(split[1], out TeamId team) || team == TeamId.TEAM_NEUTRAL)
                 {
-                    ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                    ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.SYNTAXERROR);
                     ShowSyntax();
                     return;
                 }
@@ -54,7 +55,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 split[1] = split[1].Replace("champ", "team_").ToUpper();
                 if (!Enum.TryParse(split[1], out TeamId team) || team == TeamId.TEAM_NEUTRAL)
                 {
-                    ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                    ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.SYNTAXERROR);
                     ShowSyntax();
                     return;
                 }
@@ -69,7 +70,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                     }
                     catch (ContentNotFoundException)
                     {
-                        ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR, "Character Name: " + championModel + " invalid.");
+                        ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.SYNTAXERROR, "Character Name: " + championModel + " invalid.");
                         ShowSyntax();
                         return;
                     }
@@ -89,7 +90,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 split[1] = split[1].Replace("region", "team_").ToUpper();
                 if (!Enum.TryParse(split[1], out TeamId team) || team == TeamId.TEAM_NEUTRAL)
                 {
-                    ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                    ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.SYNTAXERROR);
                     ShowSyntax();
                     return;
                 }
@@ -105,7 +106,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
                 }
                 else if (split.Length > 4)
                 {
-                    ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.SYNTAXERROR);
+                    ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.SYNTAXERROR);
                     ShowSyntax();
                     return;
                 }
@@ -145,7 +146,8 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
         public void SpawnChampForTeam(TeamId team, int userId, string model)
         {
-            var championPos = _playerManager.GetPeerInfo(userId).Champion.Position;
+            var player = _playerManager.GetPeerInfo(userId);
+            var championPos = player.Champion.Position;
 
             var runesTemp = new RuneCollection();
             var talents = new TalentInventory();
@@ -175,7 +177,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             Game.ObjectManager.AddObject(c);
 
-            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "Spawned Bot" + clientInfoTemp.Name + " as " + c.Model + " with NetID: " + c.NetId + ".");
+            ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.INFO, "Spawned Bot" + clientInfoTemp.Name + " as " + c.Model + " with NetID: " + c.NetId + ".");
         }
 
         public void SpawnRegionForTeam(TeamId team, int userId, float radius = 250.0f, float lifetime = -1.0f)

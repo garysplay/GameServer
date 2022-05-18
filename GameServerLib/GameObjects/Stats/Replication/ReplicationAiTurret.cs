@@ -11,9 +11,42 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
         }
         public override void Update()
         {
+            //?
+            UpdateUint(1103626240, 1, 0);
+            //Bonus attack speed
+            UpdateUint(1065353216, 1, 3);
+
+            //Curent-Health
+            UpdateFloat(Stats.CurrentHealth, 1, 8);
+
+            //Max-Health
+            UpdateFloat(Stats.HealthPoints.Total, 1, 9);
+
+            //?
+            UpdateUint(32775, 1, 10);
+            //Double-Check
+            UpdateFloat(Stats.HealthRegeneration.Total, 1, 14);
+            
+            //Size
+            UpdateFloat(1, 3, 3);
+
+            UpdateBool(true, 1, 1);
+            UpdateBool(false, 1, 2);
+            UpdateBool(false, 1, 4);
+            UpdateBool(false, 1, 5);
+            UpdateBool(false, 1, 6);
+            UpdateBool(false, 1, 7);
+            UpdateBool(false, 1, 11);
+            UpdateBool(false, 1, 12);
+            //Targetability
+            UpdateBool(Stats.IsTargetable, 1, 13);
+            UpdateBool(false, 1, 15);
+            UpdateBool(false, 3, 0);
+            UpdateBool(false, 3, 1);
+            UpdateBool(false, 3, 2);
             // UpdateFloat(Stats.ManaPoints.Total, 1, 0); //mMaxMP
             // UpdateFloat(Stats.CurrentMana, 1, 1); //mMP
-            UpdateUint((uint)Stats.ActionState, 1, 2); //ActionState
+            /*UpdateUint((uint)Stats.ActionState, 1, 2); //ActionState
             UpdateBool(Stats.IsMagicImmune, 1, 3); //MagicImmune
             UpdateBool(Stats.IsInvulnerable, 1, 4); //IsInvulnerable
             UpdateBool(Stats.IsPhysicalImmune, 1, 5); //IsPhysicalImmune
@@ -33,7 +66,7 @@ namespace LeagueSandbox.GameServer.GameObjects.Stats
             UpdateFloat(Stats.MoveSpeed.Total, 3, 4); //mMoveSpeed
             UpdateFloat(Stats.Size.Total, 3, 5); //mSkinScaleCoef(mistyped as mCrit)
             UpdateBool(Stats.IsTargetable, 5, 0); //mIsTargetable
-            UpdateUint((uint)Stats.IsTargetableToTeam, 5, 1); //mIsTargetableToTeamFlags
+            UpdateUint((uint)Stats.IsTargetableToTeam, 5, 1); //mIsTargetableToTeamFlags*/
         }
     }
 }

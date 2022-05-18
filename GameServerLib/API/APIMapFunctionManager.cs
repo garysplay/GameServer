@@ -85,7 +85,8 @@ namespace LeagueSandbox.GameServer.API
         /// <returns></returns>
         public static IInhibitor CreateInhibitor(string name, string model, Vector2 position, TeamId team, LaneID lane, int inhibRadius, int sightRange)
         {
-            return new Inhibitor(_game, model, lane, team, inhibRadius, position, sightRange, Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000);
+            var hash = Crc32Algorithm.Compute(Encoding.UTF8.GetBytes(name)) | 0xFF000000;
+            return new Inhibitor(_game, model, lane, team, inhibRadius, position, sightRange, hash);
         }
 
         public static MapObject CreateLaneMinionSpawnPos(string name, Vector3 position)

@@ -48,7 +48,7 @@ namespace GameServerCore.Domain
         IPassiveData PassiveData { get; }
         float PathfindingCollisionRadius { get; }
         float PerceptionBubbleRadius { get; }
-        bool ShouldFaceTarget { get; }
+        bool ShouldFaceTarget { get; set; }
         float SpellBlock { get; }
         float SpellBlockPerLevel { get; }
         string[] SpellNames { get; }

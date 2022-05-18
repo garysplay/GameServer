@@ -1,3 +1,4 @@
+using GameServerCore;
 using System;
 
 namespace LeagueSandbox.GameServer.Chatbox.Commands
@@ -11,18 +12,21 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
         public override string Command => "help";
         public override string Syntax => $"{Command}";
 
+        private IPlayerManager _playerManager;
         public HelpCommand(ChatCommandManager chatCommandManager, Game game)
             : base(chatCommandManager, game)
         {
-
+            _playerManager = game.PlayerManager;
         }
 
         public override void Execute(int userId, bool hasReceivedArguments, string arguments = "")
         {
+            var player = _playerManager.GetPeerInfo(userId);
+
             if (!Game.Config.ChatCheatsEnabled)
             {
                 var msg = "[LS] Chat commands are disabled in this game.";
-                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, msg);
+                ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.INFO, msg);
                 return;
             }
 
@@ -31,7 +35,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
             var lastCommandString = "";
             var isNewMessage = false;
 
-            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "List of available commands: ");
+            ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.INFO, "List of available commands: ");
 
             foreach (var command in commands)
             {
@@ -47,7 +51,7 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
                 if(commandsString.Length + lastCommandString.Length >= MESSAGE_MAX_SIZE)
                 {
-                    ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, commandsString);
+                    ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.NORMAL, commandsString);
                     commandsString = "";
                     isNewMessage = true;
                 }
@@ -59,10 +63,10 @@ namespace LeagueSandbox.GameServer.Chatbox.Commands
 
             if (commandsString.Length != 0)
             {
-                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.NORMAL, commandsString);
+                ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.NORMAL, commandsString);
             }
 
-            ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, "There are " + commands.Count + " commands");
+            ChatCommandManager.SendDebugMsgFormatted(player, DebugMsgType.INFO, "There are " + commands.Count + " commands");
         }
     }
 }

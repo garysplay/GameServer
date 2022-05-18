@@ -24,6 +24,7 @@ using GameServerCore.Handlers;
 using LeagueSandbox.GameServer.Handlers;
 using GameServerCore.Packets.PacketDefinitions;
 using GameServerCore.Packets.PacketDefinitions.Requests;
+using GameServerCore.NetInfo;
 
 namespace LeagueSandbox.GameServer
 {
@@ -227,7 +228,7 @@ namespace LeagueSandbox.GameServer
         /// <summary>
         /// Enables or disables the hot reloading of scripts. Used only for development.
         /// </summary>
-        public void EnableHotReload(bool status)
+        public void EnableHotReload(bool status, ClientInfo client)
         {
             string scriptsPath = Config.ContentManager.ContentPath;
 
@@ -235,7 +236,7 @@ namespace LeagueSandbox.GameServer
             {
                 // Disable raising events to avoid triggering LoadScripts() many times in a row after the first event
                 ScriptsHotReloadWatcher.EnableRaisingEvents = false;
-                ChatCommandManager.SendDebugMsgFormatted(DebugMsgType.INFO, LoadScripts() ? "Scripts reloaded." : "Scripts failed to reload.");
+                ChatCommandManager.SendDebugMsgFormatted(client, DebugMsgType.INFO, LoadScripts() ? "Scripts reloaded." : "Scripts failed to reload.");
                 ScriptsHotReloadWatcher.EnableRaisingEvents = true;
             }
 
