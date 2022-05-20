@@ -26,6 +26,7 @@ namespace GameServerLib.GameObjects.AttackableUnits
         /// Source of the damage.
         /// </summary>
         public DamageSource DamageSource { get; set; }
+        public DamageResultType DamageResultType { get; set; } = DamageResultType.RESULT_NORMAL;
         /// <summary>
         /// The raw ammount of damage to be inflicted (Pre-mitigated damage)
         /// </summary>

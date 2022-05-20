@@ -26,6 +26,7 @@ namespace GameServerCore.Domain
         /// Source of the damage.
         /// </summary>
         DamageSource DamageSource { get; }
+        DamageResultType DamageResultType { get; }
         /// <summary>
         /// The raw ammount of damage to be inflicted (Pre-Mitigation damage)
         /// </summary>

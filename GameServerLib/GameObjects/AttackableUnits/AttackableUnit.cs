@@ -854,84 +854,6 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                             Stats.SetActionState(ActionState.CAN_MOVE, enabled);
                             break;
                         }
-                        case StatusFlags.CanMoveEver:
-                        {
-                            Stats.SetActionState(ActionState.CAN_NOT_MOVE, !enabled);
-                            break;
-                        }
-                        case StatusFlags.Charmed:
-                        {
-                            Stats.SetActionState(ActionState.CHARMED, enabled);
-                            break;
-                        }
-                        // DisableAmbientGold
-                        case StatusFlags.Feared:
-                        {
-                            Stats.SetActionState(ActionState.FEARED, enabled);
-                            // TODO: Verify
-                            Stats.SetActionState(ActionState.IS_FLEEING, enabled);
-                            break;
-                        }
-                        case StatusFlags.ForceRenderParticles:
-                        {
-                            Stats.SetActionState(ActionState.FORCE_RENDER_PARTICLES, enabled);
-                            break;
-                        }
-                        // GhostProof
-                        case StatusFlags.Ghosted:
-                        {
-                            Stats.SetActionState(ActionState.IS_GHOSTED, enabled);
-                            break;
-                        }
-                        // IgnoreCallForHelp
-                        // Immovable
-                        // Invulnerable
-                        // MagicImmune
-                        case StatusFlags.NearSighted:
-                        {
-                            Stats.SetActionState(ActionState.IS_NEAR_SIGHTED, enabled);
-                            break;
-                        }
-                        // Netted
-                        case StatusFlags.NoRender:
-                        {
-                            Stats.SetActionState(ActionState.NO_RENDER, enabled);
-                            break;
-                        }
-                        // PhysicalImmune
-                        case StatusFlags.RevealSpecificUnit:
-                        {
-                            Stats.SetActionState(ActionState.REVEAL_SPECIFIC_UNIT, enabled);
-                            break;
-                        }
-                        // Rooted
-                        // Silenced
-                        case StatusFlags.Sleep:
-                        {
-                            Stats.SetActionState(ActionState.IS_ASLEEP, enabled);
-                            break;
-                        }
-                        case StatusFlags.Stealthed:
-                        {
-                            Stats.SetActionState(ActionState.STEALTHED, enabled);
-                            break;
-                        }
-                        // SuppressCallForHelp
-                        case StatusFlags.Targetable:
-                        {
-                            Stats.IsTargetable = enabled;
-                            // TODO: Refactor this.
-                            if (CharData.IsUseable)
-                            {
-                                Stats.SetActionState(ActionState.TARGETABLE, enabled);
-                            }
-                            break;
-                        }
-                        case StatusFlags.Taunted:
-                        {
-                            Stats.SetActionState(ActionState.TAUNTED, enabled);
-                            break;
-                        }
                     }
                 }
             }
@@ -947,11 +869,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                 || Status.HasFlag(StatusFlags.Suppressed)
                 || Status.HasFlag(StatusFlags.Taunted))
             {
-                Stats.SetActionState(ActionState.CAN_NOT_MOVE, true);
+                Stats.SetActionState(ActionState.CAN_MOVE, false);
             }
-            else if (Stats.GetActionState(ActionState.CAN_NOT_MOVE))
+            else
             {
-                Stats.SetActionState(ActionState.CAN_NOT_MOVE, false);
+                Stats.SetActionState(ActionState.CAN_MOVE, true);
             }
 
             if (!(Status.HasFlag(StatusFlags.CanAttack)
@@ -964,11 +886,11 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
                     && !Status.HasFlag(StatusFlags.Stunned)
                     && !Status.HasFlag(StatusFlags.Suppressed)))
             {
-                Stats.SetActionState(ActionState.CAN_NOT_ATTACK, true);
+                Stats.SetActionState(ActionState.CAN_ATTACK, false);
             }
-            else if (Stats.GetActionState(ActionState.CAN_NOT_ATTACK))
+            else
             {
-                Stats.SetActionState(ActionState.CAN_NOT_ATTACK, false);
+                Stats.SetActionState(ActionState.CAN_ATTACK, true);
             }
         }
 
