@@ -2,13 +2,13 @@
 {
     public enum SpellSlotType
     {
-        SpellSlots,
-        SummonerSpellSlots = 4,
+        SummonerSpellSlots,
+        SpellSlots = 2,
         InventorySlots = 6,
         BluePillSlot = 13,
         TempItemSlot = 14,
         RuneSlots = 15,
-        ExtraSlots = 45,
+        ExtraSlots = 42,
         RespawnSpellSlot = 61,
         UseSpellSlot = 62,
         PassiveSpellSlot = 63,

@@ -1898,7 +1898,10 @@ namespace PacketDefinitions420
             {
                 foreach (var target in s.CastInfo.Targets)
                 {
-                    castInfo.TargetsInfo.Add(new CastTargetInfo { HitResult = (byte)target.HitResult, UnitNetID = target.Unit.NetId, Position = target.Unit.GetPosition3D() });
+                    if(target.Unit != null)
+                    {
+                        castInfo.TargetsInfo.Add(new CastTargetInfo { HitResult = (byte)target.HitResult, UnitNetID = target.Unit.NetId, Position = target.Unit.GetPosition3D() });
+                    }
                 }
             }
 
@@ -3643,7 +3646,7 @@ namespace PacketDefinitions420
             var damagePacket = new S2C_UnitApplyDamage
             {
                 SenderNetID = damageData.Target.NetId,
-                DamageResultType = (byte)damageData.DamageType,
+                DamageResultType = (byte)damageData.DamageResultType,
                 TargetNetID = damageData.Target.NetId,
                 SourceNetID = damageData.Attacker.NetId,
                 Damage = damageData.Damage
