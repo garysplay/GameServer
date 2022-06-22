@@ -85,6 +85,10 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         /// </summary>
         private List<float> _slows = new List<float>();
         /// <summary>
+        /// The true movement speed of an unit, after mitigation and softcaps
+        /// </summary>
+        private float _trueMoveSpeed;
+        /// <summary>
         /// Waypoints that make up the path a game object is walking in.
         /// </summary>
         public List<Vector2> Waypoints { get; protected set; }
@@ -111,19 +115,30 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
         public AttackableUnit(
             Game game,
             string model,
-            IStats stats,
             int collisionRadius = 40,
             Vector2 position = new Vector2(),
             int visionRadius = 0,
             uint netId = 0,
-            TeamId team = TeamId.TEAM_NEUTRAL
+            TeamId team = TeamId.TEAM_NEUTRAL,
+            IStats stats = null
         ) : base(game, position, collisionRadius, collisionRadius, visionRadius, netId, team)
 
         {
             Logger = LoggerProvider.GetLogger();
             Model = model;
+
             CharData = _game.Config.ContentManager.GetCharData(Model);
-            Stats = stats;
+            if (stats == null)
+            {
+                var charStats = new Stats.Stats();
+                charStats.LoadStats(CharData);
+                Stats = charStats;
+            }
+            else
+            {
+                Stats = stats;
+            }
+
             Waypoints = new List<Vector2> { Position };
             CurrentWaypoint = new KeyValuePair<int, Vector2>(1, Position);
             Status = StatusFlags.CanAttack | StatusFlags.CanCast | StatusFlags.CanMove | StatusFlags.CanMoveEver | StatusFlags.Targetable;
@@ -135,6 +150,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             ParentBuffs = new Dictionary<string, IBuff>();
             BuffList = new List<IBuff>();
             IconInfo = new IconInfo(this);
+            CalculateTrueMoveSpeed();
         }
 
         /// <summary>
@@ -466,6 +482,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
 
             Stats.AddModifier(statModifier);
+            CalculateTrueMoveSpeed();
         }
 
         /// <summary>
@@ -481,6 +498,7 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             }
 
             Stats.RemoveModifier(statModifier);
+            CalculateTrueMoveSpeed();
         }
 
         /// <summary>
@@ -831,20 +849,23 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             return GetTrueMoveSpeed();
         }
 
-        public float GetTrueMoveSpeed()
+        /// <summary>
+        /// Processes the unit's move speed
+        /// </summary>
+        public void CalculateTrueMoveSpeed()
         {
-            float speed = Stats.MoveSpeed.Total;
-            if (speed > 490)
+            float speed = Stats.MoveSpeed.BaseValue + Stats.MoveSpeed.FlatBonus;
+            if (speed > 490.0f)
             {
-                speed = speed * 0.5f + 230;
+                speed = speed * 0.5f + 230.0f;
             }
-            else if (speed >= 415)
+            else if (speed >= 415.0f)
             {
-                speed = speed * 0.8f + 83;
+                speed = speed * 0.8f + 83.0f;
             }
-            else if (speed < 220)
+            else if (speed < 220.0f)
             {
-                speed = speed * 0.5f + 110;
+                speed = speed * 0.5f + 110.0f;
             }
 
             speed = speed * (1 + Stats.MoveSpeed.PercentBonus) * (1 + Stats.MultiplicativeSpeedBonus);
@@ -852,10 +873,21 @@ namespace LeagueSandbox.GameServer.GameObjects.AttackableUnits
             if (_slows.Count > 0)
             {
                 //Only takes into account the highest slow
-                speed *= 1 - (_slows.Max(z => z) * (1 - Stats.SlowResistPercent));
+                speed *= 1 + _slows.Max(z => z) * (1 - Stats.SlowResistPercent);
             }
 
-            return speed;
+            _trueMoveSpeed = speed;
+        }
+
+        public float GetTrueMoveSpeed()
+        {
+            return _trueMoveSpeed;
+        }
+
+        public void ClearSlows()
+        {
+            _slows.Clear();
+            CalculateTrueMoveSpeed();
         }
 
         /// <summary>
