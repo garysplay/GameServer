@@ -1428,7 +1428,7 @@ namespace PacketDefinitions420
                         AssistCount = 0
                         //TODO: Inplement assists when an assist system gets put in place
                     };
-                    NotifyS2C_OnEventWorld(annoucementDeath, inhibitor.NetId);
+                    NotifyS2C_OnEventWorld(annoucementDeath, inhibitor);
 
                     NotifyBuilding_Die(deathData);
 
@@ -1438,7 +1438,7 @@ namespace PacketDefinitions420
                     {
                         OtherNetID = inhibitor.NetId
                     };
-                    NotifyS2C_OnEventWorld(annoucementRespawn, inhibitor.NetId);
+                    NotifyS2C_OnEventWorld(annoucementRespawn, inhibitor);
                     break;
             }
             NotifyDampenerSwitchStates(inhibitor);
@@ -2120,22 +2120,44 @@ namespace PacketDefinitions420
         /// <param name="goldFromKill">Amount of gold the killer received.</param>
         public void NotifyNPC_Hero_Die(IDeathData deathData)
         {
-            NotifyS2C_UpdateDeathTimer(deathData.Unit as IChampion);
+            var champ = deathData.Unit as IChampion;
+
+            NotifyS2C_UpdateDeathTimer(champ);
+
+            uint killerNetID = deathData.Killer.NetId;
 
             var cd = new NPC_Hero_Die
             {
                 SenderNetID = deathData.Unit.NetId,
                 DeathData = new DeathData
                 {
-                    KillerNetID = deathData.Killer.NetId,
+                    KillerNetID = killerNetID,
                     DieType = deathData.DieType,
                     DamageType = (byte)deathData.DamageType,
                     DamageSource = (byte)deathData.DamageSource,
                     BecomeZombie = deathData.BecomeZombie,
-                    DeathDuration = (deathData.Unit as IChampion).RespawnTimer / 1000f
+                    DeathDuration = champ.RespawnTimer / 1000f
                 }
             };
             _packetHandlerManager.BroadcastPacket(cd.GetBytes(), Channel.CHL_S2C);
+
+            NotifyNPC_Die_EventHistory(champ, killerNetID);
+        }
+        public void NotifyNPC_Die_EventHistory(IChampion ch, uint killerNetID = 0)
+        {
+            var history = new NPC_Die_EventHistory();
+            history.KillerNetID = killerNetID;
+            history.Duration = 0;
+            if(ch.EventHistory.Count > 0)
+            {
+                float firstTimestamp = ch.EventHistory[0].Timestamp;
+                float lastTimestamp = ch.EventHistory[ch.EventHistory.Count - 1].Timestamp;
+                history.Duration = lastTimestamp - firstTimestamp; // ?
+            }
+            history.EventSourceType = 0; //TODO: Confirm that it is always zero
+            history.Entries = ch.EventHistory;
+            
+            _packetHandlerManager.SendPacket((int)ch.GetPlayerId(), history.GetBytes(), Channel.CHL_S2C);
         }
         /// <summary>
         /// Sends a packet to all players with vision of the specified AttackableUnit detailing that the attacker has abrubtly stopped their attack (can be a spell or auto attack, although internally AAs are also spells).
@@ -2723,15 +2745,15 @@ namespace PacketDefinitions420
         /// <param name="playerNetId">NetID to send the packet to.</param>
         /// <param name="targetNetId">NetID of the target referenced by the tip.</param>
         /// TODO: tipCommand should be a lib/core enum that gets translated into a league version specific packet enum as it may change over time.
-        public void NotifyS2C_HandleTipUpdatep(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId, uint targetNetId)
+        public void NotifyS2C_HandleTipUpdate(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId, uint targetNetId)
         {
             var packet = new S2C_HandleTipUpdate
             {
                 SenderNetID = playerNetId,
                 TipCommand = tipCommand,
                 TipImagePath = imagePath,
-                TipName = title,
-                TipOther = text,
+                TipName = text,
+                TipOther = title,
                 TipID = targetNetId
             };
             _packetHandlerManager.SendPacket(userId, packet.GetBytes(), Channel.CHL_S2C);
@@ -2914,12 +2936,27 @@ namespace PacketDefinitions420
             }
         }
 
+        public void NotifyOnEvent(IEvent gameEvent, IAttackableUnit sender = null)
+        {
+            var packet = new OnEvent
+            {
+                Event = gameEvent
+            };
+
+            if(sender != null)
+            {
+                packet.SenderNetID = sender.NetId;
+            }
+
+            _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
+        }
+
         /// <summary>
         /// Sends a packet to all players that announces a specified message (ex: "Minions have spawned.")
         /// </summary>
         /// <param name="eventId">Id of the event to happen.</param>
         /// <param name="sourceNetID">Not yet know it's use.</param>
-        public void NotifyS2C_OnEventWorld(IEvent mapEvent, uint sourceNetId = 0)
+        public void NotifyS2C_OnEventWorld(IEvent mapEvent, IAttackableUnit source = null)
         {
             if (mapEvent == null)
             {
@@ -2930,9 +2967,14 @@ namespace PacketDefinitions420
                 EventWorld = new EventWorld
                 {
                     Event = mapEvent,
-                    Source = sourceNetId
                 }
             };
+
+            if(source != null)
+            {
+                packet.EventWorld.Source = source.NetId;
+            }
+
             _packetHandlerManager.BroadcastPacket(packet.GetBytes(), Channel.CHL_S2C);
         }
 
@@ -3831,8 +3873,6 @@ namespace PacketDefinitions420
         {
             var xp = new UnitAddEXP
             {
-                // TODO: Verify if this is correct. Usually 0.
-                SenderNetID = champion.NetId,
                 TargetNetID = champion.NetId,
                 ExpAmmount = experience
             };
@@ -3875,7 +3915,7 @@ namespace PacketDefinitions420
         {
             var damagePacket = new UnitApplyDamage
             {
-                SenderNetID = source.NetId,
+                SenderNetID = target.NetId,
                 DamageResultType = (byte)damagetext,
                 DamageType = (byte)type,
                 TargetNetID = target.NetId,

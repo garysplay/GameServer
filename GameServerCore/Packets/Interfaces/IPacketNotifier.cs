@@ -583,7 +583,7 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="playerNetId">NetID to send the packet to.</param>
         /// <param name="targetNetId">NetID of the target referenced by the tip.</param>
         /// TODO: tipCommand should be a lib/core enum that gets translated into a league version specific packet enum as it may change over time.
-        void NotifyS2C_HandleTipUpdatep(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId, uint targetNetId);
+        void NotifyS2C_HandleTipUpdate(int userId, string title, string text, string imagePath, byte tipCommand, uint playerNetId, uint targetNetId);
         /// <summary>
         /// Sends a packet to all players detailing the stats (CS, kills, deaths, etc) of the player who owns the specified Champion.
         /// </summary>
@@ -621,12 +621,13 @@ namespace GameServerCore.Packets.Interfaces
         /// <param name="o">GameObject coming into vision.</param>
         /// <param name="userId">User to send the packet to.</param>
         void NotifyS2C_OnEnterTeamVisibility(IGameObject o, TeamId team, int userId = 0);
+        void NotifyOnEvent(IEvent gameEvent, IAttackableUnit sender = null);
         /// <summary>
         /// Sends a packet to all players that announces a specified message (ex: "Minions have spawned.")
         /// </summary>
         /// <param name="eventId">Id of the event to happen.</param>
         /// <param name="sourceNetID">Not yet know it's use.</param>
-        void NotifyS2C_OnEventWorld(IEvent mapEvent, uint sourceNetId = 0);
+        void NotifyS2C_OnEventWorld(IEvent mapEvent, IAttackableUnit source = null);
         /// <summary>
         /// Sends a packet to either all players with vision of the specified GameObject or a specified user.
         /// The packet contains details of which team lost visibility of the GameObject and should only be used after it is first initialized into vision (NotifyEnterVisibility).

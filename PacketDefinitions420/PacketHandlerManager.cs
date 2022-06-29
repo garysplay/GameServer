@@ -166,7 +166,6 @@ namespace PacketDefinitions420
                 {
                     temp = source;
                 }
-
                 return _peers[playerId].Send((byte)channelNo, new LENet.Packet(temp, flag)) == 0;
             }
             return false;
@@ -227,13 +226,11 @@ namespace PacketDefinitions420
             if (channelId == Channel.CHL_COMMUNICATION || channelId == Channel.CHL_LOADING_SCREEN)
             {
                 var loadScreenPacketId = (LoadScreenPacketID)reader.ReadByte();
-
                 convertor = GetConvertor(loadScreenPacketId);
             }
             else
             {
                 var gamePacketId = (GamePacketID)reader.ReadByte();
-
                 convertor = GetConvertor(gamePacketId, channelId);
 
                 switch (gamePacketId)
@@ -276,7 +273,7 @@ namespace PacketDefinitions420
             if (peerInfo != null)
             {
                 var annoucement = new OnLeave { OtherNetID = peerInfo.Champion.NetId };
-                _game.PacketNotifier.NotifyS2C_OnEventWorld(annoucement, peerInfo.Champion.NetId);
+                _game.PacketNotifier.NotifyS2C_OnEventWorld(annoucement, peerInfo.Champion);
                 peerInfo.IsDisconnected = true;
             }
             

@@ -34,7 +34,7 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                     peerInfo.IsDisconnected = false;
 
                     var announcement = new OnReconnect { OtherNetID = peerInfo.Champion.NetId };
-                    _game.PacketNotifier.NotifyS2C_OnEventWorld(announcement, peerInfo.Champion.NetId);
+                    _game.PacketNotifier.NotifyS2C_OnEventWorld(announcement, peerInfo.Champion);
                 }
 
                 SyncTime(userId);
@@ -68,13 +68,13 @@ namespace LeagueSandbox.GameServer.Packets.PacketHandlers
                         }
 
                         // TODO: send this in one place only
-                        _game.PacketNotifier.NotifyS2C_HandleTipUpdatep((int)player.Item2.PlayerId, "Welcome to League Sandbox!",
+                        _game.PacketNotifier.NotifyS2C_HandleTipUpdate((int)player.Item2.PlayerId, "Welcome to League Sandbox!",
                             "This is a WIP project.", "", 0, player.Item2.Champion.NetId,
                             _game.NetworkIdManager.GetNewNetId());
-                        _game.PacketNotifier.NotifyS2C_HandleTipUpdatep((int)player.Item2.PlayerId, "Server Build Date",
+                        _game.PacketNotifier.NotifyS2C_HandleTipUpdate((int)player.Item2.PlayerId, "Server Build Date",
                             ServerContext.BuildDateString, "", 0, player.Item2.Champion.NetId,
                             _game.NetworkIdManager.GetNewNetId());
-                        _game.PacketNotifier.NotifyS2C_HandleTipUpdatep((int)player.Item2.PlayerId, "Your Champion:",
+                        _game.PacketNotifier.NotifyS2C_HandleTipUpdate((int)player.Item2.PlayerId, "Your Champion:",
                             player.Item2.Champion.Model, "", 0, player.Item2.Champion.NetId,
                             _game.NetworkIdManager.GetNewNetId());
 
