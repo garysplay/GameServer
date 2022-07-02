@@ -78,7 +78,7 @@ namespace PacketDefinitions420
         {
             return new MovementDataStop
             {
-                SyncID = (int)o.SyncId,
+                SyncID = Environment.TickCount,
                 Position = o.Position,
                 Forward = new Vector2(o.Direction.X, o.Direction.Z)
             };
@@ -92,7 +92,7 @@ namespace PacketDefinitions420
         {
             return new MovementDataNone
             {
-                SyncID = (int)o.SyncId
+                SyncID = 0 // Always zero in replays
             };
         }
 
@@ -101,7 +101,7 @@ namespace PacketDefinitions420
             var currentWaypoints = new List<Vector2>(unit.Waypoints);
             currentWaypoints[0] = unit.Position;
 
-            int count = 2 + ((currentWaypoints.Count - 1) - unit.CurrentWaypoint.Key);
+            int count = 2 + ((currentWaypoints.Count - 1) - unit.CurrentWaypointKey);
             if (count >= 2)
             {
                 currentWaypoints.RemoveRange(1, currentWaypoints.Count - count);
@@ -139,7 +139,7 @@ namespace PacketDefinitions420
 
             return new MovementDataNormal
             {
-                SyncID = unit.SyncId,
+                SyncID = Environment.TickCount,
                 TeleportNetID = unit.NetId,
                 HasTeleportID = useTeleportID,
                 TeleportID = useTeleportID ? unit.TeleportID : (byte)0,
@@ -184,7 +184,7 @@ namespace PacketDefinitions420
 
             return new MovementDataWithSpeed
             {
-                SyncID = unit.SyncId,
+                SyncID = Environment.TickCount,
                 TeleportNetID = unit.NetId,
                 HasTeleportID = useTeleportID,
                 TeleportID = useTeleportID ? unit.TeleportID : (byte)0,
