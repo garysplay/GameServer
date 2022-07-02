@@ -23,7 +23,7 @@ namespace Buffs
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        IObjAiBase Owner;
+        IObjAIBase Owner;
         public ISpellSector DRMundoWAOE;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {

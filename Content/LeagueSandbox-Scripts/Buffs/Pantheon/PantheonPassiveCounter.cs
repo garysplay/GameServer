@@ -27,7 +27,7 @@ namespace Buffs
 
         ISpell Spell;
 		int counter;
-		IObjAiBase Owner;
+		IObjAIBase Owner;
         IAttackableUnit Target;
 		IBuff thisBuff;
         bool didcast = false;

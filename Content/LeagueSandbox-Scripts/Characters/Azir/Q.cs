@@ -18,7 +18,7 @@ namespace Spells
     public class AzirQ: ISpellScript
     {
 		ISpell Spell;
-		IObjAiBase Owner;
+		IObjAIBase Owner;
 		private readonly IMinion Soldier = Spells.AzirW.Soldier;
 
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
@@ -27,7 +27,7 @@ namespace Spells
             // TODO
         };
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
             Spell = spell;
             Owner = spell.CastInfo.Owner;
@@ -38,11 +38,11 @@ namespace Spells
             SealSpellSlot(Owner, SpellSlotType.SpellSlots, 0, SpellbookType.SPELLBOOK_CHAMPION, true);
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {       
         }
 
@@ -56,7 +56,7 @@ namespace Spells
         }
 		public void OnMoveEnd(IAttackableUnit owner)
         {
-            //if (owner is IObjAiBase c)
+            //if (owner is IObjAIBase c)
             //{
                 //StopAnimation(c, "Spell4",true,true,true);				    
             //}

@@ -22,7 +22,7 @@ namespace Buffs
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
         IBuff thisBuff;
-        IObjAiBase Unit;
+        IObjAIBase Unit;
         IParticle p;
 		ISpell ownerSpell;
         IParticle p2;
@@ -30,7 +30,7 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             thisBuff = buff;
-            if(unit is IObjAiBase ai)
+            if(unit is IObjAIBase ai)
             {
                 Unit = ai;
 				SealSpellSlot(ai, SpellSlotType.SpellSlots, 1, SpellbookType.SPELLBOOK_CHAMPION, true);
@@ -49,7 +49,7 @@ namespace Buffs
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-			if(unit is IObjAiBase ai)
+			if(unit is IObjAIBase ai)
             {
                 Unit = ai;
 				//ApiEventManager.OnLaunchAttack.RemoveListener(this);

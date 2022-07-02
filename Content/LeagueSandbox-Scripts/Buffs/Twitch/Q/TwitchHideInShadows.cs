@@ -27,14 +27,14 @@ namespace Buffs
         IParticle pbuff2;
         IBuff thisBuff;
 		ISpell Spell;
-		IObjAiBase owner;
+		IObjAIBase owner;
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
 			Spell = ownerSpell;
             thisBuff = buff;
 			owner = ownerSpell.CastInfo.Owner as IChampion;
-			if (unit is IObjAiBase ai)
+			if (unit is IObjAIBase ai)
             {
 			StatsModifier.MoveSpeed.PercentBonus += 0.1f;
 			unit.AddStatModifier(StatsModifier);
@@ -64,7 +64,7 @@ namespace Buffs
 				ApiEventManager.OnPreAttack.RemoveListener(this);
                 ApiEventManager.OnLaunchAttack.RemoveListener(this);
             }
-			if (unit is IObjAiBase ai)
+			if (unit is IObjAIBase ai)
             {
 				AddBuff("TwitchHideInShadowsBuff", 5f, 1, Spell, ai, ai);
 				AddParticle(ai, null, "Twitch_Base_Q_Invisiible_Outro", ai.Position, lifetime: buff.Duration);

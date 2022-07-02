@@ -23,7 +23,7 @@ namespace CharScripts
     {
         ISpell Spell;
 		IAttackableUnit Target;
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
 
         {
             Spell = spell;
@@ -48,7 +48,7 @@ namespace CharScripts
 				Target.TakeDamage(owner, Edamage, DamageType.DAMAGE_TYPE_PHYSICAL, DamageSource.DAMAGE_SOURCE_PERIODIC, false);
             }
         }       
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
         public void OnUpdate(float diff)

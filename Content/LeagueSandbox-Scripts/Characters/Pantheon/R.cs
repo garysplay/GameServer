@@ -20,17 +20,17 @@ namespace Spells
             ChannelDuration = 2f,
         };
 
-        IObjAiBase Owner;
+        IObjAIBase Owner;
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             Owner = owner;
         }
@@ -76,17 +76,17 @@ namespace Spells
             ChannelDuration = 2f,
         };
 
-        IObjAiBase Owner;
+        IObjAIBase Owner;
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             Owner = owner;
         }
@@ -112,7 +112,7 @@ namespace Spells
             var spellpos = new Vector2(spell.CastInfo.TargetPositionEnd.X, spell.CastInfo.TargetPositionEnd.Z);
             AddParticle(Owner, null, "Pantheon_Base_R_aoe_explosion.troy", spellpos);
             Owner.TeleportTo(spellpos.X, spellpos.Y);
-			if (Owner is IObjAiBase c)
+			if (Owner is IObjAIBase c)
             {
                 var units = GetUnitsInRange(c.Position, 550f, true);
                 for (int i = 0; i < units.Count; i++)

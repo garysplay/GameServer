@@ -17,7 +17,7 @@ namespace Spells
 {
     public class slashCast: ISpellScript
     {
-        IObjAiBase Owner;
+        IObjAIBase Owner;
 		IParticle P;
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
@@ -29,15 +29,15 @@ namespace Spells
         };
         public ISpellSector AOE;
 		public List<IAttackableUnit> UnitsHit = new List<IAttackableUnit>();
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             UnitsHit.Clear();
             SetStatus(owner, StatusFlags.Ghosted, true);			

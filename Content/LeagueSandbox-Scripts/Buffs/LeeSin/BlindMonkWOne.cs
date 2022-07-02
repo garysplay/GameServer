@@ -21,7 +21,7 @@ namespace Buffs
         public IStatsModifier StatsModifier { get; private set; }
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-			if(unit is IObjAiBase ai)
+			if(unit is IObjAIBase ai)
             {
 			ai.SetSpell("BlindMonkWTwo", 1, true); 
 			}

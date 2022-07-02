@@ -19,18 +19,18 @@ namespace Spells
         {
 
         };
-        IObjAiBase daowner;
+        IObjAIBase daowner;
         ISpell daspell;
 		IAttackableUnit Target;
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
 			Target = target;
             daspell = spell;
@@ -43,11 +43,11 @@ namespace Spells
             AddBuff("CursedTouch", 4f, 1, daspell, Target, spell.CastInfo.Owner);
         }
 
-        private void SpellCast(IObjAiBase owner, int v1, SpellSlotType extraSlots, bool v2, IAttackableUnit target, Vector2 position)
+        private void SpellCast(IObjAIBase owner, int v1, SpellSlotType extraSlots, bool v2, IAttackableUnit target, Vector2 position)
         {
         }
 
-        private void AddParticleTarget(IObjAiBase owner, IAttackableUnit target1, string v, IAttackableUnit target2, string bone)
+        private void AddParticleTarget(IObjAIBase owner, IAttackableUnit target1, string v, IAttackableUnit target2, string bone)
         {
         }
 
@@ -81,18 +81,18 @@ namespace Spells
         {
 
         };
-        IObjAiBase daowner;
+        IObjAIBase daowner;
         ISpell daspell;
 		IAttackableUnit Target;
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
 			Target = target;
             daspell = spell;
@@ -105,11 +105,11 @@ namespace Spells
             AddBuff("CursedTouch", 4f, 1, daspell, Target, spell.CastInfo.Owner);
         }
 
-        private void SpellCast(IObjAiBase owner, int v1, SpellSlotType extraSlots, bool v2, IAttackableUnit target, Vector2 position)
+        private void SpellCast(IObjAIBase owner, int v1, SpellSlotType extraSlots, bool v2, IAttackableUnit target, Vector2 position)
         {
         }
 
-        private void AddParticleTarget(IObjAiBase owner, IAttackableUnit target1, string v, IAttackableUnit target2, string bone)
+        private void AddParticleTarget(IObjAIBase owner, IAttackableUnit target1, string v, IAttackableUnit target2, string bone)
         {
         }
 

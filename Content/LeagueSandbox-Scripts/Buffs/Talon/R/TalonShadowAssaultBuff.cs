@@ -35,7 +35,7 @@ namespace Buffs
             p = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "Talon_Base_R_Cas_Invis.troy", unit, 2.5f);
 			p2 = AddParticleTarget(ownerSpell.CastInfo.Owner, ownerSpell.CastInfo.Owner, "talon_ult_sound.troy", ownerSpell.CastInfo.Owner, 10f);
 			p3 = AddParticleTarget(ownerSpell.CastInfo.Owner, ownerSpell.CastInfo.Owner, ".troy", ownerSpell.CastInfo.Owner, 10f);
-            if (unit is IObjAiBase owner)
+            if (unit is IObjAIBase owner)
             {
           
                 var r2Spell = owner.SetSpell("TalonShadowAssaultToggle", 3, true);
@@ -55,7 +55,7 @@ namespace Buffs
         {   
              RemoveParticle(p2);
 			 RemoveParticle(p3);
-             (unit as IObjAiBase).SetSpell("TalonShadowAssault", 3, true);
+             (unit as IObjAIBase).SetSpell("TalonShadowAssault", 3, true);
 			 PlaySound("Play_vo_Talon_TalonShadowAssaultBuff_OnBuffDeactivate", unit);
         }
 

@@ -23,7 +23,7 @@ namespace Buffs
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
         private ISpell originSpell;
         private float[] manaCost = { 8.0f, 8.0f, 8.0f, 8.0f, 8.0f };
-        private IObjAiBase Owner;
+        private IObjAIBase Owner;
         private IBuff thisBuff;
         public ISpellSector AuraAmumu;
 

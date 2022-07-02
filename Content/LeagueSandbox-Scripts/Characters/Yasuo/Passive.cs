@@ -28,8 +28,8 @@ namespace CharScripts
      
     public class  CharScriptYasuo : ICharScript
     {
-		IObjAiBase Owner;
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+		IObjAIBase Owner;
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {       
 		    Owner = spell.CastInfo.Owner;
             ApiEventManager.OnSpellPostCast.AddListener(this, Owner.GetSpell(0), OnCast);
@@ -43,7 +43,7 @@ namespace CharScripts
 			//OverrideAnimation(Owner, "Yasuo_Idle_IN", "Idle2");
 			//OverrideAnimation(Owner, "Yasuo_Idle_IN", "Idle3");
 		}
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
         public void OnUpdate(float diff)

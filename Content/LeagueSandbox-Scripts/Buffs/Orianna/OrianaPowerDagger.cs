@@ -25,7 +25,7 @@ namespace Buffs
 {
     class OrianaPowerDagger : IBuffGameScript
     {
-        private IObjAiBase thisOwner;
+        private IObjAIBase thisOwner;
         private ISpell thisSpell;
         private IBuff thisBuff;
         private float Damage = 0f;

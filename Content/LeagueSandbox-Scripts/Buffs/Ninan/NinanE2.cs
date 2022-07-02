@@ -25,7 +25,7 @@ namespace Buffs
         IRegion bubble1;
         IRegion bubble2;
         IParticle p;
-		IObjAiBase Owner;
+		IObjAIBase Owner;
         IAttackableUnit Unit;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {

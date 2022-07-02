@@ -15,7 +15,7 @@ namespace Buffs
 {
     class ClockworkWinding : IBuffGameScript
     {
-        private IObjAiBase _owner;
+        private IObjAIBase _owner;
         private ISpell _spell;
         public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {

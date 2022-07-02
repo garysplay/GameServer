@@ -39,7 +39,7 @@ namespace Buffs
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier ();
 
-        private IObjAiBase _orianna;
+        private IObjAIBase _orianna;
         private ISpell _spell;
         private IBuff _buff;
         private OriannaBall _ballBuff;
@@ -55,7 +55,7 @@ namespace Buffs
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            _orianna = (IObjAiBase) unit;
+            _orianna = (IObjAIBase) unit;
             _spell = ownerSpell;
             _buff = buff;
             ApiEventManager.OnDeath.AddListener(this, unit, OnDeath, false);

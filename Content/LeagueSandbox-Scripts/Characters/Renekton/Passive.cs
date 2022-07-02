@@ -21,7 +21,7 @@ namespace CharScripts
 		ISpell Spell;
 		int counter;
 		public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {
 			Spell = spell;
 			var Health = owner.Stats.CurrentMana * 1f;
@@ -42,7 +42,7 @@ namespace CharScripts
 			var owner = spell.CastInfo.Owner;
             owner.Stats.CurrentMana += 10f;			
         }       
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
         public void OnUpdate(float diff)

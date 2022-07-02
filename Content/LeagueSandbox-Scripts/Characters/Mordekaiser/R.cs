@@ -16,7 +16,7 @@ namespace Spells
     public class MordekaiserChildrenOfTheGrave : ISpellScript
     {
         IMinion minion;
-        IObjAiBase Owner;
+        IObjAIBase Owner;
         IBuff Buff;
         ISpell Spell;
         IAttackableUnit Target;
@@ -27,15 +27,15 @@ namespace Spells
             // TODO
         };
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             Target = target;
         }

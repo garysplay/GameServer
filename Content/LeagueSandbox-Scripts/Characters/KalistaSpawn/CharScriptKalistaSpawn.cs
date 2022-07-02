@@ -23,7 +23,7 @@ namespace CharScripts
     {
         ISpell Spell;
 		IAttackableUnit Target;
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {
            AddParticleTarget(owner, owner, "Kalista_Base_W_Alerted.troy", owner, int.MaxValue);
 		   AddParticleTarget(owner, owner, "Kalista_Base_W_Avatar.troy", owner, int.MaxValue);
@@ -36,7 +36,7 @@ namespace CharScripts
         {
 	
         }       
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
         public void OnUpdate(float diff)

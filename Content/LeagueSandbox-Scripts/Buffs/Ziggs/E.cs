@@ -21,7 +21,7 @@ namespace Buffs
 		IParticle P;
 		ISpell S;
 		IBuff Ebuff;
-		IObjAiBase Owner;
+		IObjAIBase Owner;
 		IAttackableUnit U;
         public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {

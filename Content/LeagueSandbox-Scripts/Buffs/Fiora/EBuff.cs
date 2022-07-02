@@ -24,7 +24,7 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
 			thisBuff = buff;
-            if (unit is IObjAiBase owner)
+            if (unit is IObjAIBase owner)
             {
             var ELevel = owner.GetSpell(2).CastInfo.SpellLevel;	
 			SealSpellSlot(owner, SpellSlotType.SpellSlots, 2, SpellbookType.SPELLBOOK_CHAMPION, true);
@@ -59,7 +59,7 @@ namespace Buffs
 				ApiEventManager.OnSpellPostCast.RemoveListener(this);
                 ApiEventManager.OnLaunchAttack.RemoveListener(this);
             }
-			if (unit is IObjAiBase ai)
+			if (unit is IObjAIBase ai)
             {
                 SealSpellSlot(ai, SpellSlotType.SpellSlots, 2, SpellbookType.SPELLBOOK_CHAMPION, false);
             }

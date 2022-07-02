@@ -22,7 +22,7 @@ namespace Buffs
         private IBuff ThisBuff;
         private ISpell Spelll;
         private IAttackableUnit Target;
-        private IObjAiBase Owner;
+        private IObjAIBase Owner;
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {

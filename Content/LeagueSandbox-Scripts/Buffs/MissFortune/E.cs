@@ -24,7 +24,7 @@ namespace Buffs
 		float T;
         float AP;
 		float damage;
-        IObjAiBase Owner;
+        IObjAIBase Owner;
 		IMinion E; 
 		ISpell S;
 		IParticle P;

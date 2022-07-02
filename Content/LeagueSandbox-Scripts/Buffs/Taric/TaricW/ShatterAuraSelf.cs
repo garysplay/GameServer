@@ -18,7 +18,7 @@ namespace Buffs
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        IObjAiBase owner;
+        IObjAIBase owner;
         IAttackableUnit Unit;
         ISpell spell;
         //float timeSinceLastTick = 1000.0f;

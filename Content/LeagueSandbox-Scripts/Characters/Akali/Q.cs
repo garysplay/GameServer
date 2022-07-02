@@ -6,7 +6,6 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell;
 using GameServerCore.Domain.GameObjects.Spell.Missile;
 using LeagueSandbox.GameServer.API;
-using System.Collections.Generic;
 using GameServerCore.Scripting.CSharp;
 using GameServerCore.Domain.GameObjects.Spell.Sector;
 
@@ -51,7 +50,7 @@ namespace Spells
             var owner = spell.CastInfo.Owner;
             var AP = owner.Stats.AbilityPower.Total * 0.4f;
             var damage = 15f + spell.CastInfo.SpellLevel * 20f + AP;
-            
+
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_ATTACK, false);
             AddBuff("AkaliMota", 6f, 1, spell, target, owner);
             missile.SetToRemove();

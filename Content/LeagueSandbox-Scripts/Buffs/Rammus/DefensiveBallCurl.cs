@@ -39,7 +39,7 @@ namespace Buffs
                 unit.ChangeModel("RammusDBC");
             }
 
-            if (unit is IObjAiBase obj)
+            if (unit is IObjAIBase obj)
             { 
 		            StatsModifier.MoveSpeed.PercentBonus -= 0.15f;
                     obj.AddStatModifier(StatsModifier);

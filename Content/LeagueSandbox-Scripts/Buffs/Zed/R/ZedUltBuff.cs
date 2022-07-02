@@ -22,7 +22,7 @@ namespace Buffs
         private IBuff ThisBuff;
         private ISpell Spelll;
         private IAttackableUnit Target;
-        private IObjAiBase Owner;
+        private IObjAIBase Owner;
         private float ticks = 0;
         private float damage;
 		IParticle p;

@@ -23,7 +23,7 @@ namespace Buffs
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
 
-        private IObjAiBase Owner;
+        private IObjAIBase Owner;
         float somerandomTick;
         IAttackableUnit Target1;
         IAttackableUnit Target2;

@@ -37,6 +37,11 @@ namespace Spells
                     pcastname = "Aatrox_Skin02_R_Activate";
                     phitname = "Aatrox_Skin02_R_active_hit_tar";
                 }
+                else if (c.SkinID == 3)
+                {
+                    pcastname = "Aatrox_Base_R_Activate";
+                    phitname = "Aatrox_Base_R_active_hit_tar";
+                }
             }
         }
 

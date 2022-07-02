@@ -27,13 +27,13 @@ namespace CharScripts
 {
     public class CharScriptOrianna : ICharScript
     {
-        IObjAiBase _orianna;
+        IObjAIBase _orianna;
         IMinion _ball;
         private IAttackableUnit _passiveTarget = null;
         private IAttackableUnit _currentTarget = null;
         ISpell _spell;
         Buffs.OriannaBallHandler BallHandler;
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {
             _orianna = owner;
             _spell = spell;
@@ -65,7 +65,7 @@ namespace CharScripts
         private void OnDeath(IDeathData death)
         {
         }
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
 
@@ -80,9 +80,9 @@ namespace CharScripts
 
     public class CharScriptOriannaNoBall : ICharScript
     {
-        IObjAiBase _owner;
+        IObjAIBase _owner;
         IMinion oriannaBall;
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {
             _owner = owner;
             ApiEventManager.OnDeath.AddListener(owner,owner, OnDeath, false);
@@ -94,7 +94,7 @@ namespace CharScripts
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
         public void OnUpdate(float diff)

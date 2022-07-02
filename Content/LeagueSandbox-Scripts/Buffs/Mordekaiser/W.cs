@@ -21,7 +21,7 @@ namespace Buffs
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        IObjAiBase Owner;
+        IObjAIBase Owner;
         ISpell Spell;
         IAttackableUnit Target;
         float ticks = 0;
@@ -42,7 +42,7 @@ namespace Buffs
             var units = GetUnitsInRange(Target.Position, 350f, true);
             for (int i = units.Count - 1; i >= 0; i--)
             {
-                if (units[i].Team != Spell.CastInfo.Owner.Team && !(units[i] is IObjBuilding || units[i] is IBaseTurret) && units[i] is IObjAiBase ai)
+                if (units[i].Team != Spell.CastInfo.Owner.Team && !(units[i] is IObjBuilding || units[i] is IBaseTurret) && units[i] is IObjAIBase ai)
                 {
                     units[i].TakeDamage(Owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELLAOE, false);
                     units.RemoveAt(i);
@@ -70,7 +70,7 @@ namespace Buffs
                 var units = GetUnitsInRange(Target.Position, 350f, true);
                 for (int i = units.Count - 1; i >= 0; i--)
                 {
-                    if (units[i].Team != Spell.CastInfo.Owner.Team && !(units[i] is IObjBuilding || units[i] is IBaseTurret) && units[i] is IObjAiBase ai)
+                    if (units[i].Team != Spell.CastInfo.Owner.Team && !(units[i] is IObjBuilding || units[i] is IBaseTurret) && units[i] is IObjAIBase ai)
                     {
                         units[i].TakeDamage(Owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELLAOE, false);
                         units.RemoveAt(i);

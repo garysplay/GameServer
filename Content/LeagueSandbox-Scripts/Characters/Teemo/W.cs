@@ -18,14 +18,14 @@ namespace Spells
         float timer = 0f;
         IAttackableUnit Unit;
         ISpell Spell;
-        IObjAiBase Owner;
+        IObjAIBase Owner;
         bool OnFirstSpellLevelUp = false;
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             TriggersSpellCasts = true
         };
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
             Spell = spell;
             Owner = owner;
@@ -41,11 +41,11 @@ namespace Spells
             }
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             AddBuff("MoveQuick", 3f, 1, spell, owner, owner);
         }

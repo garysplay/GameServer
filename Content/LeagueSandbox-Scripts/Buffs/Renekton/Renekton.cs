@@ -26,7 +26,7 @@ namespace Buffs
 
         IParticle p;
 		IParticle p2;
-		IObjAiBase Owner;
+		IObjAIBase Owner;
 		public ISpellSector AOE;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {

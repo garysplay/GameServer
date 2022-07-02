@@ -17,10 +17,10 @@ namespace Spells
             TriggersSpellCasts = true
         };
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {          
         }     
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
@@ -37,9 +37,9 @@ namespace Spells
             string particles9;
             string particles10;
 			string particles11;			
-			if (unit is IObjAiBase _owner)
+			if (unit is IObjAIBase _owner)
             {
-			switch ((_owner as IObjAiBase).SkinID)
+			switch ((_owner as IObjAIBase).SkinID)
             {
                 case 3:
                     particles = "exile_bunny_Q_01_detonate.troy";
@@ -199,9 +199,9 @@ namespace Spells
         }
         ISpellSector DamageSector;
         int q = 0;
-        IObjAiBase _owner;
+        IObjAIBase _owner;
         ISpell _spell;
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             _owner = owner;
             _spell = spell;
@@ -224,7 +224,7 @@ namespace Spells
         public void OnSpellPostCast(ISpell spell)
         {
             var owner = spell.CastInfo.Owner;		
-            AddBuff("RivenTriCleave", 4.0f, 1, spell, owner, owner as IObjAiBase);
+            AddBuff("RivenTriCleave", 4.0f, 1, spell, owner, owner as IObjAIBase);
 			ApiEventManager.OnMoveEnd.AddListener(this, owner, DashFin, true);
             var getbuff = owner.GetBuffWithName("RivenTriCleave");
             switch (getbuff.StackCount)

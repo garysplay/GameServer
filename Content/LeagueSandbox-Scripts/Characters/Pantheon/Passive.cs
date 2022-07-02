@@ -31,8 +31,8 @@ namespace CharScripts
     {
         ISpell Spell;
 		int counter;
-		IObjAiBase Owner;
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+		IObjAIBase Owner;
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
 
         {
             Owner = spell.CastInfo.Owner;
@@ -41,7 +41,7 @@ namespace CharScripts
 				AddBuff("PantheonPassiveCounter", 25000f, 1, spell, owner, owner);
             }      
         }   
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
             //ApiEventManager.OnHitUnit.RemoveListener(this);
         }

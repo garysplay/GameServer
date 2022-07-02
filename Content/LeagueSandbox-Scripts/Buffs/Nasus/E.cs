@@ -22,7 +22,7 @@ namespace Buffs
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        IObjAiBase Owner;
+        IObjAIBase Owner;
 		IMinion NA; 
         public ISpellSector AOE;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

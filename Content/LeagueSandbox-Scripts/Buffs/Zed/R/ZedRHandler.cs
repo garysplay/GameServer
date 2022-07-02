@@ -25,7 +25,7 @@ namespace Buffs
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {       
-            if (unit is IObjAiBase owner)
+            if (unit is IObjAIBase owner)
             {                
                owner.SetSpell("ZedR2", 3, true);
             }
@@ -34,7 +34,7 @@ namespace Buffs
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {   
              RemoveParticle(p2);
-             (unit as IObjAiBase).SetSpell("ZedUlt", 3, true);
+             (unit as IObjAIBase).SetSpell("ZedUlt", 3, true);
         }
 
         public void OnUpdate(float diff)

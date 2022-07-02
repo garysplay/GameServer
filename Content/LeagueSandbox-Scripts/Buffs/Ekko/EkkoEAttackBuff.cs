@@ -26,7 +26,7 @@ namespace Buffs
         IParticle activate;
 		IParticle activate2;
 		IBuff thisBuff;
-		IObjAiBase owner;
+		IObjAIBase owner;
         public void OnUpdate(float diff)
         {
         }
@@ -36,7 +36,7 @@ namespace Buffs
 			thisBuff = buff;
             var owner = ownerSpell.CastInfo.Owner;
 			StatsModifier.Range.FlatBonus = 350.0f;
-			if (unit is IObjAiBase ai)
+			if (unit is IObjAIBase ai)
             {
 				OverrideAnimation(ai, "Spell3_Dash_to_Run", "Run");            
             }
@@ -80,7 +80,7 @@ namespace Buffs
             {
                 ApiEventManager.OnLaunchAttack.RemoveListener(this);
             }
-			if (unit is IObjAiBase ai)
+			if (unit is IObjAIBase ai)
             {
 				OverrideAnimation(ai, "Run", "Spell3_Dash_to_Run");
                 SealSpellSlot(ai, SpellSlotType.SpellSlots, 2, SpellbookType.SPELLBOOK_CHAMPION, false);

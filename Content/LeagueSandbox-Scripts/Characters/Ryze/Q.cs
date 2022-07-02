@@ -25,16 +25,16 @@ namespace Spells
             // TODO
         };
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
             ApiEventManager.OnSpellHit.AddListener(this, spell, TargetExecute, false);
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
@@ -54,7 +54,7 @@ namespace Spells
 			var Mana = owner.Stats.CurrentMana * 0.1f;
             var damage = 20 + spell.CastInfo.SpellLevel * 20 + ap + Mana;
             target.TakeDamage(owner, damage, DamageType.DAMAGE_TYPE_MAGICAL, DamageSource.DAMAGE_SOURCE_SPELL, false);
-			AddBuff("TestAi_Zed", 10f, 1, spell, target, owner);
+			AddBuff("TestAI_Zed", 10f, 1, spell, target, owner);
 			AddParticleTarget(owner, target, "Overload_tar", target);
             missile.SetToRemove();
         }

@@ -37,7 +37,7 @@ namespace Buffs
             p = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "Talon_Base_R_Cas_Invis.troy", unit,buff.Duration);
 			p2 = AddParticle(ownerSpell.CastInfo.Owner, null, "Talon_base_R_Blade_Hold_Sound1.troy", ownerSpell.CastInfo.Owner.Position, 10f);
 			p3 = AddParticle(ownerSpell.CastInfo.Owner, null, "Talon_Base_R_Cas.troy", ownerSpell.CastInfo.Owner.Position);
-            if (unit is IObjAiBase owner)
+            if (unit is IObjAIBase owner)
             {
           
                 var r2Spell = owner.SetSpell("NinanRToggle", 3, true);
@@ -59,7 +59,7 @@ namespace Buffs
 			 RemoveParticle(p3);
 			 PlaySound("Play_vo_Talon_TalonShadowAssaultBuff_OnBuffDeactivate", unit);			
              AddParticle(unit, null, "Talon_base_R_Blade_Hold_Sound2", v);			 
-             (unit as IObjAiBase).SetSpell("NinanR", 3, true);
+             (unit as IObjAIBase).SetSpell("NinanR", 3, true);
         }
 
         public void OnUpdate(float diff)

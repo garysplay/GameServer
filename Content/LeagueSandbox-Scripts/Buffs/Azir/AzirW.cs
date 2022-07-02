@@ -24,7 +24,7 @@ namespace Buffs
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
         IBuff ThisBuff;
-		IObjAiBase Owner;
+		IObjAIBase Owner;
 		IAttackableUnit U;
 		private readonly IMinion Soldier = Spells.AzirW.Soldier;
 

@@ -27,7 +27,7 @@ namespace Buffs
 
         IMinion Ekko;
         ISpell Spell;
-		IObjAiBase Owner;
+		IObjAIBase Owner;
 		private IBuff buff;
 		float timeSinceLastTick = 1000f;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

@@ -27,14 +27,14 @@ namespace Buffs
         IParticle pbuff2;
         IBuff thisBuff;
 		ISpell Spell;
-		IObjAiBase owner;
+		IObjAIBase owner;
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
 			Spell = ownerSpell;
             thisBuff = buff;
 			owner = ownerSpell.CastInfo.Owner as IChampion;
-			if (unit is IObjAiBase ai)
+			if (unit is IObjAIBase ai)
             {
 			StatsModifier.Range.FlatBonus = 300.0f;
 			StatsModifier.AttackDamage.FlatBonus = ((owner.GetSpell(3).CastInfo.SpellLevel * 15) + 25f);
@@ -71,7 +71,7 @@ namespace Buffs
 				ApiEventManager.OnPreAttack.RemoveListener(this);
                 ApiEventManager.OnLaunchAttack.RemoveListener(this);
             }
-			if (unit is IObjAiBase ai)
+			if (unit is IObjAIBase ai)
             {
                 SealSpellSlot(ai, SpellSlotType.SpellSlots, 3, SpellbookType.SPELLBOOK_CHAMPION, false);
             }

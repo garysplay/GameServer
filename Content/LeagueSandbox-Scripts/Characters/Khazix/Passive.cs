@@ -20,7 +20,7 @@ namespace CharScripts
     {
         ISpell Spell;
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {
             Spell = spell;
             {
@@ -38,7 +38,7 @@ namespace CharScripts
 			ApiEventManager.OnLevelUp.RemoveListener(this);
 			});
         }	 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
         public void OnUpdate(float diff)

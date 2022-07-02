@@ -26,7 +26,7 @@ namespace Buffs
 		IAttackableUnit Target;
         private ISpell spell;
 		IBuff ibuff;
-		IObjAiBase Owner;
+		IObjAIBase Owner;
 		public ISpellSector AOE;
 		IParticle p;
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();

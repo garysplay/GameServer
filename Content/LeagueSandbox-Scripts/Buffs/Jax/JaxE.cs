@@ -28,7 +28,7 @@ namespace Buffs
         IParticle pbuff;
         IParticle pbuff2;
         IBuff thisBuff;
-		IObjAiBase owner;
+		IObjAIBase owner;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
 			pbuff = AddParticleTarget(unit, unit, "JaxDodger.troy", unit, buff.Duration);

@@ -28,7 +28,7 @@ namespace Buffs
 			//buff.SetStatusEffect(StatusFlags.Targetable, false);	
 		    buff.SetStatusEffect(StatusFlags.Ghosted, true);
 			ApiEventManager.OnSpellCast.AddListener(this, ownerSpell.CastInfo.Owner.GetSpell("LeblancSlideReturn"), W2OnSpellCast);         
-            if (unit is IObjAiBase owner)
+            if (unit is IObjAIBase owner)
             {
           
                 var r2Spell = owner.SetSpell("LeblancSlideReturn", 1, true);
@@ -45,7 +45,7 @@ namespace Buffs
              RemoveParticle(p2);
 			 buff.SetStatusEffect(StatusFlags.Ghosted, false);
 			 //buff.SetStatusEffect(StatusFlags.Targetable, true);
-             (unit as IObjAiBase).SetSpell("LeblancSlide", 1, true);
+             (unit as IObjAIBase).SetSpell("LeblancSlide", 1, true);
         }
 
         public void OnUpdate(float diff)

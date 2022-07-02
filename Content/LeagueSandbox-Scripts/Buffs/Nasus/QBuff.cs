@@ -25,12 +25,12 @@ namespace Buffs
         IParticle pbuff;
         IParticle pbuff2;
         IBuff thisBuff;
-		IObjAiBase owner;
+		IObjAIBase owner;
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             thisBuff = buff;
-			if (unit is IObjAiBase ai)
+			if (unit is IObjAIBase ai)
             {
             var owner = ownerSpell.CastInfo.Owner as IChampion;
 			pbuff = AddParticleTarget(ownerSpell.CastInfo.Owner, ownerSpell.CastInfo.Owner, "Nasus_Base_Q_Buf.troy", unit, buff.Duration, 1, "BUFFBONE_CSTM_WEAPON_1");
@@ -58,7 +58,7 @@ namespace Buffs
             {
                 ApiEventManager.OnLaunchAttack.RemoveListener(this);
             }
-			if (unit is IObjAiBase ai)
+			if (unit is IObjAIBase ai)
             {
                 SealSpellSlot(ai, SpellSlotType.SpellSlots, 0, SpellbookType.SPELLBOOK_CHAMPION, false);
             }

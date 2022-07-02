@@ -16,9 +16,9 @@ namespace Buffs
             BuffType = BuffType.COMBAT_ENCHANCER,
             BuffAddType = BuffAddType.REPLACE_EXISTING
         };
-        private IObjAiBase Owner;
+        private IObjAIBase Owner;
         private ISpell daspell;
-        private IObjAiBase daowner;
+        private IObjAIBase daowner;
      
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
         IBuff thisBuff;
@@ -44,7 +44,7 @@ namespace Buffs
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-			ApiEventManager.OnLaunchAttack.RemoveListener(this, unit as IObjAiBase);
+			ApiEventManager.OnLaunchAttack.RemoveListener(this, unit as IObjAIBase);
 			SealSpellSlot(ownerSpell.CastInfo.Owner, SpellSlotType.SpellSlots, 2, SpellbookType.SPELLBOOK_CHAMPION, false);
         }
 

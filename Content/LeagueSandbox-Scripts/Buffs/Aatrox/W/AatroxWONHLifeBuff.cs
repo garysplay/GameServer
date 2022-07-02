@@ -25,12 +25,12 @@ namespace Buffs
         IParticle pbuff;
         IParticle pbuff2;
         IBuff thisBuff;
-		IObjAiBase owner;
+		IObjAIBase owner;
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             thisBuff = buff;
-			if (unit is IObjAiBase ai)
+			if (unit is IObjAIBase ai)
             {
             var owner = ownerSpell.CastInfo.Owner as IChampion;
 			pbuff = AddParticleTarget(unit, unit, "Aatrox_Base_W_WeaponLife.troy", unit, 25000f, 1, "WEAPON");

@@ -23,7 +23,7 @@ namespace Buffs
 		IAttackableUnit Target;
         private ISpell spell;
 		IBuff ibuff;
-		IObjAiBase owner;
+		IObjAIBase owner;
 		IAttackableUnit Unit;
 		IParticle p;
 		public ISpellSector CC;
@@ -51,8 +51,8 @@ namespace Buffs
 			RemoveParticle(p);
 			CC.SetToRemove();
 		    unit.TakeDamage(unit, 1000000, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_SPELL, false);
-            ApiEventManager.OnPreAttack.RemoveListener(this, unit as IObjAiBase);
-            ApiEventManager.OnCollision.RemoveListener(this, unit as IObjAiBase);						
+            ApiEventManager.OnPreAttack.RemoveListener(this, unit as IObjAIBase);
+            ApiEventManager.OnCollision.RemoveListener(this, unit as IObjAIBase);						
         }
 		public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellMissile missile, ISpellSector sector)
         {

@@ -25,7 +25,7 @@ namespace Buffs
 
         public IStatsModifier StatsModifier { get; private set; }
 
-        IObjAiBase Owner;
+        IObjAIBase Owner;
         IAttackableUnit Target;
         ISpell rspell;
         bool didcast = false;

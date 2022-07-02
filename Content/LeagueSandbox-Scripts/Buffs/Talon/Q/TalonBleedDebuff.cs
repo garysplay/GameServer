@@ -23,7 +23,7 @@ namespace Buffs
         float damage;
         float timeSinceLastTick = 900f;
         IAttackableUnit Unit;
-        IObjAiBase owner;
+        IObjAIBase owner;
         IParticle p;
 		IBuff thisBuff;
 		bool isVisible = true;

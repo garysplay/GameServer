@@ -45,7 +45,7 @@ namespace Buffs
         {
         };
 
-        IObjAiBase _orianna;
+        IObjAIBase _orianna;
         Buffs.OriannaBallHandler _ballHandler;
         IParticle _bind;
         IParticle _ring;

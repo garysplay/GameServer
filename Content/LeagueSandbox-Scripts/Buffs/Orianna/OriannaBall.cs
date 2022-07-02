@@ -31,7 +31,7 @@ namespace Buffs
             MaxStacks = 1
         };
 
-        IObjAiBase _owner;
+        IObjAIBase _owner;
         IBuff ThisBuff;
         Buffs.OriannaBallHandler BallHandler;
         IMinion _ball;

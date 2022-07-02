@@ -22,7 +22,7 @@ namespace Buffs
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        IObjAiBase Owner;
+        IObjAIBase Owner;
 		IParticle p;
 		IParticle p2;
 		IBuff thisBuff;

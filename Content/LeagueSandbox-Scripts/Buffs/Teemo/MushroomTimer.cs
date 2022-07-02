@@ -25,7 +25,7 @@ namespace Buffs
             Unit = unit;
             //var spell = ownerSpell;
             //var owner = spell.CastInfo.Owner;
-            //ApiEventManager.OnSpellSectorHit.AddListener(this, new KeyValuePair<ISpell, IObjAiBase>(spell, owner), TargetExecute, false);
+            //ApiEventManager.OnSpellSectorHit.AddListener(this, new KeyValuePair<ISpell, IObjAIBase>(spell, owner), TargetExecute, false);
         }
         public void TargetExecute(ISpell spell, IAttackableUnit target, ISpellSector sector)
         {

@@ -22,20 +22,20 @@ namespace Spells
             IsDamagingSpell = false
         };
 
-        private IObjAiBase Owner;
+        private IObjAIBase Owner;
         private ISpell Spell;
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
             Owner = owner;
             Spell = spell;
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
 			AddParticle(owner, null, "Nasus_Base_E_Warning.troy", end,5f,1);
 			AddParticle(owner, null, "Nasus_Base_E_Staff_Swirl.troy", end,5f,1);
@@ -50,7 +50,7 @@ namespace Spells
         public void OnSpellPostCast(ISpell spell)
         {
 			var owner = spell.CastInfo.Owner;
-            if (owner is IObjAiBase c)
+            if (owner is IObjAIBase c)
             {
                 var ownerSkinID = c.SkinID;
                 var targetPos = new Vector2(spell.CastInfo.TargetPosition.X, spell.CastInfo.TargetPosition.Z);

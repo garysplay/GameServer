@@ -26,7 +26,7 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
 			ApiEventManager.OnSpellCast.AddListener(this, ownerSpell.CastInfo.Owner.GetSpell("LeblancSlideReturnM"), W2OnSpellCast);
-            if (unit is IObjAiBase owner)
+            if (unit is IObjAIBase owner)
             {
           
                 var r2Spell = owner.SetSpell("LeblancSlideReturnM", 3, true);
@@ -41,7 +41,7 @@ namespace Buffs
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {   
              RemoveParticle(p2);
-             (unit as IObjAiBase).SetSpell("LeblancSlideM", 3, true);
+             (unit as IObjAIBase).SetSpell("LeblancSlideM", 3, true);
         }
 
         public void OnUpdate(float diff)

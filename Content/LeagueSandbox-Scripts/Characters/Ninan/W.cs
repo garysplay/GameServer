@@ -20,15 +20,15 @@ namespace Spells
             IsDamagingSpell = true
         };
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
 			string Sound;
             //PlayAnimation(owner, "Spell1");
@@ -113,16 +113,16 @@ namespace Spells
         };
         public List<IAttackableUnit> UnitsHit = new List<IAttackableUnit>();
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
             ApiEventManager.OnSpellHit.AddListener(this, spell, TargetExecute, false);
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             UnitsHit.Clear();
 			string Sound;
@@ -179,7 +179,7 @@ namespace Spells
 				if (!target.HasBuff("NinanPassiveCooldown")&&!target.HasBuff("NinanPassiveBleed"))
                 {     
 			    AddBuff("NinanPassiveStack", 6f, 1, spell, target, owner,false);
-				//AddBuff("TestAi_Talon", 6f, 1, spell, target, owner,false);
+				//AddBuff("TestAI_Talon", 6f, 1, spell, target, owner,false);
 			    }
                 else
 			    {
@@ -268,16 +268,16 @@ namespace Spells
         };
         public List<IAttackableUnit> UnitsHit = new List<IAttackableUnit>();
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
             ApiEventManager.OnSpellHit.AddListener(this, spell, TargetExecute, false);
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             UnitsHit.Clear();
 			string Sound;

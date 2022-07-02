@@ -21,14 +21,14 @@ namespace Buffs
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            ((IObjAiBase)unit).SetSpell("RenektonDice", 2, true);
+            ((IObjAIBase)unit).SetSpell("RenektonDice", 2, true);
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            if (((IObjAiBase)unit).Spells[2].SpellName == "RenektonDice")
+            if (((IObjAIBase)unit).Spells[2].SpellName == "RenektonDice")
             {
-                ((IObjAiBase)unit).SetSpell("RenektonSliceAndDice", 2, true);
+                ((IObjAIBase)unit).SetSpell("RenektonSliceAndDice", 2, true);
             }
         }
 

@@ -19,12 +19,12 @@ namespace ItemPassives
 {
     public class ItemID_3064 : IItemScript
     {
-		private IObjAiBase owner;
+		private IObjAIBase owner;
         private ISpell spell;
 		IAttackableUnit Target;
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAIBase owner)
         {
 			ApiEventManager.OnLaunchAttack.AddListener(this, owner, OnLaunchAttack, false);
         }
@@ -34,12 +34,12 @@ namespace ItemPassives
             Target = spell.CastInfo.Targets[0].Unit;
 			AddBuff("Frozen Mallet Slow", 6f, 1, spell, Target, owner);
         }    
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAIBase owner)
         {
 			ApiEventManager.OnLaunchAttack.RemoveListener(this);
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {      
         }
 

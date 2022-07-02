@@ -43,7 +43,7 @@ namespace Spells
             NotSingleTargetSpell = true,
         };
 
-        private IObjAiBase _orianna;
+        private IObjAIBase _orianna;
         private ISpell _spell;
 
         private Buffs.OriannaBallHandler _ballHandler;
@@ -55,18 +55,18 @@ namespace Spells
 
         private bool _queuedCast = false;
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
             _orianna = owner;
             _spell = spell;
             ApiEventManager.OnSpellHit.AddListener(_orianna, spell, TargetExecute, false);
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             _ballHandler = (_orianna.GetBuffWithName("OriannaBallHandler").BuffScript as Buffs.OriannaBallHandler);
         }

@@ -15,7 +15,7 @@ namespace Spells
 {
     public class JinxW : ISpellScript
     {
-        IObjAiBase Owner;
+        IObjAIBase Owner;
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             MissileParameters = new MissileParameters
@@ -26,14 +26,14 @@ namespace Spells
             IsDamagingSpell = true
         };
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         { 
 			FaceDirection(end, owner,true);
 			AddParticleTarget(owner, owner, "Jinx_W_Beam.troy", owner,10,1);
@@ -70,7 +70,7 @@ namespace Spells
 
     public class JinxWMissile : ISpellScript
     {
-		IObjAiBase Owner;
+		IObjAIBase Owner;
         public ISpellScriptMetadata ScriptMetadata { get; private set; } = new SpellScriptMetadata()
         {
             MissileParameters = new MissileParameters
@@ -79,16 +79,16 @@ namespace Spells
             },
             IsDamagingSpell = true
         };
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
             ApiEventManager.OnSpellHit.AddListener(this, spell, TargetExecute, false);
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 

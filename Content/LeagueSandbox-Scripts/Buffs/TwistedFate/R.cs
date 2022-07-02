@@ -22,7 +22,7 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
 			b = buff;
-            if (unit is IObjAiBase owner)
+            if (unit is IObjAIBase owner)
             {
                 var R2Spell = owner.SetSpell("Destiny Marker", 3, true);
                 ApiEventManager.OnSpellCast.AddListener(this, R2Spell, R2OnSpellCast);
@@ -34,7 +34,7 @@ namespace Buffs
         }
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            (unit as IObjAiBase).SetSpell("Destiny", 3, true);
+            (unit as IObjAIBase).SetSpell("Destiny", 3, true);
         }
 
         public void OnUpdate(float diff)

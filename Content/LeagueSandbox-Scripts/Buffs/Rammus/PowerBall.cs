@@ -23,7 +23,7 @@ namespace Buffs
 		IAttackableUnit Target;
         private ISpell spell;
 		IBuff ibuff;
-		IObjAiBase owner;
+		IObjAIBase owner;
 		float DamageManaTimer;
 		float T = 0.15f;
 		float M;
@@ -39,7 +39,7 @@ namespace Buffs
                 unit.ChangeModel("RammusPB");
             }
 
-            if (unit is IObjAiBase obj)
+            if (unit is IObjAIBase obj)
             { 
 		            StatsModifier.MoveSpeed.PercentBonus += T;
 					obj.AddStatModifier(StatsModifier);
@@ -52,10 +52,10 @@ namespace Buffs
             {
                unit.ChangeModel("Rammus");
             }
-			if (unit is IObjAiBase obj)
+			if (unit is IObjAIBase obj)
             { 
-                    ApiEventManager.OnPreAttack.RemoveListener(this, obj as IObjAiBase);
-                    ApiEventManager.OnCollision.RemoveListener(this, obj as IObjAiBase);						
+                    ApiEventManager.OnPreAttack.RemoveListener(this, obj as IObjAIBase);
+                    ApiEventManager.OnCollision.RemoveListener(this, obj as IObjAIBase);						
                				
             }
 			CreateTimer((float) 0.0001 , () =>

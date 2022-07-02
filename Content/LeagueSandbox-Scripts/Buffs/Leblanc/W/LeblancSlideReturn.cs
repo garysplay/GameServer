@@ -37,7 +37,7 @@ namespace Buffs
             unit.AddStatModifier(StatsModifier);
             buff.SetStatusEffect(StatusFlags.Targetable, false);
             buff.SetStatusEffect(StatusFlags.Ghosted, true);
-			switch ((LeBlanc.Owner as IObjAiBase).SkinID)
+			switch ((LeBlanc.Owner as IObjAIBase).SkinID)
             {
                 case 3:
                     particles = "LeBlanc_Base_W_return_indicator.troy";

@@ -22,7 +22,7 @@ namespace Spells
             // TODO
         };
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
 			AddBuff("Tantrum", 250000.0f, 1, spell, owner, owner);
             ApiEventManager.OnSpellHit.AddListener(this, spell, TargetExecute, false);
@@ -33,11 +33,11 @@ namespace Spells
 			var owner = spell.CastInfo.Owner;
             AddBuff("Tantrum", 250000.0f, 1, spell, owner, owner);
         }
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
 
         }

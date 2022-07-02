@@ -30,7 +30,7 @@ namespace Buffs
         IAttackableUnit Unit;
 		float damage;
         float timeSinceLastTick = 900f;
-        IObjAiBase owner;
+        IObjAIBase owner;
         IParticle p;
         IParticle p2;
 		IParticle p3;

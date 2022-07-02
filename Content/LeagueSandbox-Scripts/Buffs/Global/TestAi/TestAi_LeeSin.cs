@@ -8,7 +8,7 @@ using LeagueSandbox.GameServer.Scripting.CSharp;
 
 namespace Buffs
 {
-    internal class TestAi_LeeSin : IBuffGameScript
+    internal class TestAI_LeeSin : IBuffGameScript
     {
         public IBuffScriptMetaData BuffMetaData { get; set; } = new BuffScriptMetaData
         {

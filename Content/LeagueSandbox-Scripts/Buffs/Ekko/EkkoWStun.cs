@@ -25,7 +25,7 @@ namespace Buffs
             //Change this back to buff.SetStatusEffect when it's removal get's fixed
 			unit.PauseAnimation(true);
 			unit.StopMovement(); 
-			(unit as IObjAiBase).SetTargetUnit(null, true);	
+			(unit as IObjAIBase).SetTargetUnit(null, true);	
             SetStatus(unit, StatusFlags.Stunned, true);
             stun = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "LOC_Stun", unit, buff.Duration);
 			stun = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "Ekko_Base_W_Stun_Tar", unit, buff.Duration);

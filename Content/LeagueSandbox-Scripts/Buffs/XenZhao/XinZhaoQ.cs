@@ -22,7 +22,7 @@ namespace Buffs
         };
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
         IAttackableUnit Unit;
-        IObjAiBase owner;
+        IObjAIBase owner;
         IParticle p;
 		IBuff thisBuff;
         IParticle p2;
@@ -30,7 +30,7 @@ namespace Buffs
 		int counter = 1;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-			if (unit is IObjAiBase obj)
+			if (unit is IObjAIBase obj)
             {
 				p = AddParticleTarget(obj, obj, "xenZiou_ChainAttack_cas_01.troy", obj, buff.Duration, 1, "Buffbone_Glb_WEAPON_1");
 				p2 = AddParticleTarget(obj, obj, "xenZiou_ChainAttack_indicator.troy", obj, buff.Duration, 1, "Buffbone_Glb_WEAPON_1");

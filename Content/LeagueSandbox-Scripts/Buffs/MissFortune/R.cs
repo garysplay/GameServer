@@ -24,7 +24,7 @@ namespace Buffs
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();   
 
-        IObjAiBase owner;
+        IObjAIBase owner;
         float tickTime;
 		ISpell S;
 		Vector2 targetPos;

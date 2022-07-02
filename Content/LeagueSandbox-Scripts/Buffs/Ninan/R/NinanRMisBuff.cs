@@ -37,7 +37,7 @@ namespace Buffs
             unit.AddStatModifier(StatsModifier);
             buff.SetStatusEffect(StatusFlags.Targetable, false);
             buff.SetStatusEffect(StatusFlags.Ghosted, true);
-			switch ((Blade.Owner as IObjAiBase).SkinID)
+			switch ((Blade.Owner as IObjAIBase).SkinID)
             {
 				case 1:
                     particles = "Talon_Skin01_R_Blade_Hold.troy";

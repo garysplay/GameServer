@@ -22,7 +22,7 @@ namespace Buffs
         private IBuff ThisBuff;
         private ISpell Spell;
         private readonly IAttackableUnit Target = Spells.ZedUlt.Target;
-        private IObjAiBase Owner;
+        private IObjAIBase Owner;
         private float ticks = 0;
         private float damage;
 

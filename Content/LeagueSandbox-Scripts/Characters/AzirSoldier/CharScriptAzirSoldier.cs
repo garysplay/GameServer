@@ -23,8 +23,8 @@ namespace CharScripts
     {
         ISpell Spell;
 		IAttackableUnit Target;
-		IObjAiBase Owner;
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+		IObjAIBase Owner;
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {
 			Owner = owner;
             ApiEventManager.OnDeath.AddListener(this, owner, OnDeath, true);
@@ -34,7 +34,7 @@ namespace CharScripts
             AddParticleTarget(Owner, Owner, "Azir_Base_W_SoldierTimeout.troy", Owner,10,10);
 			AddParticleTarget(Owner, Owner, "Azir_Base_W_Soldier_Outline.troy", Owner,10,10);
         }
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
         public void OnUpdate(float diff)

@@ -26,7 +26,7 @@ namespace Buffs
         {
             var caster = ownerSpell.CastInfo.Owner;
             unit.StopMovement();
-            if (unit is IObjAiBase ai)
+            if (unit is IObjAIBase ai)
             {
                 ai.SetTargetUnit(null, true);
             }

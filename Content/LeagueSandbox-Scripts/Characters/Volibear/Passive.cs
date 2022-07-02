@@ -30,7 +30,7 @@ namespace CharScripts
 
     {
         ISpell Spell;
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {       
             if (owner.HasBuff("VolibearQ"))
             {
@@ -41,7 +41,7 @@ namespace CharScripts
 				StopAnimation(owner,"spell1_idle");
 			}
         }
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
             ApiEventManager.OnHitUnit.RemoveListener(this);
         }

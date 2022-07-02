@@ -27,14 +27,14 @@ namespace Buffs
         IParticle pbuff2;
         IBuff thisBuff;
 		ISpell Spell;
-		IObjAiBase owner;
+		IObjAIBase owner;
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
 			Spell = ownerSpell;
             thisBuff = buff;
 			owner = ownerSpell.CastInfo.Owner as IChampion;
-			if (unit is IObjAiBase ai)
+			if (unit is IObjAIBase ai)
             {
 			StatsModifier.AttackSpeed.PercentBonus += ((owner.GetSpell(0).CastInfo.SpellLevel * 0.05f) + 0.35f);
 			unit.AddStatModifier(StatsModifier);

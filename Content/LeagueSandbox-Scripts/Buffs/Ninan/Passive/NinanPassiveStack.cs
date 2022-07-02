@@ -28,7 +28,7 @@ namespace Buffs
 
         public IStatsModifier StatsModifier { get; private set; }
         IAttackableUnit Unit;
-        IObjAiBase owner;
+        IObjAIBase owner;
 		IBuff buff;
         IParticle p;
         IParticle p1;

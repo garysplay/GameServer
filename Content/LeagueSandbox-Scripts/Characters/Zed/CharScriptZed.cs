@@ -23,7 +23,7 @@ namespace CharScripts
     {
         ISpell Spell;
 		IAttackableUnit Target;
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
 
         {
             Spell = spell;
@@ -45,7 +45,7 @@ namespace CharScripts
 			{
 			}
         }       
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
         public void OnUpdate(float diff)

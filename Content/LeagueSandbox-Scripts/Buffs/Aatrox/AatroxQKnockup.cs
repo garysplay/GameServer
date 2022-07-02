@@ -22,7 +22,7 @@ namespace Buffs
 
         private IBuff thisBuff;
         private ISpell spell;
-        private IObjAiBase owner;
+        private IObjAIBase owner;
 		IParticle P;
 		string pcastname;
         string phitname;

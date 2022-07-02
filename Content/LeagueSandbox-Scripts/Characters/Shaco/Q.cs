@@ -21,15 +21,15 @@ namespace Spells
             TriggersSpellCasts = true
         };
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             teleportTo = new Vector2(end.X, end.Y);
             float targetPosDistance = Math.Abs((float)Math.Sqrt(Math.Pow(owner.Position.X - teleportTo.X, 2f) + Math.Pow(owner.Position.Y - teleportTo.Y, 2f)));

@@ -1,30 +1,22 @@
-using System.Linq;
-using GameServerCore;
 using GameServerCore.Domain.GameObjects;
 using GameServerCore.Domain.GameObjects.Spell;
-using GameServerCore.Domain.GameObjects.Spell.Missile;
 using GameServerCore.Enums;
 using static LeagueSandbox.GameServer.API.ApiFunctionManager;
-using LeagueSandbox.GameServer.Scripting.CSharp;
 using System.Numerics;
 using LeagueSandbox.GameServer.API;
-using System.Collections.Generic;
 using GameServerCore.Scripting.CSharp;   
-using GameServerCore.Domain.GameObjects;
 using LeagueSandbox.GameServer.GameObjects.Stats;
-using GameServerCore.Domain.GameObjects.Spell.Sector;
-using GameServerCore.Domain;
 
 namespace ItemPassives
 {
     public class ItemID_3022 : IItemScript
     {
-		private IObjAiBase owner;
+		private IObjAIBase owner;
         private ISpell spell;
 		IAttackableUnit Target;
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        public void OnActivate(IObjAiBase owner)
+        public void OnActivate(IObjAIBase owner)
         {
 			ApiEventManager.OnLaunchAttack.AddListener(this, owner, OnLaunchAttack, false);
         }
@@ -34,12 +26,12 @@ namespace ItemPassives
             Target = spell.CastInfo.Targets[0].Unit;
 			AddBuff("Frozen Mallet Slow", 3f, 1, spell, Target, owner);
         }    
-        public void OnDeactivate(IObjAiBase owner)
+        public void OnDeactivate(IObjAIBase owner)
         {
 			ApiEventManager.OnLaunchAttack.RemoveListener(this);
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {      
         }
 

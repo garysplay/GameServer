@@ -40,7 +40,7 @@ namespace Spells
             TriggersSpellCasts = true,
         };
 
-        private IObjAiBase _orianna;
+        private IObjAIBase _orianna;
         private ISpell _spell;
 
         private Buffs.OriannaBallHandler _ballHandler;
@@ -48,17 +48,17 @@ namespace Spells
         private bool _queuedCast = false;
 
         private ISpellSector _detonateSector;
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
             _orianna = owner;
             _spell = spell;
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             _ballHandler = (_orianna.GetBuffWithName("OriannaBallHandler").BuffScript as Buffs.OriannaBallHandler);
         }
@@ -120,23 +120,23 @@ namespace Spells
             NotSingleTargetSpell = true,
         };
 
-        private IObjAiBase _orianna;
+        private IObjAIBase _orianna;
         private ISpell _spell;
         private ISectorParameters _enemySector;
 
         private Buffs.OriannaBallHandler _ballHandler;
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
             _orianna = owner;
             _spell = spell;
             ApiEventManager.OnSpellHit.AddListener(this,spell,TargetExecute,false);
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             Console.WriteLine("Triggered: OrianaDissonanceWave");
             _ballHandler = (_orianna.GetBuffWithName("OriannaBallHandler").BuffScript as Buffs.OriannaBallHandler);

@@ -23,7 +23,7 @@ namespace Buffs
 		IAttackableUnit Target;
         private ISpell spell;
 		IBuff ibuff;
-		IObjAiBase owner;
+		IObjAIBase owner;
 		IAttackableUnit Unit;
 		IParticle p;
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
@@ -35,7 +35,7 @@ namespace Buffs
 			ibuff = buff;
 			spell = ownerSpell;
 
-            if (unit is IObjAiBase obj)
+            if (unit is IObjAIBase obj)
             { 
 		            p = AddParticleTarget(owner, obj, "caitlyn_Base_yordleTrap_idle", obj, 100f,1,"");
 		            ApiEventManager.OnCollision.AddListener(this, obj, Publish, false);
@@ -44,12 +44,12 @@ namespace Buffs
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
 			RemoveParticle(p);
-			if (unit is IObjAiBase obj)
+			if (unit is IObjAIBase obj)
             { 
 		            unit.TakeDamage(unit, 1000000, DamageType.DAMAGE_TYPE_TRUE, DamageSource.DAMAGE_SOURCE_SPELL, false);
 					AddParticleTarget(owner, unit, "caitlyn_Base_yordleTrap_trigger_sound", unit, 10f,1,"");
-                    ApiEventManager.OnPreAttack.RemoveListener(this, obj as IObjAiBase);
-                    ApiEventManager.OnCollision.RemoveListener(this, obj as IObjAiBase);						
+                    ApiEventManager.OnPreAttack.RemoveListener(this, obj as IObjAIBase);
+                    ApiEventManager.OnCollision.RemoveListener(this, obj as IObjAIBase);						
                				
             }
         }

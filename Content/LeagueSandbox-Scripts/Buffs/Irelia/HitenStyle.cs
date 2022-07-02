@@ -26,7 +26,7 @@ namespace Buffs
 			spell = ownerSpell;
 			AddParticleTarget(unit, unit, "irelia_hitenStlye_active_glow.troy", unit, 6f,1,"WEAPON");
 
-                if (unit is IObjAiBase obj)
+                if (unit is IObjAIBase obj)
             { 
 					SealSpellSlot(obj, SpellSlotType.SpellSlots, 1, SpellbookType.SPELLBOOK_CHAMPION, true);
                     ApiEventManager.OnLaunchAttack.AddListener(this, obj, OnLaunchAttack, false);
@@ -43,7 +43,7 @@ namespace Buffs
         }           
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            ApiEventManager.OnLaunchAttack.RemoveListener(this, unit as IObjAiBase);
+            ApiEventManager.OnLaunchAttack.RemoveListener(this, unit as IObjAIBase);
 			SealSpellSlot(ownerSpell.CastInfo.Owner, SpellSlotType.SpellSlots, 1, SpellbookType.SPELLBOOK_CHAMPION, false);
         }
         

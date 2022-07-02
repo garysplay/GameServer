@@ -16,12 +16,12 @@ namespace Spells
     public class XenZhaoBattleCry : ISpellScript
     {
 		ISpell Spell;
-		IObjAiBase Owner;
+		IObjAIBase Owner;
         public ISpellScriptMetadata ScriptMetadata => new SpellScriptMetadata()
         {
             TriggersSpellCasts = true
         };
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
             Spell = spell;
             Owner = spell.CastInfo.Owner;
@@ -37,11 +37,11 @@ namespace Spells
         {
             AddBuff("XenZhaoBattleCryPassive", 3f, 1, Spell, Owner, Owner);
         }
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             AddBuff("XenZhaoBattleCry", 5f, 1, spell, owner, owner,false);
         }

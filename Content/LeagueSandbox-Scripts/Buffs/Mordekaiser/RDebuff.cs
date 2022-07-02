@@ -24,7 +24,7 @@ namespace Buffs
         float timeSinceLastTick;
         IAttackableUnit Unit;
         float TickingDamage;
-        IObjAiBase Owner;
+        IObjAIBase Owner;
         ISpell spell;
         bool limiter = false;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

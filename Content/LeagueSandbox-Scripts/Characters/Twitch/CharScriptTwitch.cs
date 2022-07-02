@@ -23,7 +23,7 @@ namespace CharScripts
     {
         ISpell Spell;
 		IAttackableUnit Target;
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
 
         {
             Spell = spell;
@@ -37,7 +37,7 @@ namespace CharScripts
             Target = spell.CastInfo.Targets[0].Unit;
 			AddBuff("TwitchHideInShadows", 6, 1, spell, Target, owner);
         }       
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
         public void OnUpdate(float diff)

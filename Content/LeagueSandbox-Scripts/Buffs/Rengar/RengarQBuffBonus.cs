@@ -21,7 +21,7 @@ namespace Buffs
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
         IBuff thisBuff;
-        IObjAiBase Unit;
+        IObjAIBase Unit;
         IParticle p;
 		ISpell ownerSpell;
         IParticle p2;
@@ -30,7 +30,7 @@ namespace Buffs
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             thisBuff = buff;
-            if(unit is IObjAiBase ai)
+            if(unit is IObjAIBase ai)
             {
                 Unit = ai;
 				ApiEventManager.OnLaunchAttack.AddListener(this, ai, OnLaunchAttack, false);

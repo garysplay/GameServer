@@ -29,7 +29,7 @@ namespace Buffs
         IMinion Leblanc;
         ISpell Spell;
 		private IBuff Buff;
-		IObjAiBase Owner;
+		IObjAIBase Owner;
 		IAttackableUnit Unit;
 		float timeSinceLastTick = 500f;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

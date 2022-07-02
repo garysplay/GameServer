@@ -23,7 +23,7 @@ namespace Spells
             // TODO
         };
         IAttackableUnit Target;
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
             ApiEventManager.OnSpellHit.AddListener(this, spell, TargetExecute, false);
         }
@@ -32,11 +32,11 @@ namespace Spells
         {        
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
 			Target = target;
         }
@@ -50,7 +50,7 @@ namespace Spells
 			var owner = spell.CastInfo.Owner as IChampion;
             ApplyEffects(owner, Target, owner.GetSpell("SpellFlux"), null);			
         }
-		public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
+		public void ApplyEffects(IObjAIBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {       
             var ap = owner.Stats.AbilityPower.Total * 0.5f;
             var damage = 45f + spell.CastInfo.SpellLevel * 35f + ap;
@@ -92,17 +92,17 @@ namespace Spells
         };
         IAttackableUnit Target;
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
            
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
 			ApiEventManager.OnSpellHit.AddListener(this, spell, TargetExecute, false);
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
 			Target = target;
         }
@@ -126,7 +126,7 @@ namespace Spells
         public void OnSpellChannel(ISpell spell)
         {
         }
-		public void ApplyEffects(IObjAiBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
+		public void ApplyEffects(IObjAIBase owner, IAttackableUnit target, ISpell spell, ISpellMissile missile)
         {
            
         }

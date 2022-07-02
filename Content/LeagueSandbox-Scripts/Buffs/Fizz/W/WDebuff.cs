@@ -23,7 +23,7 @@ namespace Buffs
         float damage;
         float timeSinceLastTick = 900f;
         IAttackableUnit Unit;
-        IObjAiBase owner;
+        IObjAIBase owner;
         IParticle p;
         IParticle p2;
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)

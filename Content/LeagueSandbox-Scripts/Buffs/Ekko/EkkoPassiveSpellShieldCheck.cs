@@ -22,7 +22,7 @@ namespace Buffs
 
         float damage;
         IAttackableUnit Unit;
-        IObjAiBase owner;
+        IObjAIBase owner;
         IParticle p;
 		IParticle p1;
 		IBuff thisBuff;

@@ -9,7 +9,7 @@ namespace CharScripts
 {
     internal class CharScriptOriannaBall : ICharScript
     {
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {
             SetStatus(owner, StatusFlags.CanMove, true);
             SetStatus(owner, StatusFlags.Ghosted, true);
@@ -18,7 +18,7 @@ namespace CharScripts
             SetStatus(owner, StatusFlags.IgnoreCallForHelp, true);
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
 

@@ -27,12 +27,12 @@ namespace Buffs
         IParticle pbuff2;
 		IParticle pbuff3;
         IBuff thisBuff;
-		IObjAiBase owner;
+		IObjAIBase owner;
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
             thisBuff = buff;
-			if (unit is IObjAiBase ai)
+			if (unit is IObjAIBase ai)
             {
             var owner = ownerSpell.CastInfo.Owner as IChampion;
 			if (ai.HasBuff("VolibearQ"))
@@ -70,7 +70,7 @@ namespace Buffs
             {
                 ApiEventManager.OnLaunchAttack.RemoveListener(this);
             }
-			if (unit is IObjAiBase ai)
+			if (unit is IObjAIBase ai)
             {
                 SealSpellSlot(ai, SpellSlotType.SpellSlots, 3, SpellbookType.SPELLBOOK_CHAMPION, false);
             }

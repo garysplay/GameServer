@@ -15,7 +15,7 @@ namespace Buffs
         {
             BuffAddType = BuffAddType.REPLACE_EXISTING
         };
-        private IObjAiBase Owner;
+        private IObjAIBase Owner;
         public IStatsModifier StatsModifier { get; private set; }
 
         private readonly IAttackableUnit target = Spells.AlphaStrike.Target;
@@ -38,7 +38,7 @@ namespace Buffs
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-            if (unit is IObjAiBase ai)
+            if (unit is IObjAIBase ai)
             {
             TeleportTo(ai, target.Position.X, target.Position.Y);
 			}

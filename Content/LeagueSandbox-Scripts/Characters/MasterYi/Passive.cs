@@ -30,7 +30,7 @@ namespace CharScripts
 
     {
         ISpell Spell;
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
 
         {
 
@@ -49,7 +49,7 @@ namespace CharScripts
             var owner = Spell.CastInfo.Owner;
             AddBuff("MasterYiPassive", 3f, 1, Spell, owner, owner);
         }     
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
             ApiEventManager.OnHitUnit.RemoveListener(this);
         }

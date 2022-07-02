@@ -23,10 +23,10 @@ namespace Spells
             
         };
 
-        IObjAiBase _owner;
+        IObjAIBase _owner;
         IMinion targetMinion = null;
         bool HasBall = true;
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
             _owner = owner; 
             ApiEventManager.OnDeath.AddListener(owner, owner, OnDeath, false);
@@ -46,11 +46,11 @@ namespace Spells
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
         
@@ -105,9 +105,9 @@ namespace Spells
             IsDamagingSpell = true,
         };
 
-        IObjAiBase _owner;
+        IObjAIBase _owner;
         IBuff HandlerBuff;
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
             _owner = owner;
             ApiEventManager.OnSpellHit.AddListener(this, spell, TargetExecute, false);
@@ -119,13 +119,13 @@ namespace Spells
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
 
         Vector2 targetPosition;
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
 
             var missile = spell.CreateSpellMissile(new MissileParameters

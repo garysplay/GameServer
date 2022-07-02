@@ -26,7 +26,7 @@ namespace Buffs
         IParticle activate;
 		IParticle activate2;
 		IBuff thisBuff;
-		IObjAiBase owner;     
+		IObjAIBase owner;     
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
 			thisBuff = buff;

@@ -39,7 +39,7 @@ namespace Buffs
                 Type = SectorType.Area
             });
 
-            switch ((unit as IObjAiBase).SkinID)
+            switch ((unit as IObjAIBase).SkinID)
             {
                 case 8:
                     particles2 = "Veigar_Skin08_W_aoe_explosion.troy";

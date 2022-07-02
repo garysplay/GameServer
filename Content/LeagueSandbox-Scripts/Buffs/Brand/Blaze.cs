@@ -18,7 +18,7 @@ namespace Buffs
         };
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
 
-        IObjAiBase owner;
+        IObjAIBase owner;
         IAttackableUnit Unit;
         IParticle p;
         float damage;

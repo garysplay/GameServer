@@ -16,7 +16,7 @@ namespace CharScripts
     public class CharScriptJax : ICharScript
     {
         ISpell Spell;
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {
 
             Spell = spell;
@@ -30,7 +30,7 @@ namespace CharScripts
             AddBuff("JaxPassive", 2.5f, 1, Spell, owner, owner);
         }      
  
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
             ApiEventManager.OnLaunchAttack.RemoveListener(this);
         }

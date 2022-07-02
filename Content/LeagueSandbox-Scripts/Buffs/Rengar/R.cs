@@ -49,7 +49,7 @@ namespace Buffs
 			AddParticleTarget(unit, unit, "Rengar_Base_R_Alert.troy", unit, buff.Duration);
 			AddParticleTarget(unit, unit, "Rengar_Base_R_Alert_Sound.troy", unit, buff.Duration);
             SealSpellSlot(owner, SpellSlotType.SpellSlots, 3, SpellbookType.SPELLBOOK_CHAMPION, true);
-            if(unit is IObjAiBase ai)
+            if(unit is IObjAIBase ai)
             {             
                 ai.SkipNextAutoAttack();
 				ai.CancelAutoAttack(true, true);

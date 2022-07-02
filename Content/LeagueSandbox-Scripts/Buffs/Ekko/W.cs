@@ -24,7 +24,7 @@ namespace Buffs
 		float T;
         IBuff WB;
 		ISpell S;
-        IObjAiBase Owner;
+        IObjAIBase Owner;
 		IMinion W; 
 		IParticle P;
         public ISpellSector AOE;

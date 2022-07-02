@@ -20,7 +20,7 @@ namespace Buffs
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-			if (unit is IObjAiBase ai)
+			if (unit is IObjAIBase ai)
             {
 		    var HealthPoints = 70 + 40 * (ai.GetSpell(3).CastInfo.SpellLevel - 1);
             StatsModifier.HealthPoints.FlatBonus += HealthPoints;

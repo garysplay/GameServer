@@ -31,7 +31,7 @@ namespace CharScripts
     {
         ISpell Spell;
 		IAttackableUnit Target;
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
 
         {
 
@@ -53,7 +53,7 @@ namespace CharScripts
 			AddBuff("DariusHemo", 6.0f, 1, Spell, Target, owner);
 			}
         }     
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
         public void OnUpdate(float diff)

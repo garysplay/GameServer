@@ -17,15 +17,15 @@ namespace Spells
             TriggersSpellCasts = true
             // TODO
         };
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
         }
 
@@ -36,19 +36,19 @@ namespace Spells
             {
                 owner.ChangeModel("Nidalee_Cougar");
 				//owner.SetAutoAttackSpell("Nidalee_CougarBasicAttack2", false);
-				(owner as IObjAiBase).SetSpell("Takedown", 0, true);
-				(owner as IObjAiBase).SetSpell("Pounce", 1, true);
-				(owner as IObjAiBase).SetSpell("Swipe", 2, true);
-				//(owner as IObjAiBase).SetSpell("AspectOfTheCougar", 3, true);
+				(owner as IObjAIBase).SetSpell("Takedown", 0, true);
+				(owner as IObjAIBase).SetSpell("Pounce", 1, true);
+				(owner as IObjAIBase).SetSpell("Swipe", 2, true);
+				//(owner as IObjAIBase).SetSpell("AspectOfTheCougar", 3, true);
             }
 			else
             {		
                 owner.ChangeModel("Nidalee");
 				//owner.SetAutoAttackSpell("NidaleeBasicAttack2", false);
-				(owner as IObjAiBase).SetSpell("JavelinToss", 0, true);
-				(owner as IObjAiBase).SetSpell("Bushwhack", 1, true);
-				(owner as IObjAiBase).SetSpell("PrimalSurge", 2, true);
-				//(owner as IObjAiBase).SetSpell("AspectOfTheCougar", 3, true);
+				(owner as IObjAIBase).SetSpell("JavelinToss", 0, true);
+				(owner as IObjAIBase).SetSpell("Bushwhack", 1, true);
+				(owner as IObjAIBase).SetSpell("PrimalSurge", 2, true);
+				//(owner as IObjAIBase).SetSpell("AspectOfTheCougar", 3, true);
             }
         }
 

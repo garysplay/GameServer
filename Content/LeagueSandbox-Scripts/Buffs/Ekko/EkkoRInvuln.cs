@@ -25,7 +25,7 @@ namespace Buffs
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
         ISpell Spell;
-		IObjAiBase Owner;
+		IObjAIBase Owner;
 		private IBuff buff;
 	    IAttackableUnit Unit;
 		float dist;

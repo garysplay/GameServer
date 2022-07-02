@@ -16,9 +16,9 @@ namespace Buffs
             BuffType = BuffType.COMBAT_ENCHANCER,
             BuffAddType = BuffAddType.REPLACE_EXISTING
         };
-        private IObjAiBase Owner;
+        private IObjAIBase Owner;
         private ISpell daspell;
-        private IObjAiBase daowner;
+        private IObjAIBase daowner;
 		IAttackableUnit Unit;
 
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
@@ -62,7 +62,7 @@ namespace Buffs
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
-			ApiEventManager.OnHitUnit.RemoveListener(this, unit as IObjAiBase);
+			ApiEventManager.OnHitUnit.RemoveListener(this, unit as IObjAIBase);
 			//beidongdonghua
 			//AddParticleTarget(unit, unit, "Malphite_Base_Obduracy_off", unit, buff.Duration, 1);
 			SealSpellSlot(ownerSpell.CastInfo.Owner, SpellSlotType.SpellSlots, 1, SpellbookType.SPELLBOOK_CHAMPION, false);

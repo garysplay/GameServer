@@ -20,21 +20,21 @@ namespace Spells
             IsDamagingSpell = true
         };
 
-        public void OnActivate(IObjAiBase owner, ISpell spell)
+        public void OnActivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnDeactivate(IObjAiBase owner, ISpell spell)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell)
         {
         }
 
-        public void OnSpellPreCast(IObjAiBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
+        public void OnSpellPreCast(IObjAIBase owner, ISpell spell, IAttackableUnit target, Vector2 start, Vector2 end)
         {
             Target = target;
 			string particles;
 			string particles2;
 			string particles3;
-			switch ((owner as IObjAiBase).SkinID)
+			switch ((owner as IObjAIBase).SkinID)
             {          
 				case 5:
                     particles = "Talon_Skin05_E_Cas.troy";

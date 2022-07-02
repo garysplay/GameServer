@@ -23,7 +23,7 @@ namespace CharScripts
     {
         ISpell Spell;
 		IAttackableUnit Target;
-        public void OnActivate(IObjAiBase owner, ISpell spell = null)
+        public void OnActivate(IObjAIBase owner, ISpell spell = null)
         {
             Spell = spell;
             ApiEventManager.OnLaunchAttack.AddListener(this, owner, OnLaunchAttack, false);
@@ -39,7 +39,7 @@ namespace CharScripts
                 getbuff.DeactivateBuff();			
             }
         }       
-        public void OnDeactivate(IObjAiBase owner, ISpell spell = null)
+        public void OnDeactivate(IObjAIBase owner, ISpell spell = null)
         {
         }
         public void OnUpdate(float diff)
