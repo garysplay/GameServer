@@ -21,8 +21,6 @@ namespace Buffs
         public IStatsModifier StatsModifier { get; private set; } = new StatsModifier();
         IBuff ThisBuff;
         IParticle p;
-		IParticle p2;
-		IParticle p3;
 
         public void OnActivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
         {
@@ -30,36 +28,31 @@ namespace Buffs
 
             ApiEventManager.OnSpellCast.AddListener(this, ownerSpell.CastInfo.Owner.GetSpell("TalonRake"), OnSpellCast);
             ApiEventManager.OnSpellCast.AddListener(this, ownerSpell.CastInfo.Owner.GetSpell("TalonCutthroat"), OnSpellCast);
-			ApiEventManager.OnSpellCast.AddListener(this, ownerSpell.CastInfo.Owner.GetSpell("TalonBasicAttack"), OnSpellCast);
+            ApiEventManager.OnSpellCast.AddListener(this, ownerSpell.CastInfo.Owner.GetSpell("TalonBasicAttack"), OnSpellCast);
+
+            p = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "Talon_Base_R_Cas_Invis.troy", unit, 2.5f);
+            AddParticleTarget(ownerSpell.CastInfo.Owner, ownerSpell.CastInfo.Owner, "talon_ult_sound.troy", ownerSpell.CastInfo.Owner);
 
             StatsModifier.MoveSpeed.PercentBonus += 0.4f;
             unit.AddStatModifier(StatsModifier);
-
-            p = AddParticleTarget(ownerSpell.CastInfo.Owner, unit, "Talon_Base_R_Cas_Invis.troy", unit, 2.5f);
-			p2 = AddParticleTarget(ownerSpell.CastInfo.Owner, ownerSpell.CastInfo.Owner, "talon_ult_sound.troy", ownerSpell.CastInfo.Owner, 10f);
-			p3 = AddParticleTarget(ownerSpell.CastInfo.Owner, ownerSpell.CastInfo.Owner, ".troy", ownerSpell.CastInfo.Owner, 10f);
 
             if (unit is IObjAIBase owner)
             {
                 var r2Spell = owner.SetSpell("TalonShadowAssaultToggle", 3, true);
             }
         }
-		
-		public void OnSpellCast(ISpell spell)
-        {          
+
+        public void OnSpellCast(ISpell spell)
+        {
             ThisBuff.DeactivateBuff();
         }
 
         public void OnDeactivate(IAttackableUnit unit, IBuff buff, ISpell ownerSpell)
-        {   
-             RemoveParticle(p2);
-			 RemoveParticle(p3);
-             (unit as IObjAIBase).SetSpell("TalonShadowAssault", 3, true);
-			 PlaySound("Play_vo_Talon_TalonShadowAssaultBuff_OnBuffDeactivate", unit);
-        }
-
-        public void OnUpdate(float diff)
         {
+            RemoveParticle(p);
+            PlaySound("Play_vo_Talon_TalonShadowAssaultBuff_OnBuffDeactivate", unit);
+            var spell = (unit as IObjAIBase).SetSpell("TalonShadowAssault", 3, true);
+            spell.SetCooldown(spell.GetCooldown() - buff.TimeElapsed);
         }
     }
 }
